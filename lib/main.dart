@@ -1,15 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'generated/locale_keys.g.dart';
 import 'screens/add_secstor/add_secstor.dart';
 import 'models/secstor.dart';
 import 'client/hive_names.dart';
+import 'package:easy_localization/easy_localization.dart';
+import '../generated/codegen_loader.g.dart';
 
 void main() async {
   //   hive initialization
   await Hive.initFlutter();
   Hive.registerAdapter(TodoAdapter());
   await Hive.openBox<C_hive>(HiveBoxes.db_hive);
-  runApp(SboxApp());
+
+  //    Localozation init
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+
+  runApp(EasyLocalization(
+    supportedLocales: [Locale('en'), Locale('ru')],
+    path: 'assets/translations',
+    fallbackLocale: Locale('en'),
+    assetLoader: CodegenLoader(),
+    child: SboxApp(),
+  ));
 }
 
 class SboxApp extends StatefulWidget {
@@ -28,6 +42,9 @@ class _SboxAppState extends State<SboxApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Secret Box',
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
       theme: ThemeData(
         // Theme App (основная тема приложения)
         primarySwatch: Colors.blue,
@@ -52,13 +69,25 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        leading: IconButton(
+          icon: Icon(Icons.language),
+          onPressed: () {
+            if (context.locale == Locale('ru')) {
+              context.setLocale(Locale('en'));
+            } else {
+              context.setLocale(Locale('ru'));
+            }
+          },
+        ),
       ),
       body: ValueListenableBuilder(
         valueListenable: Hive.box<C_hive>(HiveBoxes.db_hive).listenable(),
         builder: (context, Box<C_hive> box, _) {
           if (box.values.isEmpty)
             return Center(
-              child: Text("Box is empty"),
+              child: Text(
+                LocaleKeys.Box_is_empty.tr(),
+              ),
             );
           return ListView.builder(
             itemCount: box.values.length,
@@ -88,7 +117,7 @@ class _MainScreenState extends State<MainScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () => Navigator.of(context)
             .push(MaterialPageRoute(builder: (context) => AddTodo())),
-        tooltip: 'Add',
+        tooltip: LocaleKeys.Add.tr(),
         child: Icon(Icons.add),
       ),
     );

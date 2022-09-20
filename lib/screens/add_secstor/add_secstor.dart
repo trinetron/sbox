@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import '../../generated/locale_keys.g.dart';
 import '../../models/secstor.dart';
 import '../../client/hive_names.dart';
 
@@ -30,8 +32,8 @@ class _AddTodoState extends State<AddTodo> {
                   TextFormField(
                     autofocus: true,
                     initialValue: '',
-                    decoration: const InputDecoration(
-                      labelText: 'Task',
+                    decoration: InputDecoration(
+                      labelText: LocaleKeys.lLabel.tr(),
                     ),
                     onChanged: (value) {
                       setState(() {
@@ -40,14 +42,14 @@ class _AddTodoState extends State<AddTodo> {
                     },
                     validator: (val) {
                       return val!.trim().isEmpty
-                          ? 'Task name should not be empty'
+                          ? LocaleKeys.Label_name_should_not_be_empty.tr()
                           : null;
                     },
                   ),
                   TextFormField(
                     initialValue: '',
-                    decoration: const InputDecoration(
-                      labelText: 'Note',
+                    decoration: InputDecoration(
+                      labelText: LocaleKeys.Note.tr(),
                     ),
                     onChanged: (value) {
                       setState(() {
@@ -56,7 +58,9 @@ class _AddTodoState extends State<AddTodo> {
                     },
                   ),
                   OutlinedButton(
-                    child: Text('Add'),
+                    child: Text(
+                      LocaleKeys.Add.tr(),
+                    ),
                     onPressed: _validateAndSave,
                   ),
                 ],
@@ -73,7 +77,9 @@ class _AddTodoState extends State<AddTodo> {
     if (form!.validate()) {
       _onFormSubmit();
     } else {
-      print('form is invalid');
+      print(
+        LocaleKeys.form_is_invalid.tr(),
+      );
     }
   }
 
