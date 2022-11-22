@@ -1,9 +1,16 @@
 {
     "Add" : "Add",
     "Box_is_empty" : "Box is empty",
-    "lLabel" : "Label",
-    "Note" : "Note",
+    "lLabel" : "Name of the website or program",
+    "Note" : "You can add a description/supplement",
     "form_is_invalid" : "form is invalid",
-    "Label_name_should_not_be_empty" : "Label name should not be empty"
+    "Label_name_should_not_be_empty" : "Label name should not be empty",
+    "clogin": "Login",
+    "cpass": "Password",
+    "ccard": "Card number (without spaces)",
+    "cname": "First Name  Last Name (as on the card)",
+    "cdate": "Expiry date",
+    "ccvv": "CVV (3 digits on the reverse side)",
+    "cpin": "PIN code (for ATM)"
 
 }
