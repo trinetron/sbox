@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:sbox/screens/main_screen.dart';
+import 'package:sbox/ui/screens/main_screen.dart';
 import 'package:sbox/models/secstor.dart';
 import 'package:sbox/client/hive_names.dart';
 import 'package:easy_localization/easy_localization.dart';

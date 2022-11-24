@@ -4,12 +4,16 @@ import 'package:sbox/client/hive_names.dart';
 import 'package:sbox/models/translat_locale_keys.g.dart';
 import 'package:sbox/models/secstor.dart';
 import 'package:sbox/models/theme.dart';
-import 'package:sbox/screens/add/add_site.dart';
+import 'package:sbox/ui/screens/add/add_site.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:adaptive_theme/adaptive_theme.dart';
+
 import 'package:rive/rive.dart';
+import 'package:flutter_neumorphic_null_safety/flutter_neumorphic.dart';
 
 import 'package:sbox/client/menu_exe.dart';
+
+import '../widgets/button_nm.dart';
+import '../widgets/container_mn.dart';
 
 class SboxApp extends StatefulWidget {
   @override
@@ -17,6 +21,7 @@ class SboxApp extends StatefulWidget {
 }
 
 class _SboxAppState extends State<SboxApp> {
+  final bColor = ColorsSHM();
   @override
   void dispose() async {
     Hive.close();
@@ -25,21 +30,26 @@ class _SboxAppState extends State<SboxApp> {
 
   @override
   Widget build(BuildContext context) {
-    return AdaptiveTheme(
-      light: kLightTheme,
-      dark: kDarkTheme,
-      initial: AdaptiveThemeMode.system,
-      //initial: AdaptiveThemeMode.dark,
-      builder: (light, dark) => MaterialApp(
-        theme: light,
-        darkTheme: dark,
-        title: 'Secret Box',
-        localizationsDelegates: context.localizationDelegates,
-        supportedLocales: context.supportedLocales,
-        locale: context.locale,
-        home: MainScreen(title: 'Secret Box'),
-        debugShowCheckedModeBanner: false,
+    return NeumorphicApp(
+      themeMode: bColor.setThemeMode,
+      theme: NeumorphicThemeData(
+        baseColor: bColor.baseColorL,
+        lightSource: bColor.lightSourceL,
+        accentColor: bColor.accentColorL,
+        depth: bColor.depthL,
       ),
+      darkTheme: NeumorphicThemeData(
+        baseColor: bColor.baseColorD,
+        lightSource: bColor.lightSourceD,
+        accentColor: bColor.accentColorD,
+        depth: bColor.depthD,
+      ),
+      title: 'Secret Box',
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
+      home: MainScreen(title: 'Secret Box'),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -135,11 +145,11 @@ class _MainScreenState extends State<MainScreen> {
 
             if ((_b25Temp!.value == true) && (_b243Temp!.value == false))
               {
-                AdaptiveTheme.of(context).setDark(),
+                NeumorphicTheme.of(context)?.themeMode = ThemeMode.dark,
               }
             else
               {
-                AdaptiveTheme.of(context).setLight(),
+                NeumorphicTheme.of(context)?.themeMode = ThemeMode.light,
               },
 
             if (_b23Temp!.value == true)
@@ -177,8 +187,10 @@ class _MainScreenState extends State<MainScreen> {
       bottom: false,
       child: Stack(children: [
         Scaffold(
-          appBar: AppBar(
-            title: Row(
+          backgroundColor: NeumorphicTheme.baseColor(context),
+          bottomNavigationBar: BottomAppBar(
+            color: NeumorphicTheme.accentColor(context),
+            child: Row(
               children: [
                 Text(widget.title),
                 IconButton(
@@ -193,15 +205,7 @@ class _MainScreenState extends State<MainScreen> {
                 ),
                 IconButton(
                   icon: Icon(Icons.sunny),
-                  onPressed: () {
-                    if (AdaptiveTheme.of(context).mode.isLight) {
-                      // sets theme mode to dark
-                      AdaptiveTheme.of(context).setDark();
-                    } else {
-                      // sets theme mode to light
-                      AdaptiveTheme.of(context).setLight();
-                    }
-                  },
+                  onPressed: () {},
                 ),
                 Spacer(),
               ],
@@ -221,22 +225,43 @@ class _MainScreenState extends State<MainScreen> {
                 itemBuilder: (context, index) {
                   C_hive? res = box.getAt(index);
                   return Dismissible(
-                    background:
-                        Container(color: Color.fromARGB(255, 158, 54, 244)),
+                    background: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child:
+                          Container(color: Color.fromARGB(255, 158, 54, 244)),
+                    ),
                     key: UniqueKey(),
                     onDismissed: (direction) {
                       res?.delete();
                     },
-                    child: ListTile(
-                        title: Text(res!.task),
-                        subtitle: Text(res.note),
-                        leading: res.complete
-                            ? Icon(Icons.check_box)
-                            : Icon(Icons.check_box_outline_blank),
-                        onTap: () {
-                          res.complete = !res.complete;
-                          res.save();
-                        }),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                          left: 16.0, right: 18.0, top: 5.0, bottom: 4.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.grey, //color of border
+                              width: 2, //width of border
+                            ),
+                            borderRadius: BorderRadius.circular(12)),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                ButtonMN(textBtn: res!.task),
+                                ButtonMN(textBtn: res.login),
+                                ButtonMN(textBtn: res.pass),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                ContainerMN(textCont: res.note),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   );
                 },
               );
