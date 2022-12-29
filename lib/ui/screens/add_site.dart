@@ -1,12 +1,14 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:sbox/models/translat_locale_keys.g.dart';
-import 'package:sbox/models/secstor.dart';
-import 'package:sbox/client/hive_names.dart';
+import 'package:sbox/models/languages/translat_locale_keys.g.dart';
+import 'package:sbox/models/local_db/secstor.dart';
+import 'package:sbox/models/local_db/hive_names.dart';
 
 class AddSite extends StatefulWidget {
   final formKey = GlobalKey<FormState>();
+
+  AddSite({super.key});
 
   @override
   _AddSiteState createState() => _AddSiteState();

@@ -1,6 +1,7 @@
-import 'package:adaptive_theme/adaptive_theme.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic_null_safety/flutter_neumorphic.dart';
+import 'package:flutter/services.dart';
+import 'package:sbox/models/languages/translat_locale_keys.g.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ButtonMN extends StatefulWidget {
   ButtonMN({
@@ -21,8 +22,19 @@ class _ButtonMNState extends State<ButtonMN> {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: NeumorphicButton(
-          margin: EdgeInsets.only(top: 0.0, bottom: 0.0),
-          onPressed: () {},
+          margin: const EdgeInsets.only(top: 0.0, bottom: 0.0),
+          onPressed: () async {
+            await Clipboard.setData(ClipboardData(
+              text: widget.textBtn,
+            ));
+            // copied successfully
+            String tmpStr = widget.textBtn;
+            tmpStr += ' - ';
+            tmpStr += LocaleKeys.Box_is_empty.tr();
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(tmpStr),
+            ));
+          },
           style: NeumorphicStyle(
             shape: NeumorphicShape.flat,
             boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(8)),
