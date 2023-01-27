@@ -1,8 +1,18 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_neumorphic_null_safety/flutter_neumorphic.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:sbox/models/design/theme.dart';
+import 'package:sbox/models/local_db/provider/add_site_provider.dart';
+import 'package:sbox/models/local_db/provider/edit_site_provider.dart';
+import 'package:sbox/models/local_db/provider/menu_provider.dart';
+import 'package:sbox/models/local_db/provider/radio_provider.dart';
 import 'package:sbox/models/local_db/provider/db_provider.dart';
+import 'package:sbox/models/local_db/provider/sound_provider.dart';
+import 'package:sbox/models/local_db/provider/state_provider.dart';
+import 'package:sbox/models/local_db/secstor_card.dart';
+import 'package:sbox/ui/screens/login_screen.dart';
 import 'package:sbox/ui/screens/main_screen.dart';
 import 'package:sbox/models/local_db/secstor.dart';
 import 'package:sbox/models/local_db/hive_names.dart';
@@ -14,11 +24,12 @@ import 'models/local_db/hive_setting.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 void main() async {
-  // await DefaultCacheManager().emptyCache();
+  //await DefaultCacheManager().emptyCache();
+  // await Hive.deleteBoxFromDisk('shopping_box');
+
   //   hive initialization
   await Hive.initFlutter();
   Hive.registerAdapter(ChiveAdapter());
-
   //final Function(String) onCountChanged;
 
   // var menuObj = MenuScreen;
@@ -58,38 +69,114 @@ void main() async {
   //boxObj. .menuSet(box.get('name').toString());
   //Text('Name: ${box.get('name').toString()}');
 
-  @override
-  void dispose() async {
-    Hive.close();
-  }
-
-  //var key = Hive.generateSecureKey();
-
-  String keyUsr = '12345';
-  String keyMix = '';
-  String key = 'ED+AB1y5hSnt353cw0E4yZ/nd3xDT/VkVgFozawPYJY=';
-  debugPrint(key);
-
-  keyMix = key.replaceRange(0, keyUsr.length, keyUsr);
-
-  debugPrint('keyMix $keyMix');
-
-  final keyEnc = base64.decode(keyMix);
-  debugPrint(keyEnc.toString());
-  await Hive.openBox<C_hive>(HiveBoxes.db_hive, encryptionKey: keyEnc);
-  // await Hive.openBox<C_hive>(HiveBoxes.db_hive);
-
   //    Localozation init
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
 
   runApp(EasyLocalization(
-    supportedLocales: [Locale('en'), Locale('ru')],
+    supportedLocales: const [
+      Locale('en'),
+      Locale('ru'),
+      Locale('fr'),
+      Locale('es'),
+      Locale('zh'),
+    ],
     path: 'lib/models/languages',
     fallbackLocale: Locale('en'),
-    child: ChangeNotifierProvider<DatabaseProvider>(
-      create: (_) => DatabaseProvider(),
+    child: MultiProvider(
+      providers: [
+        ChangeNotifierProvider<DatabaseProvider>(
+          create: (_) => DatabaseProvider(),
+        ),
+        ChangeNotifierProvider<RadioProvider>(
+          create: (context) => RadioProvider(),
+        ),
+        ChangeNotifierProvider<MenuProvider>(
+          create: (context) => MenuProvider(),
+        ),
+        ChangeNotifierProvider<AddSiteProvider>(
+          create: (context) => AddSiteProvider(),
+        ),
+        ChangeNotifierProvider<EditSiteProvider>(
+          create: (context) => EditSiteProvider(),
+        ),
+        ChangeNotifierProvider<SoundProvider>(
+          create: (context) => SoundProvider(),
+        ),
+        ChangeNotifierProvider<StateProvider>(
+          create: (context) => StateProvider(),
+        ),
+      ],
       child: SboxApp(),
     ),
   ));
+}
+
+class SboxApp extends StatefulWidget {
+  const SboxApp({super.key});
+
+  @override
+  SboxAppState createState() => SboxAppState();
+}
+
+class SboxAppState extends State<SboxApp> {
+  final bColor = ColorsSHM();
+
+  @override
+  void dispose() async {
+    Hive.close();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    // context.read<DatabaseProvider>().initConfig(context);
+    ////////////initializeFlutterFire();
+
+    super.initState();
+  }
+
+  // void initializeFlutterFire() async {
+  //   try {
+  //     msgSetting = await hiveSetting.readSetting();
+  //     await context.read<MenuProvider>().menuSet(msgSetting, context);
+
+  //     context.read<StateProvider>().changeInit(true);
+
+  //     debugPrint('try run: ---');
+  //   } catch (e) {
+  //     debugPrint('error caught: $e');
+
+  //     context.read<StateProvider>().changeErrState(true);
+
+  //     debugPrint('err run: ---');
+  //   }
+  // }
+
+  @override
+  Widget build(BuildContext context) {
+    return NeumorphicApp(
+      themeMode: bColor.setThemeMode,
+      theme: NeumorphicThemeData(
+        baseColor: bColor.baseColorL,
+        variantColor: bColor.appBarColorL,
+        lightSource: bColor.lightSourceL,
+        accentColor: bColor.accentColorL,
+        depth: bColor.depthL,
+      ),
+      darkTheme: NeumorphicThemeData(
+        baseColor: bColor.baseColorD,
+        variantColor: bColor.appBarColorD,
+        lightSource: bColor.lightSourceD,
+        accentColor: bColor.accentColorD,
+        depth: bColor.depthD,
+      ),
+      title: 'Secret Box',
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
+      home: LoginScreen(),
+      debugShowCheckedModeBanner: false,
+    );
+  }
 }

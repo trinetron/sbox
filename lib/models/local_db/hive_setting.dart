@@ -29,8 +29,8 @@ class HiveSetting {
       debugPrint('return res.toString(); $res.toString()');
       return res.toString();
     } else {
-      debugPrint('return themeD, en, soundON;');
-      return 'themeD:en:soundON';
+      debugPrint('return themeD, en, soundON, mb0_closeStat;');
+      return 'themeD:en:soundON:mb0_closeStat';
     }
     // onReadSetting(box.get('settings'));
   }

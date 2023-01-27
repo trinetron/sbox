@@ -1,8 +1,10 @@
 import 'package:flutter_neumorphic_null_safety/flutter_neumorphic.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:rive/rive.dart';
 import 'package:flutter/material.dart';
 import 'package:sbox/models/local_db/hive_setting.dart';
+import 'package:sbox/models/local_db/provider/menu_provider.dart';
 import 'package:sbox/ui/screens/main_screen.dart';
 
 class MenuScreen extends StatelessWidget {
@@ -19,17 +21,19 @@ class MenuScreen extends StatelessWidget {
   late StateMachineController controller;
 
   SMIInput<bool>? _bump;
-  SMIInput<bool>? _b0Temp;
-  SMIInput<bool>? _b11Temp;
-  SMIInput<bool>? _b12Temp;
-  SMIInput<bool>? _b13Temp;
-  SMIInput<bool>? _b21Temp;
-  SMIInput<bool>? _b221Temp;
-  SMIInput<bool>? _b23Temp;
-  SMIInput<bool>? _b242Temp;
-  SMIInput<bool>? _b25Temp;
-  SMIInput<bool>? _b222Temp;
-  SMIInput<bool>? _b243Temp;
+  SMIInput<bool>? _bSettingTemp;
+  SMIInput<bool>? _bSndTemp;
+  SMIInput<bool>? _bLngTemp;
+  SMIInput<bool>? _bLDTTemp;
+  SMIInput<bool>? _bSOnTemp;
+  SMIInput<bool>? _bSOffTemp;
+  SMIInput<bool>? _bEnTemp;
+  SMIInput<bool>? _bRuTemp;
+  SMIInput<bool>? _bDTemp;
+  SMIInput<bool>? _bFrTemp;
+  SMIInput<bool>? _bLTemp;
+  SMIInput<bool>? _bEsTemp;
+  SMIInput<bool>? _bZhTemp;
 
   void onInit(Artboard artboard) async {
     controller = StateMachineController.fromArtboard(
@@ -37,13 +41,13 @@ class MenuScreen extends StatelessWidget {
       'SM1',
       onStateChange: onStateChange,
     ) as StateMachineController;
-    // ctrl.isActive = true;
+    //controller.isActive = true;
 
     artboard.addController(controller);
 
     var asa = HiveSetting();
     String msgSetting = '';
-    msgSetting = 'themeL:ru:soundOFF';
+    //msgSetting = 'themeL:ru:soundOFF';
 
     var box = await Hive.openBox('setBox');
     msgSetting = await box.get('settings');
@@ -54,35 +58,55 @@ class MenuScreen extends StatelessWidget {
     debugPrint('arr = $arr');
 
     if (arr[0] == 'en') {
-      controller.findInput<bool>('in_b2-2_2')!.value = false;
-      controller.findInput<bool>('in_b2-3')!.value = true;
-      controller.findInput<bool>('in_b2-4_2')!.value = false;
+      controller.findInput<bool>('in_bFr')!.value = false;
+      controller.findInput<bool>('in_bEn')!.value = true;
+      controller.findInput<bool>('in_bRu')!.value = false;
+      controller.findInput<bool>('in_bEs')!.value = false;
+      controller.findInput<bool>('in_bZh')!.value = false;
     }
     if (arr[0] == 'ru') {
-      controller.findInput<bool>('in_b2-2_2')!.value = false;
-      controller.findInput<bool>('in_b2-3')!.value = false;
-      controller.findInput<bool>('in_b2-4_2')!.value = true;
+      controller.findInput<bool>('in_bFr')!.value = false;
+      controller.findInput<bool>('in_bEn')!.value = false;
+      controller.findInput<bool>('in_bRu')!.value = true;
+      controller.findInput<bool>('in_bEs')!.value = false;
+      controller.findInput<bool>('in_bZh')!.value = false;
     }
     if (arr[0] == 'fr') {
-      controller.findInput<bool>('in_b2-2_2')!.value = true;
-      controller.findInput<bool>('in_b2-3')!.value = false;
-      controller.findInput<bool>('in_b2-4_2')!.value = false;
+      controller.findInput<bool>('in_bFr')!.value = true;
+      controller.findInput<bool>('in_bEn')!.value = false;
+      controller.findInput<bool>('in_bRu')!.value = false;
+      controller.findInput<bool>('in_bEs')!.value = false;
+      controller.findInput<bool>('in_bZh')!.value = false;
+    }
+    if (arr[0] == 'es') {
+      controller.findInput<bool>('in_bFr')!.value = false;
+      controller.findInput<bool>('in_bEn')!.value = false;
+      controller.findInput<bool>('in_bRu')!.value = false;
+      controller.findInput<bool>('in_bEs')!.value = true;
+      controller.findInput<bool>('in_bZh')!.value = false;
+    }
+    if (arr[0] == 'zh') {
+      controller.findInput<bool>('in_bFr')!.value = false;
+      controller.findInput<bool>('in_bEn')!.value = false;
+      controller.findInput<bool>('in_bRu')!.value = false;
+      controller.findInput<bool>('in_bEs')!.value = false;
+      controller.findInput<bool>('in_bZh')!.value = true;
     }
 
     if (arr[2] == 'soundON') {
-      controller.findInput<bool>('in_b2-1')!.value = true;
-      controller.findInput<bool>('in_b2-2_1')!.value = false;
+      controller.findInput<bool>('in_bSOn')!.value = true;
+      controller.findInput<bool>('in_bSOff')!.value = false;
     } else {
-      controller.findInput<bool>('in_b2-1')!.value = false;
-      controller.findInput<bool>('in_b2-2_1')!.value = true;
+      controller.findInput<bool>('in_bSOn')!.value = false;
+      controller.findInput<bool>('in_bSOff')!.value = true;
     }
 
     if (arr[1] == 'themeD') {
-      controller.findInput<bool>('in_b2-4_3')!.value = false;
-      controller.findInput<bool>('in_b2-5')!.value = true;
+      controller.findInput<bool>('in_bL')!.value = false;
+      controller.findInput<bool>('in_bD')!.value = true;
     } else {
-      controller.findInput<bool>('in_b2-4_3')!.value = true;
-      controller.findInput<bool>('in_b2-5')!.value = false;
+      controller.findInput<bool>('in_bL')!.value = true;
+      controller.findInput<bool>('in_bD')!.value = false;
     }
   }
 
@@ -90,63 +114,73 @@ class MenuScreen extends StatelessWidget {
     message = 'State Changed in $stateMachineName to $stateName';
     debugPrint(message);
 
-    _b0Temp = controller.findInput<bool>('in_b0') as SMIBool;
-    _b11Temp = controller.findInput<bool>('in_b1-1') as SMIBool;
-    _b12Temp = controller.findInput<bool>('in_b1-2') as SMIBool;
-    _b13Temp = controller.findInput<bool>('in_b1-3') as SMIBool;
+    _bSettingTemp = controller.findInput<bool>('in_bSetting') as SMIBool;
+    _bSndTemp = controller.findInput<bool>('in_bSnd') as SMIBool;
+    _bLngTemp = controller.findInput<bool>('in_bLng') as SMIBool;
+    _bLDTTemp = controller.findInput<bool>('in_bLDT') as SMIBool;
 
-    _b21Temp = controller.findInput<bool>('in_b2-1') as SMIBool;
-    _b221Temp = controller.findInput<bool>('in_b2-2_1') as SMIBool;
-    _b23Temp = controller.findInput<bool>('in_b2-3') as SMIBool;
-    _b242Temp = controller.findInput<bool>('in_b2-4_2') as SMIBool;
-    _b25Temp = controller.findInput<bool>('in_b2-5') as SMIBool;
-    _b222Temp = controller.findInput<bool>('in_b2-2_2') as SMIBool;
-    _b243Temp = controller.findInput<bool>('in_b2-4_3') as SMIBool;
+    _bSOnTemp = controller.findInput<bool>('in_bSOn') as SMIBool;
+    _bSOffTemp = controller.findInput<bool>('in_bSOff') as SMIBool;
+    _bEnTemp = controller.findInput<bool>('in_bEn') as SMIBool;
+    _bRuTemp = controller.findInput<bool>('in_bRu') as SMIBool;
+    _bDTemp = controller.findInput<bool>('in_bD') as SMIBool;
+    _bFrTemp = controller.findInput<bool>('in_bFr') as SMIBool;
+    _bLTemp = controller.findInput<bool>('in_bL') as SMIBool;
+    _bEsTemp = controller.findInput<bool>('in_bEs') as SMIBool;
+    _bZhTemp = controller.findInput<bool>('in_bZh') as SMIBool;
 
-    message = _b0Temp!.value.toString();
-    message += ':  1-1:';
-    message += _b11Temp!.value.toString();
-    message += ' 1-2:';
-    message += _b12Temp!.value.toString();
-    message += ' 1-3:';
-    message += _b13Temp!.value.toString();
-    message += ' 2-1:';
-    message += _b21Temp!.value.toString();
-    message += ' 2-2_1:';
-    message += _b221Temp!.value.toString();
-    message += ' 2-2_2:';
-    message += _b222Temp!.value.toString();
-    message += ' 2-3:';
-    message += _b23Temp!.value.toString();
-    message += ' 2-4_2:';
-    message += _b242Temp!.value.toString();
-    message += ' 2-4_3:';
-    message += _b243Temp!.value.toString();
-    message += ' 2-5:';
-    message += _b25Temp!.value.toString();
+    // message = _bSettingTemp!.value.toString();
+    // message += ':  in_bSnd:';
+    // message += _bSndTemp!.value.toString();
+    // message += ' in_bLng:';
+    // message += _bLngTemp!.value.toString();
+    // message += ' in_bLD:';
+    // message += _bLDTTemp!.value.toString();
+    // message += ' in_bSOn:';
+    // message += _bSOnTemp!.value.toString();
+    // message += ' in_bSOff:';
+    // message += _bSOffTemp!.value.toString();
+    // message += ' in_bEn:';
+    // message += _bFrTemp!.value.toString();
+    // message += ' in_bRu:';
+    // message += _bEnTemp!.value.toString();
+    // message += ' in_bD:';
+    // message += _bRuTemp!.value.toString();
+    // message += ' in_bFr:';
+    // message += _bLTemp!.value.toString();
+    // message += ' in_bL:';
+    // message += _bDTemp!.value.toString();
 
-    debugPrint('readButtonMenu $message');
+    // debugPrint('readButtonMenu $message');
 
     message = '';
 
-    if (_b23Temp!.value == true) {
+    if (_bEnTemp!.value == true) {
       //context.setLocale(Locale('en'));
       message += 'en:';
     }
-    if (_b222Temp!.value == true) {
+    if (_bFrTemp!.value == true) {
       // context.setLocale(Locale('ru'));
       message += 'fr:';
     }
-    if (_b242Temp!.value == true) {
+    if (_bRuTemp!.value == true) {
       // context.setLocale(Locale('ru'));
       message += 'ru:';
+    }
+    if (_bEsTemp!.value == true) {
+      // context.setLocale(Locale('ru'));
+      message += 'es:';
+    }
+    if (_bZhTemp!.value == true) {
+      // context.setLocale(Locale('ru'));
+      message += 'zh:';
     }
     if (message == '') {
       // context.setLocale(Locale('ru'));
       message += 'en:';
     }
 
-    if ((_b25Temp!.value == true) && (_b243Temp!.value == false)) {
+    if ((_bDTemp!.value == true) && (_bLTemp!.value == false)) {
       // NeumorphicTheme.of(context)!.themeMode = ThemeMode.dark;
       message += 'themeD:';
     } else {
@@ -154,31 +188,41 @@ class MenuScreen extends StatelessWidget {
       message += 'themeL:';
     }
 
-    if ((_b21Temp!.value == true) && (_b221Temp!.value == false)) {
+    if ((_bSOnTemp!.value == true) && (_bSOffTemp!.value == false)) {
       // context.setLocale(Locale('ru'));
-      message += 'soundON';
+      message += 'soundON:';
     } else {
       // context.setLocale(Locale('ru'));
-      message += 'soundOFF';
+      message += 'soundOFF:';
     }
+
+    message += stateName;
     // message = 'en:themeL:soundOFF';
     onMenuChanged(message);
   }
 
 //open menu
   void hitBump() {
-    if (controller.findInput<bool>('in_b0')!.value == true) {
-      controller.findInput<bool>('in_b0')!.value = false;
+    if (controller.findInput<bool>('in_bSetting')!.value == true) {
+      controller.findInput<bool>('in_bSetting')!.value = false;
     } else {
-      controller.findInput<bool>('in_b0')!.value = true;
+      controller.findInput<bool>('in_bSetting')!.value = true;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return RiveAnimation.asset(
-      'assets/menu2.riv',
+      // fit: BoxFit.contain,
+      // fit: BoxFit.cover,
+      // fit: BoxFit.fill,
+      fit: BoxFit.none,
+      // fit: BoxFit.fitHeight,
+      // fit: BoxFit.fitWidth,
+      // fit: BoxFit.scaleDown,
+      'assets/menu4.riv',
       onInit: onInit,
+      alignment: Alignment.topRight,
     );
   }
 }

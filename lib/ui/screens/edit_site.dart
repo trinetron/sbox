@@ -6,22 +6,33 @@ import 'package:provider/provider.dart';
 import 'package:sbox/models/design/theme.dart';
 import 'package:sbox/models/languages/translat_locale_keys.g.dart';
 import 'package:sbox/models/local_db/provider/add_site_provider.dart';
+import 'package:sbox/models/local_db/provider/edit_site_provider.dart';
 import 'package:sbox/models/local_db/secstor.dart';
 import 'package:sbox/models/local_db/hive_names.dart';
 import 'package:sbox/ui/widgets/add_textfield_nm.dart';
 import 'package:sbox/ui/widgets/button_appbar.dart';
 import 'package:sbox/ui/widgets/button_form_add.dart';
+import 'package:sbox/ui/widgets/button_form_edit.dart';
 import 'package:sbox/ui/widgets/button_nm.dart';
 import 'package:sbox/ui/widgets/radio_button_nm.dart';
 
-@immutable
-class AddSite extends StatelessWidget {
+class EditSite extends StatelessWidget {
   final bColor = ColorsSHM();
-  late String task;
-  late String note;
-  late String login;
-  late String pass;
+  int id;
+  String task;
+  String note;
+  String login;
+  String pass;
   final _formKey = GlobalKey<FormState>();
+
+  EditSite({
+    // super.key,
+    required this.id,
+    required this.task,
+    required this.login,
+    required this.pass,
+    required this.note,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -56,53 +67,71 @@ class AddSite extends StatelessWidget {
                         child: Column(
                           children: [
                             // Text(
-                            //   context.watch<AddSiteProvider>().dataSite.toString(),
+                            //   context.watch<EditSiteProvider>().dataSite.toString(),
                             // ),
                             Row(
                               children: [
                                 Flexible(
                                   child: TextFormField(
-                                    autofocus: true,
-                                    initialValue: '',
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                      color: _textColor(context),
-                                      decoration: TextDecoration.none,
-                                      fontSize: 15,
-                                    ),
-                                    decoration: InputDecoration(
-                                      fillColor: _fillColor(context),
-                                      focusColor: _textColor(context),
-                                      hoverColor: _textColor(context),
-                                      labelStyle: TextStyle(
-                                        fontSize: 15.0,
-                                        color: _borderColor(context),
+                                      autofocus: true,
+                                      initialValue: task,
+                                      textAlign: TextAlign.start,
+                                      style: TextStyle(
+                                        color: _textColor(context),
+                                        decoration: TextDecoration.none,
+                                        fontSize: 15,
                                       ),
-                                      hintStyle: TextStyle(
-                                        fontSize: 15.0,
-                                        color: _borderColor(context),
+                                      decoration: InputDecoration(
+                                        fillColor: _fillColor(context),
+                                        focusColor: _textColor(context),
+                                        hoverColor: _textColor(context),
+                                        labelStyle: TextStyle(
+                                          fontSize: 15.0,
+                                          color: _borderColor(context),
+                                        ),
+                                        hintStyle: TextStyle(
+                                          fontSize: 15.0,
+                                          color: _borderColor(context),
+                                        ),
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                          borderSide: BorderSide(
+                                              color:
+                                                  _fillSelectedColor(context),
+                                              style: BorderStyle.solid,
+                                              width: 1.0),
+                                          //color: _textColor(context)
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color:
+                                                  _fillSelectedColor(context),
+                                              width: 2.0),
+                                        ),
+                                        labelText: LocaleKeys.c_site.tr(),
+                                        // hintText: LocaleKeys.c_site.tr(),
                                       ),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(6),
-                                        borderSide: BorderSide(
-                                            color: _fillSelectedColor(context),
-                                            style: BorderStyle.solid,
-                                            width: 1.0),
-                                        //color: _textColor(context)
+                                      onChanged: (val) => {
+                                            task = val,
+                                            context
+                                                .read<EditSiteProvider>()
+                                                .changeDataText(val, 1),
+                                            context
+                                                .read<EditSiteProvider>()
+                                                .changeDataText(login, 2),
+                                            context
+                                                .read<EditSiteProvider>()
+                                                .changeDataText(pass, 3),
+                                            context
+                                                .read<EditSiteProvider>()
+                                                .changeDataText(note, 4),
+                                            context
+                                                .read<EditSiteProvider>()
+                                                .changeDataId(id),
+                                          }
+                                      //task = val,
                                       ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: _fillSelectedColor(context),
-                                            width: 2.0),
-                                      ),
-                                      labelText: LocaleKeys.c_site.tr(),
-                                      // hintText: LocaleKeys.c_site.tr(),
-                                    ),
-                                    onChanged: (val) => context
-                                        .read<AddSiteProvider>()
-                                        .changeDataText(val, 1),
-                                    //task = val,
-                                  ),
                                 ),
 //
 // ? >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> button
@@ -134,11 +163,11 @@ class AddSite extends StatelessWidget {
                                         unselectedColor: _fillColor(context),
                                       ),
                                       groupValue: context
-                                          .watch<AddSiteProvider>()
+                                          .watch<EditSiteProvider>()
                                           .hintOnSite,
                                       value: 1,
                                       onChanged: (value) => context
-                                          .read<AddSiteProvider>()
+                                          .read<EditSiteProvider>()
                                           .changeHintOn(1),
                                       child: Center(
                                         child: NeumorphicIcon(
@@ -159,7 +188,7 @@ class AddSite extends StatelessWidget {
                             Align(
                               alignment: Alignment.topLeft,
                               child: Text(
-                                context.watch<AddSiteProvider>().hintSite,
+                                context.watch<EditSiteProvider>().hintSite,
                                 maxLines: 10,
                                 style: TextStyle(
                                   color: _textColor(context),
@@ -191,50 +220,67 @@ class AddSite extends StatelessWidget {
                         child: Column(
                           children: [
                             // Text(
-                            //   context.watch<AddSiteProvider>().dataSite.toString(),
+                            //   context.watch<EditSiteProvider>().dataSite.toString(),
                             // ),
                             Row(
                               children: [
                                 Flexible(
                                   child: TextFormField(
-                                    autofocus: true,
-                                    initialValue: '',
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                      color: _textColor(context),
-                                      decoration: TextDecoration.none,
-                                      fontSize: 15,
-                                    ),
-                                    decoration: InputDecoration(
-                                      fillColor: _fillColor(context),
-                                      focusColor: _textColor(context),
-                                      hoverColor: _textColor(context),
-                                      labelStyle: TextStyle(
-                                        fontSize: 15.0,
-                                        color: _borderColor(context),
+                                      autofocus: true,
+                                      initialValue: login,
+                                      textAlign: TextAlign.start,
+                                      style: TextStyle(
+                                        color: _textColor(context),
+                                        decoration: TextDecoration.none,
+                                        fontSize: 15,
                                       ),
-                                      hintStyle: TextStyle(
-                                        fontSize: 15.0,
-                                        color: _borderColor(context),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: _fillSelectedColor(context),
-                                            width: 2.0),
-                                      ),
-                                      labelText: LocaleKeys.c_login.tr(),
-                                      // hintText: LocaleKeys.c_site.tr(),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(6),
+                                      decoration: InputDecoration(
+                                        fillColor: _fillColor(context),
+                                        focusColor: _textColor(context),
+                                        hoverColor: _textColor(context),
+                                        labelStyle: TextStyle(
+                                          fontSize: 15.0,
+                                          color: _borderColor(context),
+                                        ),
+                                        hintStyle: TextStyle(
+                                          fontSize: 15.0,
+                                          color: _borderColor(context),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color:
+                                                  _fillSelectedColor(context),
+                                              width: 2.0),
+                                        ),
+                                        labelText: LocaleKeys.c_login.tr(),
+                                        // hintText: LocaleKeys.c_site.tr(),
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(6),
 
-                                        //color: _textColor(context)
+                                          //color: _textColor(context)
+                                        ),
                                       ),
-                                    ),
-                                    onChanged: (val) => context
-                                        .read<AddSiteProvider>()
-                                        .changeDataText(val, 2),
-                                    //task = val,
-                                  ),
+                                      onChanged: (val) => {
+                                            login = val,
+                                            context
+                                                .read<EditSiteProvider>()
+                                                .changeDataText(val, 2),
+                                            context
+                                                .read<EditSiteProvider>()
+                                                .changeDataText(task, 1),
+                                            context
+                                                .read<EditSiteProvider>()
+                                                .changeDataText(pass, 3),
+                                            context
+                                                .read<EditSiteProvider>()
+                                                .changeDataText(note, 4),
+                                            context
+                                                .read<EditSiteProvider>()
+                                                .changeDataId(id),
+                                          }
+                                      //task = val,
+                                      ),
                                 ),
 //
 // ? >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> button
@@ -266,11 +312,11 @@ class AddSite extends StatelessWidget {
                                         unselectedColor: _fillColor(context),
                                       ),
                                       groupValue: context
-                                          .watch<AddSiteProvider>()
+                                          .watch<EditSiteProvider>()
                                           .hintOnLogin,
                                       value: 2,
                                       onChanged: (value) => context
-                                          .read<AddSiteProvider>()
+                                          .read<EditSiteProvider>()
                                           .changeHintOn(2),
                                       child: Center(
                                         child: NeumorphicIcon(
@@ -291,7 +337,7 @@ class AddSite extends StatelessWidget {
                             Align(
                               alignment: Alignment.topLeft,
                               child: Text(
-                                context.watch<AddSiteProvider>().hintLogin,
+                                context.watch<EditSiteProvider>().hintLogin,
                                 maxLines: 10,
                                 style: TextStyle(
                                   color: _textColor(context),
@@ -323,50 +369,67 @@ class AddSite extends StatelessWidget {
                         child: Column(
                           children: [
                             // Text(
-                            //   context.watch<AddSiteProvider>().dataSite.toString(),
+                            //   context.watch<EditSiteProvider>().dataSite.toString(),
                             // ),
                             Row(
                               children: [
                                 Flexible(
                                   child: TextFormField(
-                                    autofocus: true,
-                                    initialValue: '',
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                      color: _textColor(context),
-                                      decoration: TextDecoration.none,
-                                      fontSize: 15,
-                                    ),
-                                    decoration: InputDecoration(
-                                      fillColor: _fillColor(context),
-                                      focusColor: _textColor(context),
-                                      hoverColor: _textColor(context),
-                                      labelStyle: TextStyle(
-                                        fontSize: 15.0,
-                                        color: _borderColor(context),
+                                      autofocus: true,
+                                      initialValue: pass,
+                                      textAlign: TextAlign.start,
+                                      style: TextStyle(
+                                        color: _textColor(context),
+                                        decoration: TextDecoration.none,
+                                        fontSize: 15,
                                       ),
-                                      hintStyle: TextStyle(
-                                        fontSize: 15.0,
-                                        color: _borderColor(context),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: _fillSelectedColor(context),
-                                            width: 2.0),
-                                      ),
-                                      labelText: LocaleKeys.c_pass.tr(),
-                                      // hintText: LocaleKeys.c_site.tr(),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(6),
+                                      decoration: InputDecoration(
+                                        fillColor: _fillColor(context),
+                                        focusColor: _textColor(context),
+                                        hoverColor: _textColor(context),
+                                        labelStyle: TextStyle(
+                                          fontSize: 15.0,
+                                          color: _borderColor(context),
+                                        ),
+                                        hintStyle: TextStyle(
+                                          fontSize: 15.0,
+                                          color: _borderColor(context),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color:
+                                                  _fillSelectedColor(context),
+                                              width: 2.0),
+                                        ),
+                                        labelText: LocaleKeys.c_pass.tr(),
+                                        // hintText: LocaleKeys.c_site.tr(),
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(6),
 
-                                        //color: _textColor(context)
+                                          //color: _textColor(context)
+                                        ),
                                       ),
-                                    ),
-                                    onChanged: (val) => context
-                                        .read<AddSiteProvider>()
-                                        .changeDataText(val, 3),
-                                    //task = val,
-                                  ),
+                                      onChanged: (val) => {
+                                            pass = val,
+                                            context
+                                                .read<EditSiteProvider>()
+                                                .changeDataText(val, 3),
+                                            context
+                                                .read<EditSiteProvider>()
+                                                .changeDataText(login, 2),
+                                            context
+                                                .read<EditSiteProvider>()
+                                                .changeDataText(task, 1),
+                                            context
+                                                .read<EditSiteProvider>()
+                                                .changeDataText(note, 4),
+                                            context
+                                                .read<EditSiteProvider>()
+                                                .changeDataId(id),
+                                          }
+                                      //task = val,
+                                      ),
                                 ),
 //
 // ? >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> button pass
@@ -398,11 +461,11 @@ class AddSite extends StatelessWidget {
                                         unselectedColor: _fillColor(context),
                                       ),
                                       groupValue: context
-                                          .watch<AddSiteProvider>()
+                                          .watch<EditSiteProvider>()
                                           .hintOnPass,
                                       value: 3,
                                       onChanged: (value) => context
-                                          .read<AddSiteProvider>()
+                                          .read<EditSiteProvider>()
                                           .changeHintOn(3),
                                       child: Center(
                                         child: NeumorphicIcon(
@@ -423,7 +486,7 @@ class AddSite extends StatelessWidget {
                             Align(
                               alignment: Alignment.topLeft,
                               child: Text(
-                                context.watch<AddSiteProvider>().hintPass,
+                                context.watch<EditSiteProvider>().hintPass,
                                 maxLines: 10,
                                 style: TextStyle(
                                   color: _textColor(context),
@@ -455,50 +518,67 @@ class AddSite extends StatelessWidget {
                         child: Column(
                           children: [
                             // Text(
-                            //   context.watch<AddSiteProvider>().dataSite.toString(),
+                            //   context.watch<EditSiteProvider>().dataSite.toString(),
                             // ),
                             Row(
                               children: [
                                 Flexible(
                                   child: TextFormField(
-                                    autofocus: true,
-                                    initialValue: '',
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                      color: _textColor(context),
-                                      decoration: TextDecoration.none,
-                                      fontSize: 15,
-                                    ),
-                                    decoration: InputDecoration(
-                                      fillColor: _fillColor(context),
-                                      focusColor: _textColor(context),
-                                      hoverColor: _textColor(context),
-                                      labelStyle: TextStyle(
-                                        fontSize: 15.0,
-                                        color: _borderColor(context),
+                                      autofocus: true,
+                                      initialValue: note,
+                                      textAlign: TextAlign.start,
+                                      style: TextStyle(
+                                        color: _textColor(context),
+                                        decoration: TextDecoration.none,
+                                        fontSize: 15,
                                       ),
-                                      hintStyle: TextStyle(
-                                        fontSize: 15.0,
-                                        color: _borderColor(context),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: _fillSelectedColor(context),
-                                            width: 2.0),
-                                      ),
-                                      labelText: LocaleKeys.c_note.tr(),
-                                      // hintText: LocaleKeys.c_site.tr(),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(6),
+                                      decoration: InputDecoration(
+                                        fillColor: _fillColor(context),
+                                        focusColor: _textColor(context),
+                                        hoverColor: _textColor(context),
+                                        labelStyle: TextStyle(
+                                          fontSize: 15.0,
+                                          color: _borderColor(context),
+                                        ),
+                                        hintStyle: TextStyle(
+                                          fontSize: 15.0,
+                                          color: _borderColor(context),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(
+                                              color:
+                                                  _fillSelectedColor(context),
+                                              width: 2.0),
+                                        ),
+                                        labelText: LocaleKeys.c_note.tr(),
+                                        // hintText: LocaleKeys.c_site.tr(),
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(6),
 
-                                        //color: _textColor(context)
+                                          //color: _textColor(context)
+                                        ),
                                       ),
-                                    ),
-                                    onChanged: (val) => context
-                                        .read<AddSiteProvider>()
-                                        .changeDataText(val, 4),
-                                    //task = val,
-                                  ),
+                                      onChanged: (val) => {
+                                            note = val,
+                                            context
+                                                .read<EditSiteProvider>()
+                                                .changeDataText(val, 4),
+                                            context
+                                                .read<EditSiteProvider>()
+                                                .changeDataText(login, 2),
+                                            context
+                                                .read<EditSiteProvider>()
+                                                .changeDataText(pass, 3),
+                                            context
+                                                .read<EditSiteProvider>()
+                                                .changeDataText(task, 1),
+                                            context
+                                                .read<EditSiteProvider>()
+                                                .changeDataId(id),
+                                          }
+                                      //task = val,
+                                      ),
                                 ),
 //
 // ? >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> button
@@ -530,11 +610,11 @@ class AddSite extends StatelessWidget {
                                         unselectedColor: _fillColor(context),
                                       ),
                                       groupValue: context
-                                          .watch<AddSiteProvider>()
+                                          .watch<EditSiteProvider>()
                                           .hintOnNote,
                                       value: 4,
                                       onChanged: (value) => context
-                                          .read<AddSiteProvider>()
+                                          .read<EditSiteProvider>()
                                           .changeHintOn(4),
                                       child: Center(
                                         child: NeumorphicIcon(
@@ -555,7 +635,7 @@ class AddSite extends StatelessWidget {
                             Align(
                               alignment: Alignment.topLeft,
                               child: Text(
-                                context.watch<AddSiteProvider>().hintNote,
+                                context.watch<EditSiteProvider>().hintNote,
                                 maxLines: 10,
                                 style: TextStyle(
                                   color: _textColor(context),
@@ -571,81 +651,9 @@ class AddSite extends StatelessWidget {
 //! >>>>>>>>>>>>>>>>>>> end container note
                     SizedBox(height: 10),
 
-                    // TextFormField(
-                    //   initialValue: '',
-                    //   keyboardType: TextInputType.number,
-                    //   decoration: InputDecoration(
-                    //     labelText: LocaleKeys.c_site.tr(),
-                    //     hintText: LocaleKeys.c_site.tr(),
-                    //     border: OutlineInputBorder(
-                    //       borderRadius: BorderRadius.circular(6),
-                    //     ),
-                    //   ),
-                    //   onChanged: (val) => login = val,
-                    // ),
-                    // Align(
-                    //   alignment: Alignment.topRight,
-                    //   child: radioButtonWidget(
-                    //     objNum: 1,
-                    //   ),
-                    // ),
-                    // SizedBox(height: 10),
-                    // TextFormField(
-                    //   initialValue: '',
-                    //   keyboardType: TextInputType.number,
-                    //   decoration: InputDecoration(
-                    //     labelText: LocaleKeys.c_login.tr(),
-                    //     hintText: LocaleKeys.c_login.tr(),
-                    //     border: OutlineInputBorder(
-                    //       borderRadius: BorderRadius.circular(6),
-                    //     ),
-                    //   ),
-                    //   onChanged: (val) => login = val,
-                    // ),
-                    // Align(
-                    //   alignment: Alignment.topRight,
-                    //   child: radioButtonWidget(
-                    //     objNum: 2,
-                    //   ),
-                    // ),
-                    // SizedBox(height: 10),
-                    // TextFormField(
-                    //   initialValue: '',
-                    //   decoration: InputDecoration(
-                    //     labelText: LocaleKeys.c_pass.tr(),
-                    //     hintText: LocaleKeys.c_pass.tr(),
-                    //     border: OutlineInputBorder(
-                    //       borderRadius: BorderRadius.circular(6),
-                    //     ),
-                    //   ),
-                    //   onChanged: (val) => pass = val,
-                    // ),
-                    // Align(
-                    //   alignment: Alignment.topRight,
-                    //   child: radioButtonWidget(
-                    //     objNum: 3,
-                    //   ),
-                    // ),
-                    // SizedBox(height: 10),
-                    // TextFormField(
-                    //   initialValue: '',
-                    //   decoration: InputDecoration(
-                    //     labelText: LocaleKeys.c_note.tr(),
-                    //     hintText: LocaleKeys.c_note.tr(),
-                    //     border: OutlineInputBorder(
-                    //       borderRadius: BorderRadius.circular(6),
-                    //     ),
-                    //   ),
-                    //   onChanged: (val) => note = val,
-                    // ),
-                    // Align(
-                    //   alignment: Alignment.topRight,
-                    //   child: radioButtonWidget(objNum: 4),
-                    // ),
-
                     SizedBox(height: 20),
 
-                    ButtonFormAdd(),
+                    ButtonFormEdit(),
                   ],
                 ),
               ),

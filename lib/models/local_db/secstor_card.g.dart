@@ -1,44 +1,53 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'secstor.dart';
+part of 'secstor_card.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class ChiveAdapter extends TypeAdapter<C_hive> {
+class ChiveCardAdapter extends TypeAdapter<C_hiveCard> {
   @override
   final int typeId = 0;
 
   @override
-  C_hive read(BinaryReader reader) {
+  C_hiveCard read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return C_hive(
+    return C_hiveCard(
       id: fields[0] as String,
       note: fields[1] as String,
-      task: fields[2] as String,
-      login: fields[3] as String,
-      pass: fields[4] as String,
+      card: fields[2] as String,
+      name: fields[3] as String,
+      date: fields[4] as String,
+      dateExp: fields[5] as String,
+      cvv: fields[6] as String,
+      pinAtm: fields[7] as String,
     );
   }
 
   @override
-  void write(BinaryWriter writer, C_hive obj) {
+  void write(BinaryWriter writer, C_hiveCard obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
       ..write(obj.note)
       ..writeByte(2)
-      ..write(obj.task)
+      ..write(obj.card)
       ..writeByte(3)
-      ..write(obj.login)
+      ..write(obj.name)
       ..writeByte(4)
-      ..write(obj.pass);
+      ..write(obj.date)
+      ..writeByte(5)
+      ..write(obj.dateExp)
+      ..writeByte(6)
+      ..write(obj.cvv)
+      ..writeByte(7)
+      ..write(obj.pinAtm);
   }
 
   @override
@@ -47,7 +56,7 @@ class ChiveAdapter extends TypeAdapter<C_hive> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is ChiveAdapter &&
+      other is ChiveCardAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
