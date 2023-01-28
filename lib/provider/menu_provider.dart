@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic_null_safety/flutter_neumorphic.dart';
 import 'package:provider/provider.dart';
 import 'package:sbox/models/local_db/hive_setting.dart';
-import 'package:sbox/models/local_db/provider/sound_provider.dart';
+import 'package:sbox/provider/sound_provider.dart';
 
 class MenuProvider extends ChangeNotifier {
   double dataH = 53;

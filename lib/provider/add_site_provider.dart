@@ -26,6 +26,14 @@ class AddSiteProvider extends ChangeNotifier {
   String hintPass = '';
   String hintNote = '';
 
+  void cleanDataText() {
+    dataSite = '';
+    dataLogin = '';
+    dataPass = '';
+    dataNote = '';
+    notifyListeners();
+  }
+
   void changeDataText(var newDataText, int objNum) {
     switch (objNum) {
       case 1:

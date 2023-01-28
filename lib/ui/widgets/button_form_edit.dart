@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:sbox/models/design/theme.dart';
 import 'package:sbox/models/languages/translat_locale_keys.g.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:sbox/models/local_db/provider/add_site_provider.dart';
-import 'package:sbox/models/local_db/provider/edit_site_provider.dart';
+import 'package:sbox/provider/add_site_provider.dart';
+import 'package:sbox/provider/edit_site_provider.dart';
 import 'package:sbox/ui/screens/add_site.dart';
 
 class ButtonFormEdit extends StatelessWidget {

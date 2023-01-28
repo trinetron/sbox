@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:rive/rive.dart';
 import 'package:flutter/material.dart';
 import 'package:sbox/models/local_db/hive_setting.dart';
-import 'package:sbox/models/local_db/provider/menu_provider.dart';
+import 'package:sbox/provider/menu_provider.dart';
 import 'package:sbox/ui/screens/main_screen.dart';
 
 class MenuScreen extends StatelessWidget {

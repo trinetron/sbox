@@ -6,8 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:sbox/models/languages/translat_locale_keys.g.dart';
 import 'package:sbox/models/local_db/hive_names.dart';
 import 'package:sbox/models/local_db/hive_setting.dart';
-import 'package:sbox/models/local_db/provider/menu_provider.dart';
-import 'package:sbox/models/local_db/provider/state_provider.dart';
+import 'package:sbox/provider/menu_provider.dart';
+import 'package:sbox/provider/state_provider.dart';
 import 'package:sbox/models/local_db/secstor_card.dart';
 import 'package:sbox/ui/screens/login_screen.dart';
 import 'package:sbox/ui/screens/main_screen.dart';
@@ -20,6 +20,8 @@ class DatabaseProvider extends ChangeNotifier {
   int _selectedIndex = 0;
   String pass = '';
   bool initialized = false;
+  bool dbFilesExist = false;
+  bool msgFilesExist = false;
 
   String msgSetting = '';
   final hiveSetting = HiveSetting();
@@ -69,6 +71,21 @@ class DatabaseProvider extends ChangeNotifier {
     return initialized != false;
   }
 
+  void msgdbFilesExists(var val) {
+    msgFilesExist = val;
+  }
+
+  Future<bool> dbFilesExists() async {
+    if ((await Hive.boxExists(HiveBoxes.db_hive)) &&
+        (await Hive.boxExists(HiveBoxes.db_hiveCard))) {
+// dbFilesExist = true;
+// msgFilesExist = true;
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   void changeDataLogin(String val) {
     pass = val;
     // if (pass == 'xxx') {
@@ -105,40 +122,46 @@ class DatabaseProvider extends ChangeNotifier {
 
       final keyEnc = base64.decode(keyMix);
       debugPrint(keyEnc.toString());
-      await Hive.openBox<C_hive>(HiveBoxes.db_hive,
+
+      var boxSite = await Hive.openBox<C_hive>(HiveBoxes.db_hive,
           encryptionCipher: HiveAesCipher(keyEnc), crashRecovery: false);
-      await Hive.openBox<C_hiveCard>(HiveBoxes.db_hiveCard,
+      var boxCard = await Hive.openBox<C_hiveCard>(HiveBoxes.db_hiveCard,
           encryptionCipher: HiveAesCipher(keyEnc), crashRecovery: false);
 
-// if (await Hive.boxExists(“themeBox”)) {
-// themeBox = await Hive.openBox(“themeBox”);
-// } else {
-// createDatabase();
-// }
+      if ((boxSite != null) && (boxCard != null)) {
+        context.read<StateProvider>().changeInit(true);
+        context.read<StateProvider>().changeErrState(false);
+        notifyListeners();
+        await Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => MainScreen()));
+      } else {
+        context.read<StateProvider>().changeErrState(false);
+        context.read<StateProvider>().changeInit(false);
+        notifyListeners();
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(LocaleKeys.pass_err.tr()),
+        ));
+      }
 
       debugPrint('initSecBD try run: ---');
     } catch (e, s) {
-      context.read<StateProvider>().changeErrState(true);
-      context.read<StateProvider>().changeInit(false);
-      notifyListeners();
       debugPrint('initSecBD error caught: $e');
       debugPrint('initSecBD error Стек: $s');
-      notifyListeners();
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(LocaleKeys.pass_err.tr()),
-      ));
 
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => LoginScreen()));
+      // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      //   content: Text(LocaleKeys.pass_err.tr()),
+      // ));
+
+      // Navigator.of(context)
+      //     .push(MaterialPageRoute(builder: (context) => LoginScreen()));
 
       debugPrint('initSecBD err run: ---');
     } finally {
       //
-      context.read<StateProvider>().changeInit(true);
-      notifyListeners();
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => MainScreen()));
+      // context.read<StateProvider>().changeInit(true);
+      // notifyListeners();
+      // await Navigator.of(context)
+      //     .push(MaterialPageRoute(builder: (context) => MainScreen()));
     }
-    ;
   }
 }

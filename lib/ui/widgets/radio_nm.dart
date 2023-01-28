@@ -1,7 +1,7 @@
 import 'package:flutter_neumorphic_null_safety/flutter_neumorphic.dart';
 import 'package:provider/provider.dart';
 import 'package:sbox/models/design/theme.dart';
-import 'package:sbox/models/local_db/provider/radio_provider.dart';
+import 'package:sbox/provider/radio_provider.dart';
 
 class radioWidget extends StatelessWidget {
   radioWidget({

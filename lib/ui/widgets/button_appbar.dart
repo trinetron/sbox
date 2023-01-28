@@ -1,8 +1,10 @@
 import 'package:flutter_neumorphic_null_safety/flutter_neumorphic.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:sbox/models/design/theme.dart';
 import 'package:sbox/models/languages/translat_locale_keys.g.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:sbox/provider/add_site_provider.dart';
 import 'package:sbox/ui/screens/add_site.dart';
 
 class ButtonAppBarAdd extends StatelessWidget {
@@ -24,6 +26,7 @@ class ButtonAppBarAdd extends StatelessWidget {
         child: NeumorphicButton(
           margin: EdgeInsets.only(left: 3),
           onPressed: () => {
+            context.read<AddSiteProvider>().cleanDataText(),
             Navigator.of(context)
                 .push(MaterialPageRoute(builder: (context) => AddSite())),
           },

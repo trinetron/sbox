@@ -8,12 +8,12 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sbox/models/local_db/hive_names.dart';
 import 'package:sbox/models/languages/translat_locale_keys.g.dart';
 import 'package:sbox/models/local_db/hive_setting.dart';
-import 'package:sbox/models/local_db/provider/add_site_provider.dart';
-import 'package:sbox/models/local_db/provider/db_provider.dart';
+import 'package:sbox/provider/add_site_provider.dart';
+import 'package:sbox/provider/db_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:sbox/models/local_db/provider/menu_provider.dart';
-import 'package:sbox/models/local_db/provider/sound_provider.dart';
-import 'package:sbox/models/local_db/provider/state_provider.dart';
+import 'package:sbox/provider/menu_provider.dart';
+import 'package:sbox/provider/sound_provider.dart';
+import 'package:sbox/provider/state_provider.dart';
 import 'package:sbox/models/local_db/secstor.dart';
 import 'package:sbox/models/design/theme.dart';
 import 'package:sbox/ui/screens/add_site.dart';
@@ -64,10 +64,10 @@ class MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    initialized = context.watch<StateProvider>().initialized;
-    error = context.watch<StateProvider>().error;
+    // initialized = context.watch<StateProvider>().initialized;
+    // error = context.watch<StateProvider>().error;
 
-    if (error) {
+    if (context.watch<StateProvider>().error) {
       debugPrint('_error');
       debugPrint('_error   $error');
       debugPrint('_initialized   $initialized');
@@ -75,7 +75,7 @@ class MainScreenState extends State<MainScreen> {
       return LoginScreen(); //Text('error');
     }
 
-    if (initialized) {
+    if (context.watch<StateProvider>().initialized) {
       return SafeArea(
         left: false,
         right: false,
@@ -356,16 +356,6 @@ class MainScreenState extends State<MainScreen> {
                                                     pass: res.pass,
                                                     note: res.note,
                                                   )));
-                                    }
-                                  },
-                                  onDismissed: (direction) {
-                                    if (direction ==
-                                        DismissDirection.startToEnd) {
-                                      debugPrint("Edit item");
-                                    } else {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) => AddSite()));
                                     }
                                   },
                                   child: Padding(

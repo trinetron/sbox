@@ -5,20 +5,19 @@ import 'package:flutter_neumorphic_null_safety/flutter_neumorphic.dart';
 import 'package:provider/provider.dart';
 import 'package:sbox/models/design/theme.dart';
 import 'package:sbox/models/languages/translat_locale_keys.g.dart';
-import 'package:sbox/models/local_db/provider/db_provider.dart';
-import 'package:sbox/models/local_db/provider/menu_provider.dart';
-import 'package:sbox/models/local_db/provider/state_provider.dart';
+import 'package:sbox/provider/db_provider.dart';
+import 'package:sbox/provider/menu_provider.dart';
+import 'package:sbox/provider/state_provider.dart';
 import 'package:sbox/ui/screens/main_screen.dart';
 import 'package:sbox/ui/widgets/menu_setting.dart';
 
 class LoginScreen extends StatelessWidget {
   final bColor = ColorsSHM();
   String _pass = '';
+  TextEditingController editingController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    // Define an async function to initialize FlutterFire
-
     return SafeArea(
       child: Stack(
         children: [
@@ -28,7 +27,7 @@ class LoginScreen extends StatelessWidget {
               children: [
                 Expanded(
                   child: SizedBox(
-                    height: 50,
+                    height: 10,
                   ),
                 ),
                 Container(
@@ -39,118 +38,240 @@ class LoginScreen extends StatelessWidget {
                 ),
                 Expanded(
                   child: SizedBox(
-                    height: 50,
+                    height: 10,
                   ),
                 ),
                 Expanded(
-                  child: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: _butColor(context),
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(30),
-                        topRight: Radius.circular(30),
+                  flex: 3,
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      width: double.infinity,
+                      //height: 50,
+                      decoration: BoxDecoration(
+                        color: _butColor(context),
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(30),
+                          topRight: Radius.circular(30),
+                        ),
                       ),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 15),
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                color: _txtBGColor(context),
-                              ),
-                              child: TextField(
-                                onChanged: (val) {
-                                  _pass = val;
-                                },
-                                style: TextStyle(
-                                  color: _txtColor(context),
-                                ),
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  prefixIcon: Icon(
-                                    Icons.lock,
-                                    color: _txtColor(context),
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              const SizedBox(height: 5),
+                              Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(6),
+                                    color: _txtBGColor(context),
                                   ),
-                                  hintText: 'Password',
-                                  hintStyle: TextStyle(
-                                    color: _txtColor(context),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 35),
-                            GestureDetector(
-                              onTap: () async {
-                                // try {
-                                context
-                                    .read<DatabaseProvider>()
-                                    .changeDataLogin(_pass);
-                                debugPrint('ok1');
+                                  child: Center(
+                                    child: //Text(''),
 
-                                context
-                                    .read<StateProvider>()
-                                    .changeErrState(false);
-                                context.read<StateProvider>().changeInit(false);
+                                        Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 5, bottom: 4, left: 3, right: 3),
+                                      child: Container(
+                                        child: Align(
+                                          alignment: Alignment.bottomCenter,
+                                          child: TextField(
+                                            cursorColor: _borderColor(context),
+                                            onChanged: (val) async {
+                                              _pass = val;
 
-                                context
-                                    .read<DatabaseProvider>()
-                                    .initSecBD(context);
-                                debugPrint('ok2');
+                                              bool check_db = await context
+                                                  .read<DatabaseProvider>()
+                                                  .dbFilesExists();
 
-                                //bool loginState = false;
-                                // loginState = await context
-                                //     .read<StateProvider>()
-                                //     .initialized;
-                                debugPrint('ok3');
-                                //debugPrint('loginState $loginState');
+                                              bool msg_check_db = await context
+                                                  .read<DatabaseProvider>()
+                                                  .msgFilesExist;
 
-                                if (await context
-                                    .read<StateProvider>()
-                                    .initialized) {
-                                  // Navigator.of(context).push(MaterialPageRoute(
-                                  //     builder: (context) => MainScreen()));
-                                } else {
-                                  // ScaffoldMessenger.of(context)
-                                  //     .showSnackBar(SnackBar(
-                                  //   content: Text(LocaleKeys.pass_err.tr()),
-                                  // ));
-                                }
+                                              if ((!check_db) &&
+                                                  (!msg_check_db)) {
+                                                context
+                                                    .read<DatabaseProvider>()
+                                                    .msgdbFilesExists(true);
+                                                await showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return AlertDialog(
+                                                      title: Text(LocaleKeys
+                                                          .check_m_pass
+                                                          .tr()),
+                                                      content: Text(LocaleKeys
+                                                          .set_new_pass
+                                                          .tr()),
+                                                      actions: <Widget>[
+                                                        ElevatedButton(
+                                                          onPressed: () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop(false);
+                                                          },
+                                                          child: Icon(
+                                                              Icons.done,
+                                                              color:
+                                                                  Colors.white),
+                                                          style: ElevatedButton
+                                                              .styleFrom(
+                                                            shape:
+                                                                CircleBorder(),
+                                                            padding:
+                                                                EdgeInsets.all(
+                                                                    20),
+                                                            backgroundColor:
+                                                                _txtBGColor(
+                                                                    context), // <-- Button color
+                                                            //foregroundColor: _txtBGColor(context),// <-- Splash color
+                                                          ),
+                                                        )
+                                                      ],
+                                                    );
+                                                  },
+                                                );
 
-                                //   debugPrint('pass check try run: ---');
-                                // } catch (e) {
-                                //   debugPrint('pass check error caught: $e');
-
-                                //   debugPrint('err run: ---');
-                                // }
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(30),
-                                  color: _txtBGColor(context),
-                                ),
-                                child: Center(
-                                  child: Padding(
-                                    padding: EdgeInsets.all(10.0),
-                                    child: Text(
-                                      ' Log In',
-                                      style: TextStyle(
-                                        color: _txtColor(context),
-                                        fontSize: 30,
-                                        fontWeight: FontWeight.w500,
+                                                debugPrint('check_dbFilesNO');
+                                              } else {
+                                                debugPrint('check_dbFilesOK');
+                                              }
+                                            },
+                                            style: TextStyle(
+                                              fontSize: 15.0,
+                                              color: _textColor(context),
+                                            ),
+                                            controller: editingController,
+                                            decoration: InputDecoration(
+                                              labelStyle: TextStyle(
+                                                fontSize: 15.0,
+                                                color: _borderColor(context),
+                                              ),
+                                              labelText:
+                                                  LocaleKeys.check_m_pass.tr(),
+                                              hintStyle: TextStyle(
+                                                fontSize: 15.0,
+                                                color: _borderColor(context),
+                                              ),
+                                              hintText: LocaleKeys.c_pass.tr(),
+                                              prefixIcon: Icon(
+                                                Icons.lock,
+                                                color: _borderColor(context),
+                                              ),
+                                              suffixIcon: IconButton(
+                                                icon: Icon(
+                                                  Icons.clear,
+                                                  color: _borderColor(context),
+                                                ),
+                                                onPressed: (() {
+                                                  editingController.clear();
+                                                }),
+                                              ),
+                                              enabledBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color:
+                                                        _borderColor(context),
+                                                    width: 2.0),
+                                              ),
+                                              // border: OutlineInputBorder(
+                                              //   // borderRadius: BorderRadius.all(
+                                              //   //     Radius.circular(25.0)),
+                                              //   borderSide: BorderSide(
+                                              //       color:
+                                              //           Color.fromARGB(255, 1, 255, 22),
+                                              //       width: 3.0),
+                                              // ),
+                                              focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: _fillSelectedColor(
+                                                        context),
+                                                    width: 2.0),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
                                       ),
                                     ),
+                                  )),
+                              const SizedBox(height: 35),
+                              GestureDetector(
+                                onTap: () async {
+                                  // try {
+
+                                  context
+                                      .read<DatabaseProvider>()
+                                      .changeDataLogin(_pass);
+                                  debugPrint('ok1');
+
+                                  context
+                                      .read<StateProvider>()
+                                      .changeErrState(false);
+                                  context
+                                      .read<StateProvider>()
+                                      .changeInit(false);
+
+                                  context
+                                      .read<DatabaseProvider>()
+                                      .initSecBD(context);
+                                  debugPrint('ok2');
+
+                                  //bool loginState = false;
+                                  // loginState = await context
+                                  //     .read<StateProvider>()
+                                  //     .initialized;
+                                  debugPrint('ok3');
+                                  //debugPrint('loginState $loginState');
+
+                                  if (await context
+                                      .read<StateProvider>()
+                                      .initialized) {
+                                    // Navigator.of(context).push(MaterialPageRoute(
+                                    //     builder: (context) => MainScreen()));
+                                  } else {
+                                    // ScaffoldMessenger.of(context)
+                                    //     .showSnackBar(SnackBar(
+                                    //   content: Text(LocaleKeys.pass_err.tr()),
+                                    // ));
+                                  }
+
+                                  //   debugPrint('pass check try run: ---');
+                                  // } catch (e) {
+                                  //   debugPrint('pass check error caught: $e');
+
+                                  //   debugPrint('err run: ---');
+                                  // }
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(7),
+                                    color: _txtBGColor(context),
+                                  ),
+                                  child: Center(
+                                    child: Padding(
+                                        padding: EdgeInsets.all(10.0),
+                                        child: Icon(
+                                          Icons.login,
+                                          size: 35,
+                                          color: _textColor(context),
+                                        )
+                                        //  Text(
+                                        //   ' Log In',
+                                        //   style: TextStyle(
+                                        //     color: _txtColor(context),
+                                        //     fontSize: 30,
+                                        //     fontWeight: FontWeight.w500,
+                                        //   ),
+                                        // ),
+                                        ),
                                   ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(height: 35),
-                          ],
+                              const SizedBox(height: 15),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -252,6 +373,46 @@ class LoginScreen extends StatelessWidget {
       return bColor.appBarColorL;
     } else {
       return bColor.appBarColorD;
+    }
+  }
+
+  Color _textColor(BuildContext context) {
+    if (!NeumorphicTheme.isUsingDark(context)) {
+      return Colors.black;
+    } else {
+      return Colors.white;
+    }
+  }
+
+  Color _fillColor(BuildContext context) {
+    if (!NeumorphicTheme.isUsingDark(context)) {
+      return bColor.buttonFillL;
+    } else {
+      return bColor.buttonFillD;
+    }
+  }
+
+  Color _fillSelectedColor(BuildContext context) {
+    if (!NeumorphicTheme.isUsingDark(context)) {
+      return bColor.radioFillL;
+    } else {
+      return bColor.radioFillD;
+    }
+  }
+
+  Color _borderColor(BuildContext context) {
+    if (!NeumorphicTheme.isUsingDark(context)) {
+      return bColor.borderL;
+    } else {
+      return bColor.borderD;
+    }
+  }
+
+  Color _fillCardColor(BuildContext context) {
+    if (!NeumorphicTheme.isUsingDark(context)) {
+      return bColor.cardColorL;
+    } else {
+      return bColor.cardColorD;
     }
   }
 }
