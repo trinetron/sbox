@@ -8,6 +8,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sbox/models/local_db/hive_names.dart';
 import 'package:sbox/models/languages/translat_locale_keys.g.dart';
 import 'package:sbox/models/local_db/hive_setting.dart';
+import 'package:sbox/models/local_db/secstor_card.dart';
 import 'package:sbox/provider/add_site_provider.dart';
 import 'package:sbox/provider/db_provider.dart';
 import 'package:provider/provider.dart';
@@ -16,46 +17,35 @@ import 'package:sbox/provider/sound_provider.dart';
 import 'package:sbox/provider/state_provider.dart';
 import 'package:sbox/models/local_db/secstor.dart';
 import 'package:sbox/models/design/theme.dart';
-import 'package:sbox/ui/screens/add_site.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_neumorphic_null_safety/flutter_neumorphic.dart';
+import 'package:sbox/ui/screens/edit_card.dart';
 import 'package:sbox/ui/widgets/button_appbar_backup.dart';
 import 'package:sbox/ui/screens/edit_site.dart';
 import 'package:sbox/ui/screens/login_screen.dart';
 import 'package:sbox/ui/widgets/button_appbar.dart';
+import 'package:sbox/ui/widgets/button_appbar_card.dart';
 import 'package:sbox/ui/widgets/radio_nm.dart';
 import 'package:sbox/ui/widgets/menu_setting.dart';
 import 'package:sbox/ui/widgets/button_nm.dart';
 import 'package:sbox/ui/widgets/container_nm.dart';
 
-//>>>>>>>>>>>>>>>>>>
-//import 'package:just_audio/just_audio.dart';
-//import 'package:assets_audio_player/assets_audio_player.dart';
-
-//part 'package:sbox/ui/widgets/app_bar.dart';
-
-class MainScreen extends StatefulWidget {
-  MainScreen({
+class CardScreen extends StatefulWidget {
+  CardScreen({
     Key? key,
   }) : super(key: key);
 
   @override
-  MainScreenState createState() => MainScreenState();
+  CardScreenState createState() => CardScreenState();
 }
 
-class MainScreenState extends State<MainScreen> {
+class CardScreenState extends State<CardScreen> {
   bool initialized = false;
   bool error = false;
 
   final bColor = ColorsSHM();
   String query = '';
   TextEditingController editingController = TextEditingController();
-
-// late Box boxA;
-
-  //final hiveSetting = HiveSetting();
-
-  //late var results;
 
   @override
   void dispose() async {
@@ -88,53 +78,13 @@ class MainScreenState extends State<MainScreen> {
               appBar: AppBar(
                 backgroundColor: NeumorphicTheme.accentColor(context),
                 automaticallyImplyLeading: false,
-                // leading:
-                // FloatingActionButton(
-                //   onPressed: () => {
-                //     Navigator.of(context).push(
-                //         MaterialPageRoute(builder: (context) => AddSite())),
-                //   },
-                //   tooltip: LocaleKeys.Add.tr(),
-                //   child: Icon(Icons.add),
-                // ),
-
-                //     NeumorphicButton(
-                //   margin: EdgeInsets.only(top: 12),
-                //   onPressed: () => {
-                //     Navigator.of(context).push(
-                //         MaterialPageRoute(builder: (context) => AddSite())),
-                //   },
-                //   style: NeumorphicStyle(
-                //       shape: NeumorphicShape.flat,
-                //       boxShape: NeumorphicBoxShape.roundRect(
-                //           BorderRadius.circular(5)),
-                //       depth: 2,
-                //       intensity: 0.9,
-                //       surfaceIntensity: 0.9,
-                //       border: NeumorphicBorder(
-                //         color: Colors.grey[400],
-                //         width: 0.8,
-                //       ),
-                //       lightSource: LightSource.topLeft,
-                //       color: Colors.grey[600]),
-
-                //   padding: const EdgeInsets.all(12.0),
-                //   child: NeumorphicIcon(
-                //     Icons.add_circle,
-                //     size: 22,
-                //   ),
-                //   //  Text(
-                //   //   "Toggle Theme",
-                //   //   style: TextStyle(color: NeumorphicTheme.accentColor(context)),
-                //   // ),
-                // ),
 
                 title: Row(
                   children: [
                     Expanded(
                       child: SizedBox(),
                     ),
-                    ButtonAppBarAdd(iconBtn: Icons.add),
+                    ButtonAppBarCardAdd(iconBtn: Icons.add),
                     Expanded(
                       child: SizedBox(),
                     ),
@@ -162,87 +112,20 @@ class MainScreenState extends State<MainScreen> {
                       SearchWgt(context),
                       ValueListenableBuilder(
                         valueListenable:
-                            Hive.box<C_hive>(HiveBoxes.db_hive).listenable(),
-                        builder: (context, Box<C_hive> box, _) {
+                            Hive.box<C_hiveCard>(HiveBoxes.db_hiveCard)
+                                .listenable(),
+                        builder: (context, Box<C_hiveCard> box, _) {
                           DatabaseProvider databaseProvider =
                               Provider.of<DatabaseProvider>(context,
                                   listen: false);
-
-                          // builder: (context, Box<C_hive> boxA, _) {
-                          // if (boxG.values.isEmpty) {
-                          //   return Center(
-                          //     child: Text(
-                          //       LocaleKeys.Box_is_empty.tr(),
-                          //     ),
-                          //   );
-                          // } else
                           {
-                            List<C_hive> results = query.isEmpty
+                            List<C_hiveCard> results = query.isEmpty
                                 ? box.values.toList() // whole list
                                 : box.values
                                     .where((c) => c.note
                                         .toLowerCase()
                                         .contains(query.toLowerCase()))
-                                    .toList()
-                              ..where((c) => c.task
-                                  .toLowerCase()
-                                  .contains(query.toLowerCase())).toList();
-
-                            //   List<C_hive> results2 = query.isEmpty
-
-                            // if (query != '') {
-                            //   List<C_hive> results2 = query.isEmpty
-                            //       ? box.values.toList() // whole list
-                            //       : box.values
-                            //           .where((c) =>
-                            //               c.task.toLowerCase().contains(query))
-                            //           .toList();
-
-                            //   results.forEach((c) {
-                            //     //bool coli = results2.any((e) => e.id != id);
-                            //    // if (coli) {
-                            //       results = results + results2.elementAt(context);
-                            //    // }
-                            //   });
-
-                            // if (results2.any((c) =>
-                            //     c.id !=
-                            //     results.where((e) =>
-                            //         c.note.toLowerCase().contains(query)))) {
-                            //   results2 = results2 +
-                            //       results
-                            //           .where((e) => e.note
-                            //               .toLowerCase()
-                            //               .contains(query))
-                            //           .toList();
-                            // }
-                            // }
-
-                            // var resultsAll = results + results2;
-
-                            // late List<C_hive> results = box.values.toList();
-
-                            // if (query.isEmpty) {
-                            //   box.values.toList();
-                            // } else {
-                            //   results = box.values
-                            //       .where((c) =>
-                            //           c.task.toLowerCase().contains(query))
-                            //       .toList();
-                            //   results = box.values
-                            //       .where((c) =>
-                            //           c.note.toLowerCase().contains(query))
-                            //       .toList();
-
-                            // results.addAll(box.values
-                            //     .where((c) =>
-                            //         c.note.toLowerCase().contains(query))
-                            //     .toList());
-                            //}
-                            // (box.values
-                            // .where((c) => c.note.toLowerCase().contains(query))
-                            // .toList()));
-
+                                    .toList();
                             return ListView.builder(
                               physics: NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
@@ -253,7 +136,7 @@ class MainScreenState extends State<MainScreen> {
                                   background: Container(
                                     color: Colors.cyan[900],
                                     child: Padding(
-                                      padding: const EdgeInsets.all(15),
+                                      padding: const EdgeInsets.all(55),
                                       child: Row(
                                         children: <Widget>[
                                           SizedBox(
@@ -306,10 +189,10 @@ class MainScreenState extends State<MainScreen> {
                                                 onPressed: () {
                                                   //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   databaseProvider
-                                                      .updateSelectedIndex(
+                                                      .updateSelectedCardIndex(
                                                           index);
                                                   databaseProvider
-                                                      .deleteFromHive();
+                                                      .deleteFromCardHive();
                                                   //box.delete(index);
                                                   debugPrint('Remove item');
                                                   //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -350,12 +233,14 @@ class MainScreenState extends State<MainScreen> {
                                     } else {
                                       Navigator.of(context)
                                           .push(MaterialPageRoute(
-                                              builder: (context) => EditSite(
+                                              builder: (context) => EditCard(
                                                     id: index,
-                                                    task: res.task,
-                                                    login: res.login,
-                                                    pass: res.pass,
                                                     note: res.note,
+                                                    card: res.card,
+                                                    name: res.name,
+                                                    dateExp: res.dateExp,
+                                                    cvv: res.cvv,
+                                                    pinAtm: res.pinAtm,
                                                   )));
                                     }
                                   },
@@ -381,23 +266,23 @@ class MainScreenState extends State<MainScreen> {
                                             Row(
                                               children: [
                                                 ButtonMN(
-                                                  textBtn: res.task,
+                                                  textBtn: res.card,
                                                   textLbl:
-                                                      LocaleKeys.c_site.tr(),
+                                                      LocaleKeys.c_card.tr(),
                                                 ),
                                               ],
                                             ),
                                             Row(
                                               children: [
                                                 ButtonMN(
-                                                  textBtn: res.login,
+                                                  textBtn: res.name,
                                                   textLbl:
-                                                      LocaleKeys.c_login.tr(),
+                                                      LocaleKeys.c_name.tr(),
                                                 ),
                                                 ButtonMN(
-                                                  textBtn: res.pass,
+                                                  textBtn: res.cvv,
                                                   textLbl:
-                                                      LocaleKeys.c_pass.tr(),
+                                                      LocaleKeys.c_cvv.tr(),
                                                 ),
                                               ],
                                             ),
@@ -428,64 +313,24 @@ class MainScreenState extends State<MainScreen> {
             ),
             Align(
                 alignment: Alignment.topRight,
-
-                //alignment: Alignment.center,
                 child: GestureDetector(
                     onTap: () {
                       context.read<MenuProvider>().changeTap(true);
                       print("Container was tapped");
-                      // AudioPlayer player = AudioPlayer();
-                      try {
-                        // player.setSourceAsset('audio/chpok.mp3');
-                        //player.setReleaseMode(ReleaseMode.release);
-                        //player.resume();
 
+                      try {
                         context.read<SoundProvider>().playSound('menu');
                       } catch (e) {
                         print("Error loading audio source: $e");
                       }
                     },
                     child: Container(
-                      // margin: const EdgeInsets.only(left: 0.1, bottom: 0.1),
                       padding: const EdgeInsets.only(top: 3.1, right: 3.1),
-
-                      // child: Transform.scale(
-                      // scale: 1.0,
-                      //constraints: BoxConstraints.loose(Size(50, 50)),
-                      //constraints: BoxConstraints(minWidth: 50, maxWidth: 150),
-                      // maxWidth: 50,
-                      // maxHeight: 50,
-                      // alignment: Alignment.topRight,
-
-                      // width: 54,
-                      // height: 53,
-                      // width: 125,
-                      // height: 125,
                       width: context.watch<MenuProvider>().dataW,
                       height: context.watch<MenuProvider>().dataH,
-
-                      // //scale: 0.8,
-                      // minWidth: 45.0,
-                      // minHeight: 100.0,
-                      //maxWidth: 70.0,
-                      // maxHeight: 60.0,
-
-                      // minWidth: 0.0,
-                      // minHeight: 0.0,
-                      // maxWidth: double.infinity,
-                      // maxHeight: double.infinity,
-
                       child: Container(
                         margin: const EdgeInsets.only(left: 0.1, bottom: 0.1),
                         padding: const EdgeInsets.only(left: 0.1, bottom: 0.1),
-                        // width: 120,
-                        // height: 120,
-                        // alignment: Alignment.topRight,
-                        // padding: const EdgeInsets.only(left: 50.0, bottom: 50.0),
-                        // constraints: BoxConstraints.tight(Size(50, 50)),
-                        // margin: const EdgeInsets.only(left: 50.0, bottom: 50.0),
-                        // constraints: BoxConstraints(minWidth: 50, maxWidth: 50),
-                        // alignment: Alignment.bottomLeft,
                         child: MenuScreen(
                           msg: context.watch<MenuProvider>().msg,
                           onMenuChanged: (String val) {

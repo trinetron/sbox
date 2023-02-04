@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_neumorphic_null_safety/flutter_neumorphic.dart';
 import 'package:provider/provider.dart';
+import 'package:rive/rive.dart';
 import 'package:sbox/models/design/theme.dart';
 import 'package:sbox/models/languages/translat_locale_keys.g.dart';
 import 'package:sbox/provider/db_provider.dart';
@@ -31,10 +32,22 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  width: 50,
+                  width: 80,
+                  height: 80,
                   // height: double.infinity,
                   // height: MediaQuery.of(context).size.height / 3,
-                  child: Image.asset('assets/images/flutter.png'),
+                  child: RiveAnimation.asset(
+                    // fit: BoxFit.contain,
+                    // fit: BoxFit.cover,
+                    // fit: BoxFit.fill,
+                    fit: BoxFit.none,
+                    // fit: BoxFit.fitHeight,
+                    // fit: BoxFit.fitWidth,
+                    // fit: BoxFit.scaleDown,
+                    'assets/logo1.riv',
+                    onInit: onInit,
+                    alignment: Alignment.center,
+                  ),
                 ),
                 Expanded(
                   child: SizedBox(
@@ -42,7 +55,7 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
                 Expanded(
-                  flex: 3,
+                  flex: 2,
                   child: Align(
                     alignment: Alignment.bottomCenter,
                     child: Container(
@@ -196,7 +209,7 @@ class LoginScreen extends StatelessWidget {
                                       ),
                                     ),
                                   )),
-                              const SizedBox(height: 35),
+                              const SizedBox(height: 20),
                               GestureDetector(
                                 onTap: () async {
                                   // try {
@@ -342,6 +355,17 @@ class LoginScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void onInit(Artboard artboard) async {
+    var controller = StateMachineController.fromArtboard(
+      artboard,
+      'SM2',
+      //onStateChange: onStateChange,
+    ) as StateMachineController;
+    controller.isActive = true;
+
+    artboard.addController(controller);
   }
 
   Color _txtColor(BuildContext context) {

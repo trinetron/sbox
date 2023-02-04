@@ -8,7 +8,7 @@ part of 'secstor_card.dart';
 
 class ChiveCardAdapter extends TypeAdapter<C_hiveCard> {
   @override
-  final int typeId = 0;
+  final int typeId = 1;
 
   @override
   C_hiveCard read(BinaryReader reader) {

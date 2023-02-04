@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter_neumorphic_null_safety/flutter_neumorphic.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:rive/rive.dart';
 import 'package:flutter/material.dart';
@@ -49,9 +52,17 @@ class MenuScreen extends StatelessWidget {
     String msgSetting = '';
     //msgSetting = 'themeL:ru:soundOFF';
 
-    var box = await Hive.openBox('setBox');
-    msgSetting = await box.get('settings');
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+    String appPath = appDocDir.path + '\\sbox';
 
+    var box = await Hive.openBox('setBox', crashRecovery: true, path: appPath);
+
+    var tmpSet = await box.get('settings');
+    if (tmpSet != null) {
+      msgSetting = tmpSet;
+    } else {
+      msgSetting = 'themeL:soundOFF:mb0_closeStat';
+    }
     //msgSetting = await asa.readSetting();
 
     var arr = msgSetting.split(':');

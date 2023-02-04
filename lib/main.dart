@@ -4,7 +4,9 @@ import 'package:flutter_neumorphic_null_safety/flutter_neumorphic.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:sbox/models/design/theme.dart';
+import 'package:sbox/provider/add_card_provider.dart';
 import 'package:sbox/provider/add_site_provider.dart';
+import 'package:sbox/provider/edit_card_provider.dart';
 import 'package:sbox/provider/edit_site_provider.dart';
 import 'package:sbox/provider/menu_provider.dart';
 import 'package:sbox/provider/radio_provider.dart';
@@ -30,6 +32,7 @@ void main() async {
   //   hive initialization
   await Hive.initFlutter();
   Hive.registerAdapter(ChiveAdapter());
+  Hive.registerAdapter(ChiveCardAdapter());
   //final Function(String) onCountChanged;
 
   // var menuObj = MenuScreen;
@@ -105,6 +108,12 @@ void main() async {
         ),
         ChangeNotifierProvider<StateProvider>(
           create: (context) => StateProvider(),
+        ),
+        ChangeNotifierProvider<AddCardProvider>(
+          create: (context) => AddCardProvider(),
+        ),
+        ChangeNotifierProvider<EditCardProvider>(
+          create: (context) => EditCardProvider(),
         ),
       ],
       child: SboxApp(),

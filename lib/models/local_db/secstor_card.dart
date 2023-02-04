@@ -1,7 +1,7 @@
 import 'package:hive/hive.dart';
 part 'secstor_card.g.dart';
 
-@HiveType(typeId: 0)
+@HiveType(typeId: 1)
 class C_hiveCard extends HiveObject {
   @HiveField(0)
   String id;
