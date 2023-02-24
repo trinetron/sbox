@@ -8,6 +8,7 @@ import 'package:sbox/models/design/theme.dart';
 import 'package:sbox/models/languages/translat_locale_keys.g.dart';
 import 'package:sbox/provider/db_provider.dart';
 import 'package:sbox/provider/menu_provider.dart';
+import 'package:sbox/provider/sound_provider.dart';
 import 'package:sbox/provider/state_provider.dart';
 import 'package:sbox/ui/screens/main_screen.dart';
 import 'package:sbox/ui/widgets/menu_setting.dart';
@@ -32,8 +33,8 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  width: 80,
-                  height: 80,
+                  width: 110,
+                  height: 110,
                   // height: double.infinity,
                   // height: MediaQuery.of(context).size.height / 3,
                   child: RiveAnimation.asset(
@@ -44,7 +45,7 @@ class LoginScreen extends StatelessWidget {
                     // fit: BoxFit.fitHeight,
                     // fit: BoxFit.fitWidth,
                     // fit: BoxFit.scaleDown,
-                    'assets/logo1.riv',
+                    'assets/logo3.riv',
                     onInit: onInit,
                     alignment: Alignment.center,
                   ),
@@ -113,6 +114,16 @@ class LoginScreen extends StatelessWidget {
                                                   builder:
                                                       (BuildContext context) {
                                                     return AlertDialog(
+                                                      titleTextStyle: TextStyle(
+                                                          color: _textColor(
+                                                              context)),
+                                                      contentTextStyle:
+                                                          TextStyle(
+                                                              color: _textColor(
+                                                                  context)),
+                                                      backgroundColor:
+                                                          _fillCardColor(
+                                                              context),
                                                       title: Text(LocaleKeys
                                                           .check_m_pass
                                                           .tr()),
@@ -300,6 +311,7 @@ class LoginScreen extends StatelessWidget {
               child: GestureDetector(
                   onTap: () {
                     context.read<MenuProvider>().changeTap(true);
+                    context.read<SoundProvider>().playSound('menu');
                     print("Container was tapped");
                   },
                   child: Container(

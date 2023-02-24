@@ -47,11 +47,11 @@ class CardScreenState extends State<CardScreen> {
   String query = '';
   TextEditingController editingController = TextEditingController();
 
-  @override
-  void dispose() async {
-    Hive.close();
-    super.dispose();
-  }
+  // @override
+  // void dispose() async {
+  //   Hive.close();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -180,6 +180,12 @@ class CardScreenState extends State<CardScreen> {
                                         context: context,
                                         builder: (BuildContext context) {
                                           return AlertDialog(
+                                            titleTextStyle: TextStyle(
+                                                color: _textColor(context)),
+                                            contentTextStyle: TextStyle(
+                                                color: _textColor(context)),
+                                            backgroundColor:
+                                                _fillCardColor(context),
                                             title:
                                                 Text(LocaleKeys.confirm.tr()),
                                             content:
@@ -204,8 +210,9 @@ class CardScreenState extends State<CardScreen> {
                                                 style: ElevatedButton.styleFrom(
                                                   shape: CircleBorder(),
                                                   padding: EdgeInsets.all(20),
-                                                  backgroundColor: Colors
-                                                      .blue, // <-- Button color
+                                                  backgroundColor:
+                                                      _fillSelectedColor(
+                                                          context), // <-- Button color
                                                   foregroundColor: Colors
                                                       .red, // <-- Splash color
                                                 ),
@@ -220,8 +227,9 @@ class CardScreenState extends State<CardScreen> {
                                                 style: ElevatedButton.styleFrom(
                                                   shape: CircleBorder(),
                                                   padding: EdgeInsets.all(20),
-                                                  backgroundColor: Colors
-                                                      .blue, // <-- Button color
+                                                  backgroundColor:
+                                                      _fillSelectedColor(
+                                                          context), // <-- Button color
                                                   foregroundColor: Colors
                                                       .red, // <-- Splash color
                                                 ),

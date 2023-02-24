@@ -23,6 +23,7 @@ import 'package:sbox/ui/widgets/button_appbar_backup.dart';
 import 'package:sbox/ui/screens/edit_site.dart';
 import 'package:sbox/ui/screens/login_screen.dart';
 import 'package:sbox/ui/widgets/button_appbar.dart';
+import 'package:sbox/ui/widgets/button_nm_www.dart';
 import 'package:sbox/ui/widgets/radio_nm.dart';
 import 'package:sbox/ui/widgets/menu_setting.dart';
 import 'package:sbox/ui/widgets/button_nm.dart';
@@ -57,11 +58,11 @@ class MainScreenState extends State<MainScreen> {
 
   //late var results;
 
-  @override
-  void dispose() async {
-    Hive.close();
-    super.dispose();
-  }
+  // @override
+  // void dispose() async {
+  //   Hive.close();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -297,6 +298,12 @@ class MainScreenState extends State<MainScreen> {
                                         context: context,
                                         builder: (BuildContext context) {
                                           return AlertDialog(
+                                            titleTextStyle: TextStyle(
+                                                color: _textColor(context)),
+                                            contentTextStyle: TextStyle(
+                                                color: _textColor(context)),
+                                            backgroundColor:
+                                                _fillCardColor(context),
                                             title:
                                                 Text(LocaleKeys.confirm.tr()),
                                             content:
@@ -321,8 +328,9 @@ class MainScreenState extends State<MainScreen> {
                                                 style: ElevatedButton.styleFrom(
                                                   shape: CircleBorder(),
                                                   padding: EdgeInsets.all(20),
-                                                  backgroundColor: Colors
-                                                      .blue, // <-- Button color
+                                                  backgroundColor:
+                                                      _fillSelectedColor(
+                                                          context), // <-- Button color
                                                   foregroundColor: Colors
                                                       .red, // <-- Splash color
                                                 ),
@@ -337,8 +345,9 @@ class MainScreenState extends State<MainScreen> {
                                                 style: ElevatedButton.styleFrom(
                                                   shape: CircleBorder(),
                                                   padding: EdgeInsets.all(20),
-                                                  backgroundColor: Colors
-                                                      .blue, // <-- Button color
+                                                  backgroundColor:
+                                                      _fillSelectedColor(
+                                                          context), // <-- Button color
                                                   foregroundColor: Colors
                                                       .red, // <-- Splash color
                                                 ),
@@ -380,7 +389,7 @@ class MainScreenState extends State<MainScreen> {
                                           children: [
                                             Row(
                                               children: [
-                                                ButtonMN(
+                                                ButtonMNwww(
                                                   textBtn: res.task,
                                                   textLbl:
                                                       LocaleKeys.c_site.tr(),

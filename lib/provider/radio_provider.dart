@@ -8,27 +8,48 @@ class RadioProvider extends ChangeNotifier {
 
   void changeInt(var newInt, context) {
     data = newInt;
+    notifyListeners();
     radioControl(data, context);
+  }
+
+  void changelastD() {
+    lastD = data;
     notifyListeners();
   }
 
   void radioControl(int d, context) {
+    debugPrint('d = $d');
+    debugPrint('lastD = $lastD');
     switch (d) {
       case 1:
-        if (d != lastD) {
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => MainScreen()));
-          lastD = d;
+        if ((d != lastD) || (lastD == 0)) {
+          debugPrint('radioControl case 1');
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => MainScreen()),
+            (Route<dynamic> route) => false,
+          );
+          // if (d != 0) {
+
+          //}
         }
+        lastD = d;
+
         break;
       case 2:
-        if (d != lastD) {
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => CardScreen()));
-          lastD = d;
+        if ((d != lastD) || (lastD == 0)) {
+          debugPrint('radioControl case 2');
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => CardScreen()),
+            (Route<dynamic> route) => false,
+          );
+          //if (d != 0) {
+
+          //}
         }
+        lastD = d;
         break;
       default:
+        lastD = d;
     }
   }
 }

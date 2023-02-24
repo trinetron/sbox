@@ -44,9 +44,10 @@ class radioWidget extends StatelessWidget {
             ),
             groupValue: context.watch<RadioProvider>().data,
             value: 1,
-            onChanged: (value) =>
-                context.read<RadioProvider>().changeInt(1, context),
-
+            onChanged: (value) => {
+              context.read<RadioProvider>().changeInt(1, context),
+              debugPrint('changeInt(1)'),
+            },
             // (groupValue) {
             // setState(() {
             //groupValue = value;
@@ -96,8 +97,10 @@ class radioWidget extends StatelessWidget {
 
             groupValue: context.watch<RadioProvider>().data,
             value: 2,
-            onChanged: (value) =>
-                context.read<RadioProvider>().changeInt(2, context),
+            onChanged: (value) => {
+              context.read<RadioProvider>().changeInt(2, context),
+              debugPrint('changeInt(2)'),
+            },
             //  {
             // setState(() {
             // groupValue = 2;

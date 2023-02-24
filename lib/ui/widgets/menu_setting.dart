@@ -53,7 +53,7 @@ class MenuScreen extends StatelessWidget {
     //msgSetting = 'themeL:ru:soundOFF';
 
     Directory appDocDir = await getApplicationDocumentsDirectory();
-    String appPath = appDocDir.path + '\\sbox';
+    String appPath = appDocDir.path.toString().toLowerCase() + '/sbox';
 
     var box = await Hive.openBox('setBox', crashRecovery: true, path: appPath);
 

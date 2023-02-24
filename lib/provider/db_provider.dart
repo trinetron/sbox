@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:archive/archive_io.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:file_cryptor/file_cryptor.dart';
 import 'package:file_picker/file_picker.dart';
@@ -12,11 +13,16 @@ import 'package:sbox/models/languages/translat_locale_keys.g.dart';
 import 'package:sbox/models/local_db/hive_names.dart';
 import 'package:sbox/models/local_db/hive_setting.dart';
 import 'package:sbox/provider/menu_provider.dart';
+import 'package:sbox/provider/permissions_provider.dart';
+import 'package:sbox/provider/permissions_provider.dart';
+import 'package:sbox/provider/permissions_provider.dart';
+import 'package:sbox/provider/radio_provider.dart';
 import 'package:sbox/provider/state_provider.dart';
 import 'package:sbox/models/local_db/secstor_card.dart';
 import 'package:sbox/ui/screens/login_screen.dart';
 import 'package:sbox/ui/screens/main_screen.dart';
-
+import 'dart:io' show Platform;
+import 'package:cr_file_saver/file_saver.dart';
 import '/models/local_db/secstor.dart';
 import 'package:flutter/material.dart';
 //import 'package:hive/hive.dart';
@@ -34,13 +40,14 @@ class DatabaseProvider extends ChangeNotifier {
 
   String keyUsr = '';
   String keyMix = '';
-  String key = 'ED+AB1y5hSnt353cw0E4yZ/nd3xDT/VkVgFozawPYJY=';
+  static const String key = 'ED+AB1y5hSnt353cw0E4yZ/nd3xDT/VkVgFozawPYJY=';
   String dir2 = '';
 
-  @override
-  void dispose() async {
-    Hive.close();
-  }
+  // @override
+  // void dispose() async {
+  //   super.dispose();
+  //   Hive.close();
+  // }
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
   late Box<C_hive> _boxA = Hive.box<C_hive>(HiveBoxes.db_hive);
@@ -63,262 +70,163 @@ class DatabaseProvider extends ChangeNotifier {
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Cryptor
 
   Future<bool> restoreDbFile(context) async {
-    List<String> listFiles = [
-      'sec_box.hive',
-      // 'sec_box.lock',
-      'sec_box_card.hive',
-      //  'sec_box_card.lock',
-      'setbox.hive',
-      //  'setbox.lock'
-    ];
+    // List<String> listFiles = [
+    //   'sec_box.hive',
+    //   'sec_box_card.hive',
+    // ];
 
-    String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
+    requestStoragePermission();
 
-    Directory? appDocDir = await getExternalStorageDirectory();
+    var selectedDirectory = await FilePicker.platform.pickFiles();
     if (selectedDirectory == null) {
       return false;
     }
+    String dir = selectedDirectory.files.first.path.toString();
+    //  +        '/' +        selectedDirectory.files.first.name;
 
-    // String dir2 = appDocDir.path.toString().toLowerCase() + '\\sbox';
-    String dir2 = appDocDir!.path.toString().toLowerCase();
-    String dir = selectedDirectory;
-    debugPrint('dir = appDocDir $dir');
+    Directory? appDocDir = await getApplicationDocumentsDirectory();
+    String dir2 = appDocDir.path.toString().toLowerCase() + '/sbox';
+
+    debugPrint('dir $dir');
     debugPrint('dir2 $dir2');
 
-    // var now = new DateTime.now();
-    // var formatter = new DateFormat('yyyy-MM-dd');
-    // String formattedDate = formatter.format(now);
-    // debugPrint(formattedDate);
+    await _boxA.close();
+    await _boxB.close();
 
-    // dir2 = (dir2 + '\\sbox_' + formattedDate);
+    bool checkZip = await unzipPack(dir, dir2);
 
-    // var directory = await Directory(dir2).create(recursive: true);
-
-    // debugPrint(directory.path);
-
-    for (var fName in listFiles) {
-      String d1 = dir + '\\' + fName + '.sbox';
-      String d2 = dir2 + '\\' + fName;
-      var d1F = File(d1);
-      debugPrint('d1 $d1');
-      debugPrint('d2 $d2');
-      await Hive.close();
-      File nFile = await copyFile(d1F, d2);
-      if (nFile != null) {
-        initConfig(context);
-        initSecBD(context);
-      }
+    if (checkZip) {
+      await initConfig(context);
+      await initSecBD(context);
+      context.read<RadioProvider>().changelastD();
     }
 
     return true;
   }
 
-  Future<bool> backupDbFile() async {
+  bool zipPack(String pathSource, String pathFileTarget, List listFiles) {
+    try {
+      var encoder = ZipFileEncoder();
+      encoder.create(pathFileTarget);
+      for (var fName in listFiles) {
+        String tmpPath = pathSource + '/' + fName;
+        encoder.addFile(File(tmpPath));
+      }
+      encoder.close();
+      return true;
+    } catch (e) {
+      debugPrint('Error $e');
+      return false;
+    }
+  }
+
+  bool unzipPack(String pathSourceZipFile, String pathTarget) {
+    try {
+      final bytes = File(pathSourceZipFile).readAsBytesSync();
+      final archive = ZipDecoder().decodeBytes(bytes);
+      for (final file in archive) {
+        final filename = file.name;
+        if (file.isFile) {
+          final data = file.content as List<int>;
+          File(pathTarget + '/' + filename)
+            ..createSync(recursive: true)
+            ..writeAsBytesSync(data);
+        }
+      }
+      return true;
+    } catch (e) {
+      debugPrint('Error $e');
+      return false;
+    }
+  }
+
+  Future<bool> backupDbFile(context) async {
     List<String> listFiles = [
       'sec_box.hive',
-      // 'sec_box.lock',
       'sec_box_card.hive',
-      // 'sec_box_card.lock',
-      //'setbox.hive',
-      //  'setbox.lock'
     ];
 
-    String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
+    Directory? appDocDir = await getApplicationDocumentsDirectory();
+    String? dir = appDocDir.path.toString().toLowerCase() + '/sbox';
 
-    Directory? appDocDir = await getExternalStorageDirectory();
-    if (selectedDirectory == null) {
-      return false;
+    String? dir2 = '';
+    bool checkZip = false;
+
+    if ((Platform.isAndroid) || (Platform.isIOS)) {
+      try {
+        final granted =
+            await CRFileSaver.requestWriteExternalStoragePermission();
+
+        debugPrint('requestWriteExternalStoragePermission: $granted');
+
+        String dirTmp = dir + '/sBoxBackUp_' + curDateTime() + '.x3';
+        checkZip = zipPack(dir, dirTmp, listFiles);
+
+        dir2 = await CRFileSaver.saveFileWithDialog(SaveFileDialogParams(
+          sourceFilePath: dirTmp,
+          destinationFileName: 'sBoxBackUp_' + curDateTime() + '.x3',
+        ));
+        debugPrint('dir $dir');
+        debugPrint('dir2 $dir2');
+        debugPrint('Saved to $dir');
+        return true;
+      } catch (error) {
+        debugPrint('Error: $error');
+        return false;
+      }
+    } else {
+      requestStoragePermission();
+
+      String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
+      if (selectedDirectory == null) {
+        return false;
+      }
+      dir2 = selectedDirectory;
+      dir2 = (dir2 + '/sBoxBackUp_' + curDateTime() + '.x3');
+
+      checkZip = zipPack(dir, dir2, listFiles);
+
+      debugPrint('dir $dir');
+      debugPrint('dir2 $dir2');
+
+      if (checkZip) {
+        return true;
+      } else {
+        return false;
+      }
     }
 
-    // String dir = appDocDir.path.toString().toLowerCase() + '/sbox';
-    String dir = appDocDir!.path.toString().toLowerCase();
-    debugPrint('dir = appDocDir $dir');
+    debugPrint('dir $dir');
+    debugPrint('dir2 $dir2');
 
-    dir2 = selectedDirectory;
-    //dir2 = dir;
-    debugPrint(selectedDirectory);
+    //var directory = await Directory(dir2).create(recursive: true);
+    // debugPrint('create directory.path $directory.path');
+  }
 
-    var now = new DateTime.now();
-    var formatter = new DateFormat('yyyy-MM-dd');
+  Future<void> requestStoragePermission() async {
+    var serviceStatus = await Permission.storage.isGranted;
+
+    bool isStorageOn = serviceStatus == ServiceStatus.enabled;
+    debugPrint(isStorageOn.toString());
+
+    var status = await Permission.storage.request();
+
+    if (status == PermissionStatus.granted) {
+      debugPrint('Permission Granted');
+    } else if (status == PermissionStatus.denied) {
+      debugPrint('Permission denied');
+    } else if (status == PermissionStatus.permanentlyDenied) {
+      debugPrint('Permission Permanently Denied');
+      await openAppSettings();
+    }
+  }
+
+  String curDateTime() {
+    var now = DateTime.now();
+    var formatter = DateFormat('yyyy-MM-dd(HH-mm)');
     String formattedDate = formatter.format(now);
     debugPrint(formattedDate);
-
-    // // You can request multiple permissions at once.
-    // Map<Permission, PermissionStatus> statuses = await [
-    //   Permission.storage,
-    // ].request();
-    // print(statuses[Permission.storage]);
-
-    dir2 = (dir2 + '/sbox_' + formattedDate);
-    debugPrint('dir2  $dir2');
-
-    var directory = await Directory(dir2).create(recursive: true);
-
-    debugPrint('directory.path $directory.path');
-
-    for (var fName in listFiles) {
-      // String d1 = dir + '\\' + fName;
-      // String d2 = dir2 + '\\' + fName + '.sbox';
-      String d1 = dir + '/' + fName;
-      String d2 = dir2 + '/' + fName + '.sbox';
-      var d1F = File(d1);
-      debugPrint('d1 $d1');
-      debugPrint('d2 $d2');
-
-      copyFile(d1F, d2);
-    }
-
-    return true;
-  }
-
-  Future<bool> encFile(var inputFileF, var outputFileF, var selectedDirectory,
-      var compress) async {
-    String keyCrypt = keyMix.substring(4, 36);
-    debugPrint(keyCrypt);
-
-    // var picked = await FilePicker.platform.pickFiles();
-    // if (picked != null) {
-    //   print(picked.files.first.name);
-    // }
-
-    // String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
-
-    Directory? appDocDir = await getExternalStorageDirectory();
-    if (selectedDirectory == null) {
-      return false;
-      // selectedDirectory = appDocDir.path.toString().toLowerCase();
-    }
-    // } else {
-    //   dir = selectedDirectory;
-    //   debugPrint(selectedDirectory);
-    // }
-
-    // String dir = appDocDir.path.toString().toLowerCase() + '\\sbox';
-    String dir = appDocDir!.path.toString().toLowerCase();
-    debugPrint('dir = appDocDir $dir');
-
-    dir2 = selectedDirectory;
-    debugPrint(selectedDirectory);
-
-    var now = new DateTime.now();
-    var formatter = new DateFormat('yyyy-MM-dd');
-    String formattedDate = formatter.format(now);
-    print(formattedDate);
-
-    dir2 = (dir2 + '\\sbox_' + formattedDate);
-
-    var directory = await Directory(dir2).create(recursive: true);
-
-    print(directory.path);
-
-    FileCryptor fileCryptor = FileCryptor(
-      key: keyCrypt,
-      iv: 16,
-      dir: dir,
-      useCompress: compress,
-    );
-
-    File encryptedFile = await fileCryptor.encrypt(
-        inputFile: inputFileF, outputFile: outputFileF);
-    print(encryptedFile.absolute);
-
-    dir = dir + '\\' + outputFileF;
-    dir2 = dir2 + '\\' + outputFileF;
-    var dirF = File(dir);
-    print('dir $dir');
-    moveFile(dirF, dir2);
-
-    if (encryptedFile != null) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  Future<bool> decFile(
-      String inputFileF, String outputFileF, String dir, bool compress) async {
-    String keyCrypt = keyMix.substring(4, 36);
-    debugPrint(keyCrypt);
-
-    String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
-
-    Directory? appDocDir = await getExternalStorageDirectory();
-    if (selectedDirectory == null) {
-      return false;
-      // selectedDirectory = appDocDir.path.toString().toLowerCase();
-    }
-    // } else {
-    //   dir = selectedDirectory;
-    //   debugPrint(selectedDirectory);
-    // }
-
-    dir2 = appDocDir!.path.toString().toLowerCase();
-
-    dir = selectedDirectory;
-    debugPrint('selectedDirectory dir $dir');
-
-    // var now = new DateTime.now();
-    // var formatter = new DateFormat('yyyy-MM-dd');
-    // String formattedDate = formatter.format(now);
-    // print(formattedDate);
-
-    // var directory = await Directory(dir2).create(recursive: true);
-
-    // print(directory.path);
-
-    FileCryptor fileCryptor = FileCryptor(
-      key: keyCrypt,
-      iv: 16,
-      dir: dir,
-      useCompress: compress,
-    );
-
-    File decryptedFile = await fileCryptor.decrypt(
-        inputFile: inputFileF, outputFile: outputFileF);
-    //print('decryptedFile.absolute $decryptedFile.absolute');
-
-    dir = dir + '\\' + outputFileF;
-    dir2 = (dir2 + '\\' + outputFileF);
-    print('dir $dir');
-    print('dir2 $dir2');
-    //dir2 = directory.path + '\\' + outputFileF;
-    var dirF = File(dir);
-    print('dir $dir');
-    moveFile(dirF, dir2);
-
-    if (decryptedFile != null) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  Future<File> copyFile(File sourceFile, String newPath) async {
-    try {
-      /// prefer using rename as it is probably faster
-      /// if same directory path
-      return await sourceFile.rename(newPath);
-    } catch (e) {
-      /// if rename fails, copy the source file
-      final newFile = await sourceFile.copy(newPath);
-
-      return newFile;
-    }
-  }
-
-  Future<File> moveFile(File sourceFile, String newPath) async {
-    try {
-      /// prefer using rename as it is probably faster
-      /// if same directory path
-      return await sourceFile.rename(newPath);
-    } catch (e) {
-      /// if rename fails, copy the source file
-      final newFile = await sourceFile.copy(newPath);
-      if (newFile != null) {
-        await sourceFile.delete();
-      }
-      return newFile;
-    }
+    return formattedDate;
   }
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Hive
@@ -386,9 +294,9 @@ class DatabaseProvider extends ChangeNotifier {
   }
 
   Future<bool> dbFilesExists() async {
-    Directory? appDocDir = await getExternalStorageDirectory();
-    // String appPath = appDocDir.path + '\\sbox';
-    String appPath = appDocDir!.path;
+    Directory? appDocDir = await getApplicationDocumentsDirectory();
+    String appPath = appDocDir.path + '/sbox';
+    // String appPath = appDocDir.path;
     if ((await Hive.boxExists(HiveBoxes.db_hive, path: appPath)) &&
         (await Hive.boxExists(HiveBoxes.db_hiveCard, path: appPath))) {
       debugPrint('dbFilesExists true');
@@ -435,24 +343,33 @@ class DatabaseProvider extends ChangeNotifier {
       final keyEnc = base64.decode(keyMix);
       debugPrint(keyEnc.toString());
 
-      Directory? appDocDir = await getExternalStorageDirectory();
-      // String appPath = appDocDir.path + '/sbox';
-      String appPath = appDocDir!.path;
+      Directory? appDocDir = await getApplicationDocumentsDirectory();
+      String appPath = appDocDir.path + '/sbox';
+      // String appPath = appDocDir.path;
       debugPrint('appPath  $appPath');
 
-      var boxSite = await Hive.openBox<C_hive>(HiveBoxes.db_hive,
-          encryptionCipher: HiveAesCipher(keyEnc),
-          crashRecovery: false,
-          path: appPath);
-      var boxCard = await Hive.openBox<C_hiveCard>(HiveBoxes.db_hiveCard,
+      _boxA = await Hive.openBox<C_hive>(HiveBoxes.db_hive,
           encryptionCipher: HiveAesCipher(keyEnc),
           crashRecovery: false,
           path: appPath);
 
-      if ((boxSite != null) && (boxCard != null)) {
+      debugPrint('_boxA.isOpen $_boxA.isOpen.toString()');
+
+      _boxB = await Hive.openBox<C_hiveCard>(HiveBoxes.db_hiveCard,
+          encryptionCipher: HiveAesCipher(keyEnc),
+          crashRecovery: false,
+          path: appPath);
+
+      debugPrint('_boxB.isOpen $_boxB.isOpen.toString()');
+
+      // if ((await Hive.isBoxOpen('db_hive')) &&
+      //     (await Hive.isBoxOpen('db_hiveCard'))) {
+      if ((_boxA.isOpen) && (_boxB.isOpen)) {
         context.read<StateProvider>().changeInit(true);
         context.read<StateProvider>().changeErrState(false);
+        context.read<RadioProvider>().changeInt(1, context);
         notifyListeners();
+
         await Navigator.of(context)
             .push(MaterialPageRoute(builder: (context) => MainScreen()));
       } else {

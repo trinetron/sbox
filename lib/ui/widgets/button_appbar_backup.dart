@@ -8,6 +8,8 @@ import 'package:sbox/provider/add_site_provider.dart';
 import 'package:sbox/ui/screens/add_site.dart';
 import 'package:sbox/ui/screens/backup_screen.dart';
 
+import '../../provider/radio_provider.dart';
+
 class ButtonAppBarBackup extends StatelessWidget {
   ButtonAppBarBackup({
     Key? key,
@@ -27,9 +29,12 @@ class ButtonAppBarBackup extends StatelessWidget {
         child: NeumorphicButton(
           margin: EdgeInsets.only(left: 3),
           onPressed: () => {
-            context.read<AddSiteProvider>().cleanDataText(),
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => BackupScreen())),
+            // context.read<AddSiteProvider>().cleanDataText(),
+            context.read<RadioProvider>().changeInt(0, context),
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => BackupScreen()),
+              (Route<dynamic> route) => false,
+            ),
           },
           style: NeumorphicStyle(
               shape: NeumorphicShape.flat,

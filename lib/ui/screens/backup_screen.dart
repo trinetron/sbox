@@ -40,14 +40,14 @@ class BackupScreenState extends State<BackupScreen> {
   String query = '';
   TextEditingController editingController = TextEditingController();
 
-  List<String> listFiles = [
-    'sec_box.hive',
-    // 'sec_box.lock',
-    'sec_box_card.hive',
-    //'sec_box_card.lock',
-    'setbox.hive',
-    // 'setbox.lock'
-  ];
+  // List<String> listFiles = [
+  //   'sec_box.hive',
+  //   // 'sec_box.lock',
+  //   'sec_box_card.hive',
+  //   //'sec_box_card.lock',
+  //   'setbox.hive',
+  //   // 'setbox.lock'
+  // ];
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +103,9 @@ class BackupScreenState extends State<BackupScreen> {
                         child: NeumorphicButton(
                           margin: const EdgeInsets.only(top: 0.0, bottom: 0.0),
                           onPressed: () {
-                            context.read<DatabaseProvider>().backupDbFile();
+                            context
+                                .read<DatabaseProvider>()
+                                .backupDbFile(context);
 
                             //>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 

@@ -9,6 +9,7 @@ import 'package:sbox/provider/add_site_provider.dart';
 import 'package:sbox/provider/edit_card_provider.dart';
 import 'package:sbox/provider/edit_site_provider.dart';
 import 'package:sbox/provider/menu_provider.dart';
+import 'package:sbox/provider/permissions_provider.dart';
 import 'package:sbox/provider/radio_provider.dart';
 import 'package:sbox/provider/db_provider.dart';
 import 'package:sbox/provider/sound_provider.dart';
@@ -114,6 +115,9 @@ void main() async {
         ),
         ChangeNotifierProvider<EditCardProvider>(
           create: (context) => EditCardProvider(),
+        ),
+        ChangeNotifierProvider<PermissionsService>(
+          create: (context) => PermissionsService(),
         ),
       ],
       child: SboxApp(),

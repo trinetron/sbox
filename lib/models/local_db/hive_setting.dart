@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:path_provider/path_provider.dart';
 
 class HiveSetting {
   //final VoidCallback onCountSelected;
@@ -16,15 +19,26 @@ class HiveSetting {
   // this.writeStr = '',
   //});
 
-  @override
-  void dispose() async {
-    Hive.close();
-  }
+  // var box;
+
+  // @override
+  // void dispose() async {
+  //   Hive.close();
+  // }
 
   readSetting() async {
-    var box = await Hive.openBox('setBox');
-    var res = box.get('settings');
-    // box.close();
+    Directory? appDocDir = await getApplicationDocumentsDirectory();
+    String appPath = appDocDir.path + '/sbox';
+    late var box;
+
+    if (!Hive.isBoxOpen('setBox')) {
+      box = await Hive.openBox('setBox', path: appPath);
+    }
+    // if (box.isEmpty) {
+    //   await box.put('settings', 'themeL:en:soundOFF:mb0_closeStat');
+    // }
+    var res = await box.get('settings');
+    //await box.close();
     if ((res != '') && (res != null)) {
       debugPrint('return res.toString(); $res.toString()');
       return res.toString();
@@ -36,9 +50,13 @@ class HiveSetting {
   }
 
   writeSetting(String writeStr) async {
-    var box = await Hive.openBox('setBox');
-    box.put('settings', writeStr);
+    Directory? appDocDir = await getApplicationDocumentsDirectory();
+    String appPath = appDocDir.path + '/sbox';
+    var box = await Hive.openBox('setBox', path: appPath);
+
+    await box.clear();
+    await box.put('settings', writeStr);
     debugPrint('settings, = $writeStr');
-    // box.close();
+    //await box.close();
   }
 }

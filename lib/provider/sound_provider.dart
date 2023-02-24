@@ -12,28 +12,29 @@ class SoundProvider extends ChangeNotifier {
   }
 
   void playSound(var snd) async {
-    player.setReleaseMode(ReleaseMode.release);
+    if (soundOn) {
+      await player.setReleaseMode(ReleaseMode.release);
 
-    switch (snd) {
-      case 'menu':
-        if (soundOn) {
+      switch (snd) {
+        case 'menu':
           debugPrint('snd_menu');
           await player.setSourceAsset(bSound.snd_menu);
           await player.resume();
-        }
-        break;
-      case 'button':
-        player.setSourceAsset(bSound.snd_button);
-        player.resume();
-        break;
-      case 'save':
-        player.setSourceAsset(bSound.snd_save);
-        player.resume();
-        break;
-      case 'err':
-        player.setSourceAsset(bSound.snd_err);
-        player.resume();
-        break;
+
+          break;
+        case 'button':
+          await player.setSourceAsset(bSound.snd_button);
+          await player.resume();
+          break;
+        case 'save':
+          await player.setSourceAsset(bSound.snd_save);
+          await player.resume();
+          break;
+        case 'err':
+          await player.setSourceAsset(bSound.snd_err);
+          await player.resume();
+          break;
+      }
     }
   }
 }

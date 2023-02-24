@@ -202,7 +202,8 @@ class AddCard extends StatelessWidget {
                               children: [
                                 Flexible(
                                   child: TextFormField(
-                                    autofocus: true,
+                                    keyboardType: TextInputType.number,
+                                    //  autofocus: true,
                                     initialValue: '',
                                     textAlign: TextAlign.start,
                                     style: TextStyle(
@@ -334,7 +335,8 @@ class AddCard extends StatelessWidget {
                               children: [
                                 Flexible(
                                   child: TextFormField(
-                                    autofocus: true,
+                                    keyboardType: TextInputType.text,
+                                    // autofocus: true,
                                     initialValue: '',
                                     textAlign: TextAlign.start,
                                     style: TextStyle(
@@ -465,7 +467,8 @@ class AddCard extends StatelessWidget {
                               children: [
                                 Flexible(
                                   child: TextFormField(
-                                    autofocus: true,
+                                    keyboardType: TextInputType.number,
+                                    //autofocus: true,
                                     initialValue: '',
                                     textAlign: TextAlign.start,
                                     style: TextStyle(
@@ -595,7 +598,8 @@ class AddCard extends StatelessWidget {
                               children: [
                                 Flexible(
                                   child: TextFormField(
-                                    autofocus: true,
+                                    keyboardType: TextInputType.number,
+                                    //autofocus: true,
                                     initialValue: '',
                                     textAlign: TextAlign.start,
                                     style: TextStyle(
@@ -725,7 +729,8 @@ class AddCard extends StatelessWidget {
                               children: [
                                 Flexible(
                                   child: TextFormField(
-                                    autofocus: true,
+                                    keyboardType: TextInputType.number,
+                                    // autofocus: true,
                                     initialValue: '',
                                     textAlign: TextAlign.start,
                                     style: TextStyle(

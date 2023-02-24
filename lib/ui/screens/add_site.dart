@@ -13,15 +13,28 @@ import 'package:sbox/ui/widgets/button_appbar.dart';
 import 'package:sbox/ui/widgets/button_form_add.dart';
 import 'package:sbox/ui/widgets/button_nm.dart';
 import 'package:sbox/ui/widgets/radio_button_nm.dart';
+import 'dart:math';
 
 @immutable
-class AddSite extends StatelessWidget {
+class AddSite extends StatefulWidget {
+  @override
+  State<AddSite> createState() => _AddSiteState();
+}
+
+class _AddSiteState extends State<AddSite> {
   final bColor = ColorsSHM();
+
   late String task;
+
   late String note;
+
   late String login;
+
   late String pass;
+
   final _formKey = GlobalKey<FormState>();
+
+  TextEditingController editingController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -329,8 +342,9 @@ class AddSite extends StatelessWidget {
                               children: [
                                 Flexible(
                                   child: TextFormField(
-                                    autofocus: true,
-                                    initialValue: '',
+                                    // autofocus: true,
+                                    controller: editingController,
+                                    // initialValue: '',
                                     textAlign: TextAlign.start,
                                     style: TextStyle(
                                       color: _textColor(context),
@@ -368,8 +382,58 @@ class AddSite extends StatelessWidget {
                                     //task = val,
                                   ),
                                 ),
+
+//
+// ? >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> button generation pass
+//
+                                SizedBox(
+                                  width: 12,
+                                  height: 50,
+                                ),
+                                Align(
+                                  alignment: Alignment.topRight,
+                                  child: SizedBox(
+                                    width: 30,
+                                    height: 30,
+                                    child: NeumorphicRadio(
+                                      style: NeumorphicRadioStyle(
+                                        shape: NeumorphicShape.flat,
+                                        boxShape: NeumorphicBoxShape.roundRect(
+                                            BorderRadius.circular(5)),
+                                        intensity: 0.9,
+                                        selectedDepth: -4,
+                                        unselectedDepth: 2,
+                                        border: NeumorphicBorder(
+                                          color: _borderColor(context),
+                                          width: 0.8,
+                                        ),
+                                        lightSource: LightSource.topLeft,
+                                        selectedColor:
+                                            _fillSelectedColor(context),
+                                        unselectedColor: _fillColor(context),
+                                      ),
+                                      groupValue: 11,
+                                      value: 10,
+                                      onChanged: (value) => {
+                                        _showModalGenPass(context),
+                                      },
+                                      child: Center(
+                                        child: NeumorphicIcon(
+                                          Icons.new_releases_outlined,
+                                          size: 22,
+                                          style: NeumorphicStyle(
+                                            color: _iconColor(context),
+                                          ),
+                                        ),
+                                      ),
+                                      // Text("2012"),
+                                    ),
+                                  ),
+                                ),
+
 //
 // ? >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> button pass
+
 //
                                 SizedBox(
                                   width: 12,
@@ -696,5 +760,192 @@ class AddSite extends StatelessWidget {
     } else {
       return bColor.iconD;
     }
+  }
+
+  _showModalGenPass(BuildContext context) {
+    double lowVal = 30;
+    double highVal = 70;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          titleTextStyle: TextStyle(color: _textColor(context)),
+          contentTextStyle: TextStyle(color: _textColor(context)),
+          backgroundColor: _fillColor(context),
+          title: Text(LocaleKeys.add_pass.tr()),
+          content: Align(
+            alignment: Alignment.topLeft,
+            child: Column(
+              children: [
+                Text(LocaleKeys.set_new_pass.tr()),
+                SizedBox(
+                  height: 30,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      context.watch<AddSiteProvider>().lengthVol.toString(),
+                      style: TextStyle(color: _textColor(context)),
+                    ),
+                  ],
+                ),
+                // // SizedBox(width: 12),
+                // Expanded(
+                //   child:
+                SizedBox(
+                  height: 50,
+                  width: double.maxFinite,
+                  child: NeumorphicSlider(
+                    height: 18,
+                    min: 4,
+                    max: 25,
+                    style: SliderStyle(
+                      accent: Colors.deepPurple,
+                      variant: _fillSelectedColor(context),
+                    ),
+                    value:
+                        context.watch<AddSiteProvider>().lengthVol.toDouble(),
+                    onChanged: (value) {
+                      context
+                          .read<AddSiteProvider>()
+                          .changeLengthVol(value.toInt());
+                    },
+                  ),
+                ),
+                // ),
+                // // SizedBox(width: 12),
+
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 30,
+                        width: 60,
+                        child: NeumorphicSwitch(
+                          value: context.watch<AddSiteProvider>().letter,
+                          style: NeumorphicSwitchStyle(
+                              activeTrackColor: _fillSelectedColor(context),
+                              activeThumbColor: Colors.deepPurple,
+                              thumbShape: NeumorphicShape.flat
+                              //or convex, concave
+                              ),
+                          onChanged: (value) {
+                            context.read<AddSiteProvider>().changeLetter(value);
+                          },
+                        ),
+                      ),
+                      SizedBox(width: 20),
+                      Text(
+                        LocaleKeys.add_gen.tr(),
+                        style: TextStyle(color: _textColor(context)),
+                      ),
+                    ],
+                  ),
+                ),
+                //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 30,
+                        width: 60,
+                        child: NeumorphicSwitch(
+                          value: context.watch<AddSiteProvider>().isSpecial,
+                          style: NeumorphicSwitchStyle(
+                              activeTrackColor: _fillSelectedColor(context),
+                              activeThumbColor: Colors.deepPurple,
+                              thumbShape: NeumorphicShape.flat
+                              //or convex, concave
+                              ),
+                          onChanged: (value) {
+                            context
+                                .read<AddSiteProvider>()
+                                .changeIsSpecial(value);
+                          },
+                        ),
+                      ),
+                      SizedBox(width: 20),
+                      Text(
+                        LocaleKeys.add_gen.tr(),
+                        style: TextStyle(color: _textColor(context)),
+                      ),
+                    ],
+                  ),
+                ),
+                //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 30,
+                        width: 60,
+                        child: NeumorphicSwitch(
+                          value: context.watch<AddSiteProvider>().isNumber,
+                          style: NeumorphicSwitchStyle(
+                              activeTrackColor: _fillSelectedColor(context),
+                              activeThumbColor: Colors.deepPurple,
+                              thumbShape: NeumorphicShape.flat
+                              //or convex, concave
+                              ),
+                          onChanged: (value) {
+                            context
+                                .read<AddSiteProvider>()
+                                .changeIsNumber(value);
+                          },
+                        ),
+                      ),
+                      SizedBox(width: 20),
+                      Text(
+                        LocaleKeys.add_gen.tr(),
+                        style: TextStyle(color: _textColor(context)),
+                      ),
+                    ],
+                  ),
+                ),
+                //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () async {
+                await context.read<AddSiteProvider>().changePassVol();
+                editingController.text =
+                    await context.read<AddSiteProvider>().genPassVol;
+                Navigator.of(context).pop(true);
+              },
+              child: Icon(Icons.new_releases_outlined, color: Colors.white),
+              style: ElevatedButton.styleFrom(
+                shape: CircleBorder(),
+                padding: EdgeInsets.all(20),
+                backgroundColor:
+                    _fillSelectedColor(context), // <-- Button color
+                foregroundColor: Colors.red, // <-- Splash color
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              child: Icon(Icons.cancel, color: Colors.white),
+              style: ElevatedButton.styleFrom(
+                shape: CircleBorder(),
+                padding: EdgeInsets.all(20),
+                backgroundColor:
+                    _fillSelectedColor(context), // <-- Button color
+                foregroundColor: Colors.red, // <-- Splash color
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
