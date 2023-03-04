@@ -23,7 +23,7 @@ class ColorsSHM {
   Color accentColorD = Color.fromARGB(255, 184, 175, 175);
   final depthD = 4.0;
   final intensityD = 0.3;
-  final setThemeMode = ThemeMode.light;
+  final setThemeMode = ThemeMode.dark;
 
   Color radioFillD = Color.fromARGB(255, 226, 64, 0);
   Color buttonTextD = Color.fromARGB(255, 226, 64, 0);

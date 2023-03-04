@@ -18,10 +18,12 @@ import 'package:flutter_neumorphic_null_safety/flutter_neumorphic.dart';
 import 'package:sbox/ui/screens/edit_site.dart';
 import 'package:sbox/ui/screens/login_screen.dart';
 import 'package:sbox/ui/widgets/button_appbar.dart';
+import 'package:sbox/ui/widgets/button_appbar_backup.dart';
 import 'package:sbox/ui/widgets/radio_nm.dart';
 import 'package:sbox/ui/widgets/menu_setting.dart';
 import 'package:sbox/ui/widgets/button_nm.dart';
 import 'package:sbox/ui/widgets/container_nm.dart';
+import 'package:sbox/ui/widgets/top_body_text.dart';
 
 class BackupScreen extends StatefulWidget {
   BackupScreen({
@@ -75,7 +77,7 @@ class BackupScreenState extends State<BackupScreen> {
                   Expanded(
                     child: SizedBox(),
                   ),
-                  ButtonAppBarAdd(iconBtn: Icons.download),
+                  ButtonAppBarBackup(iconBtn: Icons.download),
                   Expanded(
                     child: SizedBox(),
                   ),
@@ -90,174 +92,128 @@ class BackupScreenState extends State<BackupScreen> {
             body: Container(
               child: SingleChildScrollView(
                 physics: ScrollPhysics(),
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(
-                        height: 30,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            left: 4.0, right: 4.0, top: 4.0, bottom: 4.0),
-                        child: NeumorphicButton(
-                          margin: const EdgeInsets.only(top: 0.0, bottom: 0.0),
-                          onPressed: () {
-                            context
-                                .read<DatabaseProvider>()
-                                .backupDbFile(context);
-
-                            //>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-                            // String? selectedDirectory =
-                            //     await FilePicker.platform.getDirectoryPath();
-
-                            // for (var str in listFiles) {
-                            //   // var str = listFiles[0];
-                            // Future.delayed(const Duration(seconds: 1), () {
-                            //   context.read<DatabaseProvider>().encFile(str,
-                            //       str + '.sbox', selectedDirectory, false);
-                            // });
-                            //   // await context.read<DatabaseProvider>().encFile(
-                            //   //     str, str + '.sbox', selectedDirectory, false);
-
-                            //   debugPrint('encFile');
-                            // }
-                          },
-                          style: NeumorphicStyle(
-                              shape: NeumorphicShape.flat,
-                              boxShape: NeumorphicBoxShape.roundRect(
-                                  BorderRadius.circular(2)),
-                              depth: 2,
-                              intensity: 0.9,
-                              surfaceIntensity: 0.9,
-                              border: NeumorphicBorder(
-                                color: _borderColor(context),
-                                width: 0.8,
+                child: Column(
+                  children: <Widget>[
+                    TopBodyText(textLbl: LocaleKeys.confirm.tr()),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 14.0, right: 14.0, top: 4.0, bottom: 4.0),
+                      child: NeumorphicButton(
+                        margin: const EdgeInsets.only(top: 0.0, bottom: 0.0),
+                        onPressed: () {
+                          context
+                              .read<DatabaseProvider>()
+                              .backupDbFile(context);
+                        },
+                        style: NeumorphicStyle(
+                            shape: NeumorphicShape.flat,
+                            boxShape: NeumorphicBoxShape.roundRect(
+                                BorderRadius.circular(2)),
+                            depth: 2,
+                            intensity: 0.9,
+                            surfaceIntensity: 0.9,
+                            border: NeumorphicBorder(
+                              color: _borderColor(context),
+                              width: 0.8,
+                            ),
+                            lightSource: LightSource.topLeft,
+                            color: _fillColor(context)),
+                        // style: NeumorphicStyle(
+                        //   shape: NeumorphicShape.flat,
+                        //   boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(8)),
+                        //   color: _iconsColor(context),
+                        // ),
+                        padding: const EdgeInsets.fromLTRB(
+                          6.0,
+                          3.0,
+                          0,
+                          0,
+                        ),
+                        child: Column(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.fromLTRB(
+                                8.0,
+                                8.0,
+                                8.0,
+                                8.0,
                               ),
-                              lightSource: LightSource.topLeft,
-                              color: _fillColor(context)),
-                          // style: NeumorphicStyle(
-                          //   shape: NeumorphicShape.flat,
-                          //   boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(8)),
-                          //   color: _iconsColor(context),
-                          // ),
-                          padding: const EdgeInsets.fromLTRB(
-                            6.0,
-                            3.0,
-                            0,
-                            0,
-                          ),
-                          child: Column(
-                            children: [
-                              Align(
-                                alignment: Alignment.topLeft,
+                              child: Align(
+                                alignment: Alignment.center,
                                 child: Text(
-                                  LocaleKeys.add_cvv.tr(),
+                                  LocaleKeys.save_back.tr(),
                                   style: TextStyle(
-                                      fontSize: 10, color: _textColor(context)),
+                                      fontSize: 12, color: _textColor(context)),
                                 ),
                               ),
-                              Container(
-                                padding: const EdgeInsets.fromLTRB(
-                                  0,
-                                  0,
-                                  0,
-                                  8.0,
-                                ),
-                                child: Align(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    LocaleKeys.save_back.tr(),
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        color: _textColor(context)),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
-                      SizedBox(
-                        height: 30,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            left: 4.0, right: 4.0, top: 4.0, bottom: 4.0),
-                        child: NeumorphicButton(
-                          margin: const EdgeInsets.only(top: 0.0, bottom: 0.0),
-                          onPressed: () async {
-                            context
-                                .read<DatabaseProvider>()
-                                .restoreDbFile(context);
-
-                            // for (var str in listFiles) {
-                            //   var decOk = context
-                            //       .read<DatabaseProvider>()
-                            //       .decFile(str + '.sbox', str, '', false);
-
-                            //   debugPrint('decFile');
-                            // }
-//>>>>>>>>>>>>>>>>>>
-                          },
-                          style: NeumorphicStyle(
-                              shape: NeumorphicShape.flat,
-                              boxShape: NeumorphicBoxShape.roundRect(
-                                  BorderRadius.circular(2)),
-                              depth: 2,
-                              intensity: 0.9,
-                              surfaceIntensity: 0.9,
-                              border: NeumorphicBorder(
-                                color: _borderColor(context),
-                                width: 0.8,
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 14.0, right: 14.0, top: 4.0, bottom: 4.0),
+                      child: NeumorphicButton(
+                        margin: const EdgeInsets.only(top: 0.0, bottom: 0.0),
+                        onPressed: () async {
+                          context
+                              .read<DatabaseProvider>()
+                              .restoreDbFile(context);
+                        },
+                        style: NeumorphicStyle(
+                            shape: NeumorphicShape.flat,
+                            boxShape: NeumorphicBoxShape.roundRect(
+                                BorderRadius.circular(2)),
+                            depth: 2,
+                            intensity: 0.9,
+                            surfaceIntensity: 0.9,
+                            border: NeumorphicBorder(
+                              color: _borderColor(context),
+                              width: 0.8,
+                            ),
+                            lightSource: LightSource.topLeft,
+                            color: _fillColor(context)),
+                        // style: NeumorphicStyle(
+                        //   shape: NeumorphicShape.flat,
+                        //   boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(8)),
+                        //   color: _iconsColor(context),
+                        // ),
+                        padding: const EdgeInsets.fromLTRB(
+                          6.0,
+                          3.0,
+                          0,
+                          0,
+                        ),
+                        child: Column(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.fromLTRB(
+                                8.0,
+                                8.0,
+                                8.0,
+                                8.0,
                               ),
-                              lightSource: LightSource.topLeft,
-                              color: _fillColor(context)),
-                          // style: NeumorphicStyle(
-                          //   shape: NeumorphicShape.flat,
-                          //   boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(8)),
-                          //   color: _iconsColor(context),
-                          // ),
-                          padding: const EdgeInsets.fromLTRB(
-                            6.0,
-                            3.0,
-                            0,
-                            0,
-                          ),
-                          child: Column(
-                            children: [
-                              Align(
-                                alignment: Alignment.topLeft,
+                              child: Align(
+                                alignment: Alignment.center,
                                 child: Text(
-                                  LocaleKeys.c_add.tr(),
+                                  LocaleKeys.load_back.tr(),
                                   style: TextStyle(
-                                      fontSize: 10, color: _textColor(context)),
+                                      fontSize: 12, color: _textColor(context)),
                                 ),
                               ),
-                              Container(
-                                padding: const EdgeInsets.fromLTRB(
-                                  0,
-                                  0,
-                                  0,
-                                  8.0,
-                                ),
-                                child: Align(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    LocaleKeys.load_back.tr(),
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        color: _textColor(context)),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),

@@ -28,6 +28,7 @@ import 'package:sbox/ui/widgets/radio_nm.dart';
 import 'package:sbox/ui/widgets/menu_setting.dart';
 import 'package:sbox/ui/widgets/button_nm.dart';
 import 'package:sbox/ui/widgets/container_nm.dart';
+import 'package:sbox/ui/widgets/top_body_text.dart';
 
 //>>>>>>>>>>>>>>>>>>
 //import 'package:just_audio/just_audio.dart';
@@ -160,6 +161,7 @@ class MainScreenState extends State<MainScreen> {
                   physics: ScrollPhysics(),
                   child: Column(
                     children: <Widget>[
+                      TopBodyText(textLbl: LocaleKeys.confirm.tr()),
                       SearchWgt(context),
                       ValueListenableBuilder(
                         valueListenable:
@@ -533,8 +535,7 @@ class MainScreenState extends State<MainScreen> {
       child: //Text(''),
 
           Padding(
-        padding:
-            const EdgeInsets.only(top: 18, bottom: 1, left: 1, right: 13.0),
+        padding: const EdgeInsets.only(top: 8, bottom: 1, left: 1, right: 13.0),
         child: Container(
           child: Align(
             alignment: Alignment.bottomCenter,
@@ -603,6 +604,14 @@ class MainScreenState extends State<MainScreen> {
         ),
       ),
     ));
+  }
+
+  Color _txtBGColor(BuildContext context) {
+    if (!NeumorphicTheme.isUsingDark(context)) {
+      return bColor.baseColorL;
+    } else {
+      return bColor.baseColorD;
+    }
   }
 
   Color _textColor(BuildContext context) {

@@ -29,6 +29,7 @@ import 'package:sbox/ui/widgets/radio_nm.dart';
 import 'package:sbox/ui/widgets/menu_setting.dart';
 import 'package:sbox/ui/widgets/button_nm.dart';
 import 'package:sbox/ui/widgets/container_nm.dart';
+import 'package:sbox/ui/widgets/top_body_text.dart';
 
 class CardScreen extends StatefulWidget {
   CardScreen({
@@ -109,6 +110,7 @@ class CardScreenState extends State<CardScreen> {
                   physics: ScrollPhysics(),
                   child: Column(
                     children: <Widget>[
+                      TopBodyText(textLbl: LocaleKeys.confirm.tr()),
                       SearchWgt(context),
                       ValueListenableBuilder(
                         valueListenable:
