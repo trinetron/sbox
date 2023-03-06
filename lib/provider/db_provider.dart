@@ -370,8 +370,8 @@ class DatabaseProvider extends ChangeNotifier {
         context.read<RadioProvider>().changeInt(1, context);
         notifyListeners();
 
-        await Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => MainScreen()));
+        await Navigator.of(context).push(
+            PageRouteBuilder(pageBuilder: (context, a1, a2) => MainScreen()));
       } else {
         context.read<StateProvider>().changeErrState(false);
         context.read<StateProvider>().changeInit(false);
