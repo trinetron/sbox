@@ -10,6 +10,7 @@ import 'package:sbox/provider/db_provider.dart';
 import 'package:sbox/provider/menu_provider.dart';
 import 'package:sbox/provider/sound_provider.dart';
 import 'package:sbox/provider/state_provider.dart';
+import 'package:sbox/provider/theme_provider.dart';
 import 'package:sbox/ui/screens/main_screen.dart';
 import 'package:sbox/ui/widgets/menu_setting.dart';
 
@@ -24,7 +25,7 @@ class LoginScreen extends StatelessWidget {
       child: Stack(
         children: [
           Scaffold(
-            backgroundColor: _topColor(context),
+            backgroundColor: context.watch<ThemeProvider>().topColor,
             body: Column(
               children: [
                 Expanded(
@@ -63,7 +64,7 @@ class LoginScreen extends StatelessWidget {
                       width: double.infinity,
                       //height: 50,
                       decoration: BoxDecoration(
-                        color: _butColor(context),
+                        color: context.watch<ThemeProvider>().butColor,
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(30),
                           topRight: Radius.circular(30),
@@ -80,7 +81,9 @@ class LoginScreen extends StatelessWidget {
                               Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(6),
-                                    color: _txtBGColor(context),
+                                    color: context
+                                        .watch<ThemeProvider>()
+                                        .txtBGColor,
                                   ),
                                   child: Center(
                                     child: //Text(''),
@@ -92,7 +95,9 @@ class LoginScreen extends StatelessWidget {
                                         child: Align(
                                           alignment: Alignment.bottomCenter,
                                           child: TextField(
-                                            cursorColor: _borderColor(context),
+                                            cursorColor: context
+                                                .watch<ThemeProvider>()
+                                                .borderColor,
                                             onChanged: (val) async {
                                               _pass = val;
 
@@ -115,15 +120,19 @@ class LoginScreen extends StatelessWidget {
                                                       (BuildContext context) {
                                                     return AlertDialog(
                                                       titleTextStyle: TextStyle(
-                                                          color: _textColor(
-                                                              context)),
-                                                      contentTextStyle:
-                                                          TextStyle(
-                                                              color: _textColor(
-                                                                  context)),
-                                                      backgroundColor:
-                                                          _fillCardColor(
-                                                              context),
+                                                          color: context
+                                                              .watch<
+                                                                  ThemeProvider>()
+                                                              .textColor),
+                                                      contentTextStyle: TextStyle(
+                                                          color: context
+                                                              .watch<
+                                                                  ThemeProvider>()
+                                                              .textColor),
+                                                      backgroundColor: context
+                                                          .watch<
+                                                              ThemeProvider>()
+                                                          .fillCardColor,
                                                       title: Text(LocaleKeys
                                                           .check_m_pass
                                                           .tr()),
@@ -148,9 +157,10 @@ class LoginScreen extends StatelessWidget {
                                                             padding:
                                                                 EdgeInsets.all(
                                                                     20),
-                                                            backgroundColor:
-                                                                _txtBGColor(
-                                                                    context), // <-- Button color
+                                                            backgroundColor: context
+                                                                .watch<
+                                                                    ThemeProvider>()
+                                                                .txtBGColor, // <-- Button color
                                                             //foregroundColor: _txtBGColor(context),// <-- Splash color
                                                           ),
                                                         )
@@ -166,29 +176,39 @@ class LoginScreen extends StatelessWidget {
                                             },
                                             style: TextStyle(
                                               fontSize: 15.0,
-                                              color: _textColor(context),
+                                              color: context
+                                                  .watch<ThemeProvider>()
+                                                  .textColor,
                                             ),
                                             controller: editingController,
                                             decoration: InputDecoration(
                                               labelStyle: TextStyle(
                                                 fontSize: 15.0,
-                                                color: _borderColor(context),
+                                                color: context
+                                                    .watch<ThemeProvider>()
+                                                    .borderColor,
                                               ),
                                               labelText:
                                                   LocaleKeys.check_m_pass.tr(),
                                               hintStyle: TextStyle(
                                                 fontSize: 15.0,
-                                                color: _borderColor(context),
+                                                color: context
+                                                    .watch<ThemeProvider>()
+                                                    .borderColor,
                                               ),
                                               hintText: LocaleKeys.c_pass.tr(),
                                               prefixIcon: Icon(
                                                 Icons.lock,
-                                                color: _borderColor(context),
+                                                color: context
+                                                    .watch<ThemeProvider>()
+                                                    .borderColor,
                                               ),
                                               suffixIcon: IconButton(
                                                 icon: Icon(
                                                   Icons.clear,
-                                                  color: _borderColor(context),
+                                                  color: context
+                                                      .watch<ThemeProvider>()
+                                                      .borderColor,
                                                 ),
                                                 onPressed: (() {
                                                   editingController.clear();
@@ -196,8 +216,9 @@ class LoginScreen extends StatelessWidget {
                                               ),
                                               enabledBorder: OutlineInputBorder(
                                                 borderSide: BorderSide(
-                                                    color:
-                                                        _borderColor(context),
+                                                    color: context
+                                                        .watch<ThemeProvider>()
+                                                        .borderColor,
                                                     width: 2.0),
                                               ),
                                               // border: OutlineInputBorder(
@@ -210,8 +231,9 @@ class LoginScreen extends StatelessWidget {
                                               // ),
                                               focusedBorder: OutlineInputBorder(
                                                 borderSide: BorderSide(
-                                                    color: _fillSelectedColor(
-                                                        context),
+                                                    color: context
+                                                        .watch<ThemeProvider>()
+                                                        .fillSelectedColor,
                                                     width: 2.0),
                                               ),
                                             ),
@@ -271,7 +293,9 @@ class LoginScreen extends StatelessWidget {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(7),
-                                    color: _txtBGColor(context),
+                                    color: context
+                                        .watch<ThemeProvider>()
+                                        .txtBGColor,
                                   ),
                                   child: Center(
                                     child: Padding(
@@ -279,7 +303,9 @@ class LoginScreen extends StatelessWidget {
                                         child: Icon(
                                           Icons.login,
                                           size: 35,
-                                          color: _textColor(context),
+                                          color: context
+                                              .watch<ThemeProvider>()
+                                              .textColor,
                                         )
                                         //  Text(
                                         //   ' Log In',
@@ -378,77 +404,5 @@ class LoginScreen extends StatelessWidget {
     controller.isActive = true;
 
     artboard.addController(controller);
-  }
-
-  Color _txtColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return Colors.black;
-    } else {
-      return Colors.white;
-    }
-  }
-
-  Color _txtBGColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return bColor.baseColorL;
-    } else {
-      return bColor.baseColorD;
-    }
-  }
-
-  Color _butColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return bColor.accentColorL;
-    } else {
-      return bColor.accentColorD;
-    }
-  }
-
-  Color _topColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return bColor.appBarColorL;
-    } else {
-      return bColor.appBarColorD;
-    }
-  }
-
-  Color _textColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return Colors.black;
-    } else {
-      return Colors.white;
-    }
-  }
-
-  Color _fillColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return bColor.buttonFillL;
-    } else {
-      return bColor.buttonFillD;
-    }
-  }
-
-  Color _fillSelectedColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return bColor.radioFillL;
-    } else {
-      return bColor.radioFillD;
-    }
-  }
-
-  Color _borderColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return bColor.borderL;
-    } else {
-      return bColor.borderD;
-    }
-  }
-
-  Color _fillCardColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return bColor.cardColorL;
-    } else {
-      return bColor.cardColorD;
-    }
   }
 }

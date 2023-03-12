@@ -1,9 +1,11 @@
 import 'package:flutter_neumorphic_null_safety/flutter_neumorphic.dart';
 import 'package:flutter/services.dart';
 import 'package:open_url/open_url.dart';
+import 'package:provider/provider.dart';
 import 'package:sbox/models/design/theme.dart';
 import 'package:sbox/models/languages/translat_locale_keys.g.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:sbox/provider/theme_provider.dart';
 
 class TopBodyText extends StatelessWidget {
   String textLbl;
@@ -33,37 +35,12 @@ class TopBodyText extends StatelessWidget {
         child: Text(
           textLbl,
           style: TextStyle(
-            color: _textColor(context),
+            color: context.watch<ThemeProvider>().textColor,
             decoration: TextDecoration.none,
             fontSize: 15,
           ),
         ),
       )),
     );
-  }
-
-  Color _textColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return Colors.black;
-    } else {
-      return Colors.white;
-    }
-  }
-
-  Color? _fillColor(BuildContext context) {
-    final theme = NeumorphicTheme.of(context);
-    if (!theme!.isUsingDark) {
-      return bColor.buttonFillL;
-    } else {
-      return bColor.buttonFillD;
-    }
-  }
-
-  Color? _borderColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return bColor.borderL;
-    } else {
-      return bColor.borderD;
-    }
   }
 }

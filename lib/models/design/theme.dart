@@ -15,6 +15,7 @@ class ColorsSHM {
   Color borderL = Color.fromARGB(255, 58, 57, 57);
   Color iconL = Color.fromARGB(255, 3, 3, 3);
   Color cardColorL = Color.fromARGB(255, 199, 168, 202);
+  Color textColorL = Colors.black;
 
   //   darkTheme:
   Color baseColorD = Color.fromARGB(255, 62, 62, 62);
@@ -31,4 +32,5 @@ class ColorsSHM {
   Color borderD = Color.fromARGB(255, 167, 80, 0);
   Color iconD = Color.fromARGB(255, 255, 255, 255);
   Color cardColorD = Color.fromARGB(255, 97, 87, 74);
+  Color textColorD = Colors.white;
 }

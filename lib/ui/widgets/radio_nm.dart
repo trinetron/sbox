@@ -2,6 +2,7 @@ import 'package:flutter_neumorphic_null_safety/flutter_neumorphic.dart';
 import 'package:provider/provider.dart';
 import 'package:sbox/models/design/theme.dart';
 import 'package:sbox/provider/radio_provider.dart';
+import 'package:sbox/provider/theme_provider.dart';
 
 class radioWidget extends StatelessWidget {
   radioWidget({
@@ -35,12 +36,12 @@ class radioWidget extends StatelessWidget {
               selectedDepth: -4,
               unselectedDepth: 2,
               border: NeumorphicBorder(
-                color: _borderColor(context),
+                color: context.watch<ThemeProvider>().borderColor,
                 width: 0.8,
               ),
               lightSource: LightSource.topLeft,
-              selectedColor: _fillSelectedColor(context),
-              unselectedColor: _fillColor(context),
+              selectedColor: context.watch<ThemeProvider>().fillSelectedColor,
+              unselectedColor: context.watch<ThemeProvider>().fillColor,
             ),
             groupValue: context.watch<RadioProvider>().data,
             value: 1,
@@ -65,7 +66,7 @@ class radioWidget extends StatelessWidget {
                 Icons.password,
                 size: 22,
                 style: NeumorphicStyle(
-                  color: _iconColor(context),
+                  color: context.watch<ThemeProvider>().iconColor,
                 ),
               ),
             ),
@@ -87,12 +88,12 @@ class radioWidget extends StatelessWidget {
               selectedDepth: -4,
               unselectedDepth: 2,
               border: NeumorphicBorder(
-                color: _borderColor(context),
+                color: context.watch<ThemeProvider>().borderColor,
                 width: 0.8,
               ),
               lightSource: LightSource.topLeft,
-              selectedColor: _fillSelectedColor(context),
-              unselectedColor: _fillColor(context),
+              selectedColor: context.watch<ThemeProvider>().fillSelectedColor,
+              unselectedColor: context.watch<ThemeProvider>().fillColor,
             ),
 
             groupValue: context.watch<RadioProvider>().data,
@@ -116,7 +117,7 @@ class radioWidget extends StatelessWidget {
                 Icons.credit_card,
                 size: 22,
                 style: NeumorphicStyle(
-                  color: _iconColor(context),
+                  color: context.watch<ThemeProvider>().iconColor,
                 ),
               ),
             ),
@@ -126,47 +127,4 @@ class radioWidget extends StatelessWidget {
       ],
     );
   }
-
-  Color? _iconColor(BuildContext context) {
-    final theme = NeumorphicTheme.of(context);
-    if (!theme!.isUsingDark) {
-      return bColor.iconL;
-    } else {
-      return bColor.iconD;
-    }
-  }
-
-  Color? _fillColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return bColor.buttonFillL;
-    } else {
-      return bColor.buttonFillD;
-    }
-  }
-
-  Color? _fillSelectedColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return bColor.radioFillL;
-    } else {
-      return bColor.radioFillD;
-    }
-  }
-
-  Color? _borderColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return bColor.borderL;
-    } else {
-      return bColor.borderD;
-    }
-  }
-
-  Color? _textColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return bColor.buttonTextD;
-    } else {
-      return bColor.buttonTextL;
-    }
-  }
 }
-
-void setRadioButton() {}

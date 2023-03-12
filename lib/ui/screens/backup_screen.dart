@@ -1,7 +1,9 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sbox/models/local_db/hive_names.dart';
 import 'package:sbox/models/languages/translat_locale_keys.g.dart';
 
@@ -15,7 +17,7 @@ import 'package:sbox/models/design/theme.dart';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_neumorphic_null_safety/flutter_neumorphic.dart';
-import 'package:sbox/ui/screens/edit_site.dart';
+import 'package:sbox/provider/theme_provider.dart';
 import 'package:sbox/ui/screens/login_screen.dart';
 import 'package:sbox/ui/widgets/button_appbar.dart';
 import 'package:sbox/ui/widgets/button_appbar_backup.dart';
@@ -23,6 +25,7 @@ import 'package:sbox/ui/widgets/radio_nm.dart';
 import 'package:sbox/ui/widgets/menu_setting.dart';
 import 'package:sbox/ui/widgets/button_nm.dart';
 import 'package:sbox/ui/widgets/container_nm.dart';
+import 'package:sbox/ui/widgets/text_field_master_pass.dart';
 import 'package:sbox/ui/widgets/top_body_text.dart';
 
 class BackupScreen extends StatefulWidget {
@@ -116,11 +119,11 @@ class BackupScreenState extends State<BackupScreen> {
                             intensity: 0.9,
                             surfaceIntensity: 0.9,
                             border: NeumorphicBorder(
-                              color: _borderColor(context),
+                              color: context.watch<ThemeProvider>().borderColor,
                               width: 0.8,
                             ),
                             lightSource: LightSource.topLeft,
-                            color: _fillColor(context)),
+                            color: context.watch<ThemeProvider>().fillColor),
                         // style: NeumorphicStyle(
                         //   shape: NeumorphicShape.flat,
                         //   boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(8)),
@@ -146,7 +149,10 @@ class BackupScreenState extends State<BackupScreen> {
                                 child: Text(
                                   LocaleKeys.save_back.tr(),
                                   style: TextStyle(
-                                      fontSize: 12, color: _textColor(context)),
+                                      fontSize: 12,
+                                      color: context
+                                          .watch<ThemeProvider>()
+                                          .textColor),
                                 ),
                               ),
                             ),
@@ -175,11 +181,11 @@ class BackupScreenState extends State<BackupScreen> {
                             intensity: 0.9,
                             surfaceIntensity: 0.9,
                             border: NeumorphicBorder(
-                              color: _borderColor(context),
+                              color: context.watch<ThemeProvider>().borderColor,
                               width: 0.8,
                             ),
                             lightSource: LightSource.topLeft,
-                            color: _fillColor(context)),
+                            color: context.watch<ThemeProvider>().fillColor),
                         // style: NeumorphicStyle(
                         //   shape: NeumorphicShape.flat,
                         //   boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(8)),
@@ -205,7 +211,10 @@ class BackupScreenState extends State<BackupScreen> {
                                 child: Text(
                                   LocaleKeys.load_back.tr(),
                                   style: TextStyle(
-                                      fontSize: 12, color: _textColor(context)),
+                                      fontSize: 12,
+                                      color: context
+                                          .watch<ThemeProvider>()
+                                          .textColor),
                                 ),
                               ),
                             ),
@@ -213,6 +222,192 @@ class BackupScreenState extends State<BackupScreen> {
                         ),
                       ),
                     ),
+                    //>>>
+                    SizedBox(
+                      height: 50,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 14.0, right: 14.0, top: 4.0, bottom: 4.0),
+                      child: NeumorphicButton(
+                        margin: const EdgeInsets.only(top: 0.0, bottom: 0.0),
+                        onPressed: () async {
+                          _showModalChangeMasterPass(context);
+                        },
+                        style: NeumorphicStyle(
+                            shape: NeumorphicShape.flat,
+                            boxShape: NeumorphicBoxShape.roundRect(
+                                BorderRadius.circular(2)),
+                            depth: 2,
+                            intensity: 0.9,
+                            surfaceIntensity: 0.9,
+                            border: NeumorphicBorder(
+                              color: context.watch<ThemeProvider>().borderColor,
+                              width: 0.8,
+                            ),
+                            lightSource: LightSource.topLeft,
+                            color: context.watch<ThemeProvider>().fillColor),
+                        padding: const EdgeInsets.fromLTRB(
+                          6.0,
+                          3.0,
+                          0,
+                          0,
+                        ),
+                        child: Column(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.fromLTRB(
+                                8.0,
+                                8.0,
+                                8.0,
+                                8.0,
+                              ),
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  LocaleKeys.load_back.tr(),
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      color: context
+                                          .watch<ThemeProvider>()
+                                          .textColor),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 14.0, right: 14.0, top: 4.0, bottom: 4.0),
+                      child: NeumorphicButton(
+                        margin: const EdgeInsets.only(top: 0.0, bottom: 0.0),
+                        onPressed: () async {
+                          Directory? appDocDir =
+                              await getApplicationDocumentsDirectory();
+                          String? dir = appDocDir.path.toString().toLowerCase();
+                          String tmpText =
+                              '\n\n$dir /sbox_accounts.csv \n\n$dir /sbox_accounts.csv ';
+                          String filesPathText =
+                              LocaleKeys.deleteQ.tr() + '\n' + tmpText;
+                          await showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                titleTextStyle: TextStyle(
+                                    color: context
+                                        .watch<ThemeProvider>()
+                                        .textColor),
+                                contentTextStyle: TextStyle(
+                                    color: context
+                                        .watch<ThemeProvider>()
+                                        .textColor),
+                                backgroundColor: context
+                                    .watch<ThemeProvider>()
+                                    .fillCardColor,
+                                title: Text(LocaleKeys.confirm.tr()),
+                                content: Text(filesPathText),
+                                actions: <Widget>[
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                      context
+                                          .read<DatabaseProvider>()
+                                          .generateCsvFiles();
+                                      debugPrint('generateCsvFiles items');
+                                      //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                      Navigator.of(context).pop(true);
+                                    },
+                                    child: Icon(Icons.select_all_rounded,
+                                        color: Colors.white),
+                                    style: ElevatedButton.styleFrom(
+                                      shape: CircleBorder(),
+                                      padding: EdgeInsets.all(20),
+                                      backgroundColor: context
+                                          .watch<ThemeProvider>()
+                                          .fillSelectedColor, // <-- Button color
+                                      foregroundColor:
+                                          Colors.red, // <-- Splash color
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 20,
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop(false);
+                                    },
+                                    child:
+                                        Icon(Icons.cancel, color: Colors.white),
+                                    style: ElevatedButton.styleFrom(
+                                      shape: CircleBorder(),
+                                      padding: EdgeInsets.all(20),
+                                      backgroundColor: context
+                                          .watch<ThemeProvider>()
+                                          .fillSelectedColor, // <-- Button color
+                                      foregroundColor:
+                                          Colors.red, // <-- Splash color
+                                    ),
+                                  )
+                                ],
+                              );
+                            },
+                          );
+                        },
+                        style: NeumorphicStyle(
+                            shape: NeumorphicShape.flat,
+                            boxShape: NeumorphicBoxShape.roundRect(
+                                BorderRadius.circular(2)),
+                            depth: 2,
+                            intensity: 0.9,
+                            surfaceIntensity: 0.9,
+                            border: NeumorphicBorder(
+                              color: context.watch<ThemeProvider>().borderColor,
+                              width: 0.8,
+                            ),
+                            lightSource: LightSource.topLeft,
+                            color: context.watch<ThemeProvider>().fillColor),
+                        // style: NeumorphicStyle(
+                        //   shape: NeumorphicShape.flat,
+                        //   boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(8)),
+                        //   color: _iconsColor(context),
+                        // ),
+                        padding: const EdgeInsets.fromLTRB(
+                          6.0,
+                          3.0,
+                          0,
+                          0,
+                        ),
+                        child: Column(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.fromLTRB(
+                                8.0,
+                                8.0,
+                                8.0,
+                                8.0,
+                              ),
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  LocaleKeys.load_back.tr(),
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      color: context
+                                          .watch<ThemeProvider>()
+                                          .textColor),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    //>>>
                   ],
                 ),
               ),
@@ -292,123 +487,87 @@ class BackupScreenState extends State<BackupScreen> {
     );
   }
 
-  @override
-  Widget SearchWgt(context) {
-    return Container(
-        child: SizedBox(
-      height: 60,
-      child: //Text(''),
+  //>>>>>>>>>>>>>>>>>>
 
-          Padding(
-        padding:
-            const EdgeInsets.only(top: 18, bottom: 1, left: 1, right: 13.0),
-        child: Container(
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: SizedBox(
-              height: 50,
-              width: 250,
-              child: TextField(
-                cursorColor: _borderColor(context),
-                onChanged: (value) {
-                  setState(() {
-                    query = value.toLowerCase();
-                  });
-                },
-                style: TextStyle(
-                  fontSize: 15.0,
-                  color: _textColor(context),
+  _showModalChangeMasterPass(BuildContext context) {
+    double lowVal = 30;
+    double highVal = 70;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          titleTextStyle:
+              TextStyle(color: context.watch<ThemeProvider>().textColor),
+          contentTextStyle:
+              TextStyle(color: context.watch<ThemeProvider>().textColor),
+          backgroundColor: context.watch<ThemeProvider>().fillColor,
+          title: Text(LocaleKeys.add_pass.tr()),
+          content: Align(
+            alignment: Alignment.topLeft,
+            child: Column(
+              children: [
+                Text(LocaleKeys.set_new_pass.tr()),
+                SizedBox(
+                  height: 30,
                 ),
-                controller: editingController,
-                decoration: InputDecoration(
-                  labelStyle: TextStyle(
-                    fontSize: 15.0,
-                    color: _borderColor(context),
-                  ),
-                  labelText: LocaleKeys.c_note.tr(),
-                  hintStyle: TextStyle(
-                    fontSize: 15.0,
-                    color: _borderColor(context),
-                  ),
-                  hintText: LocaleKeys.c_search.tr(),
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: _borderColor(context),
-                  ),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      Icons.clear,
-                      color: _borderColor(context),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Text(
+                    //   context.watch<AddSiteProvider>().lengthVol.toString(),
+                    //   style: TextStyle(
+                    //     color: context.watch<ThemeProvider>().textColor,
+                    //   ),
+                    // ),
+                    TextFieldMasterPass(
+                      textLbl: LocaleKeys.c_pass.tr(),
                     ),
-                    onPressed: (() {
-                      setState(() {
-                        editingController.clear();
-                        query = '';
-                      });
-                    }),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: _borderColor(context), width: 2.0),
-                  ),
-                  // border: OutlineInputBorder(
-                  //   // borderRadius: BorderRadius.all(
-                  //   //     Radius.circular(25.0)),
-                  //   borderSide: BorderSide(
-                  //       color:
-                  //           Color.fromARGB(255, 1, 255, 22),
-                  //       width: 3.0),
-                  // ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                        color: _fillSelectedColor(context), width: 2.0),
-                  ),
+                  ],
                 ),
-              ),
+
+                //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+              ],
             ),
           ),
-        ),
-      ),
-    ));
-  }
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () async {
+                context.read<DatabaseProvider>().changeMasterPass();
+                // editingController.text =
+                //     await context.read<AddSiteProvider>().genPassVol;
 
-  Color _textColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return Colors.black;
-    } else {
-      return Colors.white;
-    }
-  }
-
-  Color _fillColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return bColor.buttonFillL;
-    } else {
-      return bColor.buttonFillD;
-    }
-  }
-
-  Color _fillSelectedColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return bColor.radioFillL;
-    } else {
-      return bColor.radioFillD;
-    }
-  }
-
-  Color _borderColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return bColor.borderL;
-    } else {
-      return bColor.borderD;
-    }
-  }
-
-  Color _fillCardColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return bColor.cardColorL;
-    } else {
-      return bColor.cardColorD;
-    }
+                Navigator.of(context).pop(true);
+              },
+              child: Icon(Icons.new_releases_outlined, color: Colors.white),
+              style: ElevatedButton.styleFrom(
+                shape: CircleBorder(),
+                padding: EdgeInsets.all(20),
+                backgroundColor: context
+                    .watch<ThemeProvider>()
+                    .fillSelectedColor, // <-- Button color
+                foregroundColor: Colors.red, // <-- Splash color
+              ),
+            ),
+            const SizedBox(
+              width: 20,
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              child: Icon(Icons.cancel, color: Colors.white),
+              style: ElevatedButton.styleFrom(
+                shape: CircleBorder(),
+                padding: EdgeInsets.all(20),
+                backgroundColor: context
+                    .watch<ThemeProvider>()
+                    .fillSelectedColor, // <-- Button color
+                foregroundColor: Colors.red, // <-- Splash color
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

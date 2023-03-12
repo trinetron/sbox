@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:sbox/models/local_db/secstor_card.dart';
 part 'secstor.g.dart';
 
 @HiveType(typeId: 0)

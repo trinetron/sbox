@@ -5,8 +5,9 @@ import 'package:sbox/models/design/theme.dart';
 import 'package:sbox/models/languages/translat_locale_keys.g.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:sbox/provider/add_card_provider.dart';
-import 'package:sbox/provider/add_site_provider.dart';
-import 'package:sbox/ui/screens/add_site.dart';
+import 'package:sbox/provider/add_edit_site_provider.dart';
+import 'package:sbox/provider/theme_provider.dart';
+import 'package:sbox/ui/screens/add_edit_site_screen.dart';
 
 class ButtonFormCardAdd extends StatelessWidget {
   ButtonFormCardAdd({
@@ -33,17 +34,17 @@ class ButtonFormCardAdd extends StatelessWidget {
               intensity: 0.9,
               surfaceIntensity: 0.9,
               border: NeumorphicBorder(
-                color: _borderColor(context),
+                color: context.watch<ThemeProvider>().borderColor,
                 width: 0.8,
               ),
               lightSource: LightSource.topLeft,
-              color: _fillColor(context)),
+              color: context.watch<ThemeProvider>().fillColor),
 
           padding: const EdgeInsets.all(7.0),
           child: Text(
             LocaleKeys.c_save.tr(),
             style: TextStyle(
-              color: _textColor(context),
+              color: context.watch<ThemeProvider>().textColor,
               decoration: TextDecoration.none,
               fontSize: 15,
             ),
@@ -55,39 +56,5 @@ class ButtonFormCardAdd extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Color? _iconColor(BuildContext context) {
-    final theme = NeumorphicTheme.of(context);
-    if (!theme!.isUsingDark) {
-      return bColor.iconL;
-    } else {
-      return bColor.iconD;
-    }
-  }
-
-  Color? _fillColor(BuildContext context) {
-    final theme = NeumorphicTheme.of(context);
-    if (!theme!.isUsingDark) {
-      return bColor.buttonFillL;
-    } else {
-      return bColor.buttonFillD;
-    }
-  }
-
-  Color? _borderColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return bColor.borderL;
-    } else {
-      return bColor.borderD;
-    }
-  }
-
-  Color _textColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return Colors.black;
-    } else {
-      return Colors.white;
-    }
   }
 }

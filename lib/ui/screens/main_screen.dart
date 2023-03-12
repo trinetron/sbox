@@ -8,21 +8,23 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sbox/models/local_db/hive_names.dart';
 import 'package:sbox/models/languages/translat_locale_keys.g.dart';
 import 'package:sbox/models/local_db/hive_setting.dart';
-import 'package:sbox/provider/add_site_provider.dart';
+import 'package:sbox/provider/add_edit_site_provider.dart';
 import 'package:sbox/provider/db_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:sbox/provider/menu_provider.dart';
+import 'package:sbox/provider/permissions_provider.dart';
 import 'package:sbox/provider/sound_provider.dart';
 import 'package:sbox/provider/state_provider.dart';
 import 'package:sbox/models/local_db/secstor.dart';
 import 'package:sbox/models/design/theme.dart';
-import 'package:sbox/ui/screens/add_site.dart';
+import 'package:sbox/provider/theme_provider.dart';
+import 'package:sbox/ui/screens/add_edit_site_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_neumorphic_null_safety/flutter_neumorphic.dart';
 import 'package:sbox/ui/widgets/button_appbar_backup.dart';
-import 'package:sbox/ui/screens/edit_site.dart';
 import 'package:sbox/ui/screens/login_screen.dart';
 import 'package:sbox/ui/widgets/button_appbar.dart';
+import 'package:sbox/ui/widgets/button_nm_pass_site.dart';
 import 'package:sbox/ui/widgets/button_nm_www.dart';
 import 'package:sbox/ui/widgets/radio_nm.dart';
 import 'package:sbox/ui/widgets/menu_setting.dart';
@@ -53,23 +55,8 @@ class MainScreenState extends State<MainScreen> {
   String query = '';
   TextEditingController editingController = TextEditingController();
 
-// late Box boxA;
-
-  //final hiveSetting = HiveSetting();
-
-  //late var results;
-
-  // @override
-  // void dispose() async {
-  //   Hive.close();
-  //   super.dispose();
-  // }
-
   @override
   Widget build(BuildContext context) {
-    // initialized = context.watch<StateProvider>().initialized;
-    // error = context.watch<StateProvider>().error;
-
     if (context.watch<StateProvider>().error) {
       debugPrint('_error');
       debugPrint('_error   $error');
@@ -90,47 +77,6 @@ class MainScreenState extends State<MainScreen> {
               appBar: AppBar(
                 backgroundColor: NeumorphicTheme.accentColor(context),
                 automaticallyImplyLeading: false,
-                // leading:
-                // FloatingActionButton(
-                //   onPressed: () => {
-                //     Navigator.of(context).push(
-                //         MaterialPageRoute(builder: (context) => AddSite())),
-                //   },
-                //   tooltip: LocaleKeys.Add.tr(),
-                //   child: Icon(Icons.add),
-                // ),
-
-                //     NeumorphicButton(
-                //   margin: EdgeInsets.only(top: 12),
-                //   onPressed: () => {
-                //     Navigator.of(context).push(
-                //         MaterialPageRoute(builder: (context) => AddSite())),
-                //   },
-                //   style: NeumorphicStyle(
-                //       shape: NeumorphicShape.flat,
-                //       boxShape: NeumorphicBoxShape.roundRect(
-                //           BorderRadius.circular(5)),
-                //       depth: 2,
-                //       intensity: 0.9,
-                //       surfaceIntensity: 0.9,
-                //       border: NeumorphicBorder(
-                //         color: Colors.grey[400],
-                //         width: 0.8,
-                //       ),
-                //       lightSource: LightSource.topLeft,
-                //       color: Colors.grey[600]),
-
-                //   padding: const EdgeInsets.all(12.0),
-                //   child: NeumorphicIcon(
-                //     Icons.add_circle,
-                //     size: 22,
-                //   ),
-                //   //  Text(
-                //   //   "Toggle Theme",
-                //   //   style: TextStyle(color: NeumorphicTheme.accentColor(context)),
-                //   // ),
-                // ),
-
                 title: Row(
                   children: [
                     Expanded(
@@ -148,13 +94,24 @@ class MainScreenState extends State<MainScreen> {
                     Expanded(
                       child: SizedBox(),
                     ),
+                    IconButton(
+                      iconSize: 20,
+                      splashRadius: 20,
+                      icon: Icon(
+                        (context.watch<PermissionsService>().showPassword)
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: context.watch<ThemeProvider>().textColor,
+                      ),
+                      onPressed: () {
+                        context.read<PermissionsService>().togglevisibility();
+                      },
+                    ),
                     SizedBox(
-                      width: 90,
+                      width: 50,
                     ),
                   ],
                 ),
-
-                //Color: NeumorphicTheme.accentColor(context),
               ),
               body: Container(
                 child: SingleChildScrollView(
@@ -162,7 +119,98 @@ class MainScreenState extends State<MainScreen> {
                   child: Column(
                     children: <Widget>[
                       TopBodyText(textLbl: LocaleKeys.confirm.tr()),
-                      SearchWgt(context),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          //>>>
+                          Container(
+                            child: SizedBox(
+                              height: 60,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 18, bottom: 1, left: 1, right: 13.0),
+                                child: Container(
+                                  child: Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: SizedBox(
+                                      height: 50,
+                                      width: 250,
+                                      child: TextField(
+                                        cursorColor: Colors
+                                            .black, //context.watch<ThemeProvider>().borderColor,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            query = value.toLowerCase();
+                                          });
+                                        },
+                                        style: TextStyle(
+                                          fontSize: 15.0,
+                                          color: context
+                                              .watch<ThemeProvider>()
+                                              .textColor,
+                                        ),
+                                        controller: editingController,
+                                        decoration: InputDecoration(
+                                          labelStyle: TextStyle(
+                                            fontSize: 15.0,
+                                            color: context
+                                                .watch<ThemeProvider>()
+                                                .borderColor,
+                                          ),
+                                          labelText: LocaleKeys.c_note.tr(),
+                                          hintStyle: TextStyle(
+                                            fontSize: 15.0,
+                                            color: context
+                                                .watch<ThemeProvider>()
+                                                .borderColor,
+                                          ),
+                                          hintText: LocaleKeys.c_search.tr(),
+                                          prefixIcon: Icon(
+                                            Icons.search,
+                                            color: context
+                                                .watch<ThemeProvider>()
+                                                .borderColor,
+                                          ),
+                                          suffixIcon: IconButton(
+                                            icon: Icon(
+                                              Icons.clear,
+                                              color: context
+                                                  .watch<ThemeProvider>()
+                                                  .borderColor,
+                                            ),
+                                            onPressed: (() {
+                                              setState(() {
+                                                editingController.clear();
+                                                query = '';
+                                              });
+                                            }),
+                                          ),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: context
+                                                    .watch<ThemeProvider>()
+                                                    .borderColor,
+                                                width: 2.0),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: context
+                                                    .watch<ThemeProvider>()
+                                                    .fillSelectedColor,
+                                                width: 2.0),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          //>>>
+                        ],
+                      ),
                       ValueListenableBuilder(
                         valueListenable:
                             Hive.box<C_hive>(HiveBoxes.db_hive).listenable(),
@@ -171,14 +219,6 @@ class MainScreenState extends State<MainScreen> {
                               Provider.of<DatabaseProvider>(context,
                                   listen: false);
 
-                          // builder: (context, Box<C_hive> boxA, _) {
-                          // if (boxG.values.isEmpty) {
-                          //   return Center(
-                          //     child: Text(
-                          //       LocaleKeys.Box_is_empty.tr(),
-                          //     ),
-                          //   );
-                          // } else
                           {
                             List<C_hive> results = query.isEmpty
                                 ? box.values.toList() // whole list
@@ -301,11 +341,16 @@ class MainScreenState extends State<MainScreen> {
                                         builder: (BuildContext context) {
                                           return AlertDialog(
                                             titleTextStyle: TextStyle(
-                                                color: _textColor(context)),
+                                                color: context
+                                                    .watch<ThemeProvider>()
+                                                    .textColor),
                                             contentTextStyle: TextStyle(
-                                                color: _textColor(context)),
-                                            backgroundColor:
-                                                _fillCardColor(context),
+                                                color: context
+                                                    .watch<ThemeProvider>()
+                                                    .textColor),
+                                            backgroundColor: context
+                                                .watch<ThemeProvider>()
+                                                .fillCardColor,
                                             title:
                                                 Text(LocaleKeys.confirm.tr()),
                                             content:
@@ -330,12 +375,15 @@ class MainScreenState extends State<MainScreen> {
                                                 style: ElevatedButton.styleFrom(
                                                   shape: CircleBorder(),
                                                   padding: EdgeInsets.all(20),
-                                                  backgroundColor:
-                                                      _fillSelectedColor(
-                                                          context), // <-- Button color
+                                                  backgroundColor: context
+                                                      .watch<ThemeProvider>()
+                                                      .fillSelectedColor, // <-- Button color
                                                   foregroundColor: Colors
                                                       .red, // <-- Splash color
                                                 ),
+                                              ),
+                                              const SizedBox(
+                                                width: 20,
                                               ),
                                               ElevatedButton(
                                                 onPressed: () {
@@ -347,9 +395,9 @@ class MainScreenState extends State<MainScreen> {
                                                 style: ElevatedButton.styleFrom(
                                                   shape: CircleBorder(),
                                                   padding: EdgeInsets.all(20),
-                                                  backgroundColor:
-                                                      _fillSelectedColor(
-                                                          context), // <-- Button color
+                                                  backgroundColor: context
+                                                      .watch<ThemeProvider>()
+                                                      .fillSelectedColor, // <-- Button color
                                                   foregroundColor: Colors
                                                       .red, // <-- Splash color
                                                 ),
@@ -359,15 +407,45 @@ class MainScreenState extends State<MainScreen> {
                                         },
                                       );
                                     } else {
-                                      Navigator.of(context)
-                                          .push(MaterialPageRoute(
-                                              builder: (context) => EditSite(
-                                                    id: index,
-                                                    task: res.task,
-                                                    login: res.login,
-                                                    pass: res.pass,
-                                                    note: res.note,
-                                                  )));
+                                      context
+                                          .read<AddSiteProvider>()
+                                          .cleanDataText();
+
+                                      context
+                                          .read<AddSiteProvider>()
+                                          .changeDataText(res.login, 2);
+                                      context
+                                          .read<AddSiteProvider>()
+                                          .changeDataText(res.task, 1);
+                                      context
+                                          .read<AddSiteProvider>()
+                                          .changeDataText(res.pass, 3);
+                                      context
+                                          .read<AddSiteProvider>()
+                                          .changeDataText(res.note, 4);
+
+                                      context
+                                          .read<AddSiteProvider>()
+                                          .changeFlgAddSite(false);
+                                      context
+                                          .read<AddSiteProvider>()
+                                          .changeDataId(index);
+
+                                      Navigator.of(context).push(
+                                          PageRouteBuilder(
+                                              pageBuilder: (context, a1, a2) =>
+                                                  AddSite()));
+
+                                      // Navigator.of(context).push(
+                                      //     PageRouteBuilder(
+                                      //         pageBuilder: (context, a1, a2) =>
+                                      //             EditSite(
+                                      //               id: index,
+                                      //               task: res.task,
+                                      //               login: res.login,
+                                      //               pass: res.pass,
+                                      //               note: res.note,
+                                      //             )));
                                     }
                                   },
                                   child: Padding(
@@ -378,9 +456,13 @@ class MainScreenState extends State<MainScreen> {
                                         bottom: 4.0),
                                     child: Container(
                                       decoration: BoxDecoration(
-                                          color: _fillCardColor(context),
+                                          color: context
+                                              .watch<ThemeProvider>()
+                                              .fillCardColor,
                                           border: Border.all(
-                                            color: _borderColor(context),
+                                            color: context
+                                                .watch<ThemeProvider>()
+                                                .borderColor,
                                             width: 2, //width of border
                                           ),
                                           borderRadius:
@@ -404,8 +486,9 @@ class MainScreenState extends State<MainScreen> {
                                                   textBtn: res.login,
                                                   textLbl:
                                                       LocaleKeys.c_login.tr(),
+                                                  flx: 1,
                                                 ),
-                                                ButtonMN(
+                                                ButtonMN_PassSite(
                                                   textBtn: res.pass,
                                                   textLbl:
                                                       LocaleKeys.c_pass.tr(),
@@ -460,43 +543,12 @@ class MainScreenState extends State<MainScreen> {
                       // margin: const EdgeInsets.only(left: 0.1, bottom: 0.1),
                       padding: const EdgeInsets.only(top: 3.1, right: 3.1),
 
-                      // child: Transform.scale(
-                      // scale: 1.0,
-                      //constraints: BoxConstraints.loose(Size(50, 50)),
-                      //constraints: BoxConstraints(minWidth: 50, maxWidth: 150),
-                      // maxWidth: 50,
-                      // maxHeight: 50,
-                      // alignment: Alignment.topRight,
-
-                      // width: 54,
-                      // height: 53,
-                      // width: 125,
-                      // height: 125,
                       width: context.watch<MenuProvider>().dataW,
                       height: context.watch<MenuProvider>().dataH,
-
-                      // //scale: 0.8,
-                      // minWidth: 45.0,
-                      // minHeight: 100.0,
-                      //maxWidth: 70.0,
-                      // maxHeight: 60.0,
-
-                      // minWidth: 0.0,
-                      // minHeight: 0.0,
-                      // maxWidth: double.infinity,
-                      // maxHeight: double.infinity,
 
                       child: Container(
                         margin: const EdgeInsets.only(left: 0.1, bottom: 0.1),
                         padding: const EdgeInsets.only(left: 0.1, bottom: 0.1),
-                        // width: 120,
-                        // height: 120,
-                        // alignment: Alignment.topRight,
-                        // padding: const EdgeInsets.only(left: 50.0, bottom: 50.0),
-                        // constraints: BoxConstraints.tight(Size(50, 50)),
-                        // margin: const EdgeInsets.only(left: 50.0, bottom: 50.0),
-                        // constraints: BoxConstraints(minWidth: 50, maxWidth: 50),
-                        // alignment: Alignment.bottomLeft,
                         child: MenuScreen(
                           msg: context.watch<MenuProvider>().msg,
                           onMenuChanged: (String val) {
@@ -509,25 +561,14 @@ class MainScreenState extends State<MainScreen> {
           ],
         ),
       );
-
-      debugPrint('initialized');
-      debugPrint('error   $error');
-      debugPrint('initialized   $initialized');
     }
 
     debugPrint('BuildContext');
     debugPrint('_error   $error');
     debugPrint('_initialized   $initialized');
-    return
-        // Navigator.of(context)
-        //     .push(MaterialPageRoute(builder: (context) => LoginScreen()));
-
-        // LoginScreen();
-
-        Text('_XXX');
+    return const Text('_XXX');
   }
 
-  @override
   Widget SearchWgt(context) {
     return Container(
         child: SizedBox(
@@ -535,7 +576,8 @@ class MainScreenState extends State<MainScreen> {
       child: //Text(''),
 
           Padding(
-        padding: const EdgeInsets.only(top: 8, bottom: 1, left: 1, right: 13.0),
+        padding:
+            const EdgeInsets.only(top: 18, bottom: 1, left: 1, right: 13.0),
         child: Container(
           child: Align(
             alignment: Alignment.bottomCenter,
@@ -543,7 +585,8 @@ class MainScreenState extends State<MainScreen> {
               height: 50,
               width: 250,
               child: TextField(
-                cursorColor: _borderColor(context),
+                cursorColor:
+                    Colors.black, //context.watch<ThemeProvider>().borderColor,
                 onChanged: (value) {
                   setState(() {
                     query = value.toLowerCase();
@@ -551,28 +594,33 @@ class MainScreenState extends State<MainScreen> {
                 },
                 style: TextStyle(
                   fontSize: 15.0,
-                  color: _textColor(context),
+                  color:
+                      Colors.black, //context.watch<ThemeProvider>().textColor,
                 ),
                 controller: editingController,
                 decoration: InputDecoration(
                   labelStyle: TextStyle(
                     fontSize: 15.0,
-                    color: _borderColor(context),
+                    color: Colors
+                        .black, //context.watch<ThemeProvider>().borderColor,
                   ),
                   labelText: LocaleKeys.c_note.tr(),
                   hintStyle: TextStyle(
                     fontSize: 15.0,
-                    color: _borderColor(context),
+                    color: Colors
+                        .black, //context.watch<ThemeProvider>().borderColor,
                   ),
                   hintText: LocaleKeys.c_search.tr(),
                   prefixIcon: Icon(
                     Icons.search,
-                    color: _borderColor(context),
+                    color: Colors
+                        .black, //context.watch<ThemeProvider>().borderColor,
                   ),
                   suffixIcon: IconButton(
                     icon: Icon(
                       Icons.clear,
-                      color: _borderColor(context),
+                      color: Colors
+                          .black, //context.watch<ThemeProvider>().borderColor,
                     ),
                     onPressed: (() {
                       setState(() {
@@ -582,8 +630,10 @@ class MainScreenState extends State<MainScreen> {
                     }),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: _borderColor(context), width: 2.0),
+                    borderSide: BorderSide(
+                        color: Colors
+                            .black, //context.watch<ThemeProvider>().borderColor,
+                        width: 2.0),
                   ),
                   // border: OutlineInputBorder(
                   //   // borderRadius: BorderRadius.all(
@@ -595,7 +645,9 @@ class MainScreenState extends State<MainScreen> {
                   // ),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
-                        color: _fillSelectedColor(context), width: 2.0),
+                        color: Colors
+                            .black, //context.watch<ThemeProvider>().fillSelectedColor,
+                        width: 2.0),
                   ),
                 ),
               ),
@@ -604,53 +656,5 @@ class MainScreenState extends State<MainScreen> {
         ),
       ),
     ));
-  }
-
-  Color _txtBGColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return bColor.baseColorL;
-    } else {
-      return bColor.baseColorD;
-    }
-  }
-
-  Color _textColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return Colors.black;
-    } else {
-      return Colors.white;
-    }
-  }
-
-  Color _fillColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return bColor.buttonFillL;
-    } else {
-      return bColor.buttonFillD;
-    }
-  }
-
-  Color _fillSelectedColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return bColor.radioFillL;
-    } else {
-      return bColor.radioFillD;
-    }
-  }
-
-  Color _borderColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return bColor.borderL;
-    } else {
-      return bColor.borderD;
-    }
-  }
-
-  Color _fillCardColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return bColor.cardColorL;
-    } else {
-      return bColor.cardColorD;
-    }
   }
 }

@@ -9,22 +9,26 @@ import 'package:sbox/models/local_db/hive_names.dart';
 import 'package:sbox/models/languages/translat_locale_keys.g.dart';
 import 'package:sbox/models/local_db/hive_setting.dart';
 import 'package:sbox/models/local_db/secstor_card.dart';
-import 'package:sbox/provider/add_site_provider.dart';
+import 'package:sbox/provider/add_card_provider.dart';
+import 'package:sbox/provider/add_edit_site_provider.dart';
 import 'package:sbox/provider/db_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:sbox/provider/menu_provider.dart';
+import 'package:sbox/provider/permissions_provider.dart';
 import 'package:sbox/provider/sound_provider.dart';
 import 'package:sbox/provider/state_provider.dart';
 import 'package:sbox/models/local_db/secstor.dart';
 import 'package:sbox/models/design/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_neumorphic_null_safety/flutter_neumorphic.dart';
-import 'package:sbox/ui/screens/edit_card.dart';
+import 'package:sbox/provider/theme_provider.dart';
+import 'package:sbox/ui/screens/add_edit_card_screen.dart';
 import 'package:sbox/ui/widgets/button_appbar_backup.dart';
-import 'package:sbox/ui/screens/edit_site.dart';
 import 'package:sbox/ui/screens/login_screen.dart';
 import 'package:sbox/ui/widgets/button_appbar.dart';
 import 'package:sbox/ui/widgets/button_appbar_card.dart';
+import 'package:sbox/ui/widgets/button_nm_card_num.dart';
+import 'package:sbox/ui/widgets/button_nm_pass_site.dart';
 import 'package:sbox/ui/widgets/radio_nm.dart';
 import 'package:sbox/ui/widgets/menu_setting.dart';
 import 'package:sbox/ui/widgets/button_nm.dart';
@@ -97,8 +101,21 @@ class CardScreenState extends State<CardScreen> {
                     Expanded(
                       child: SizedBox(),
                     ),
+                    IconButton(
+                      iconSize: 20,
+                      splashRadius: 20,
+                      icon: Icon(
+                        (context.watch<PermissionsService>().showPassword)
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: context.watch<ThemeProvider>().textColor,
+                      ),
+                      onPressed: () {
+                        context.read<PermissionsService>().togglevisibility();
+                      },
+                    ),
                     SizedBox(
-                      width: 90,
+                      width: 50,
                     ),
                   ],
                 ),
@@ -111,7 +128,101 @@ class CardScreenState extends State<CardScreen> {
                   child: Column(
                     children: <Widget>[
                       TopBodyText(textLbl: LocaleKeys.confirm.tr()),
-                      SearchWgt(context),
+                      //>>>>>
+                      Container(
+                        child: SizedBox(
+                          height: 60,
+                          child: //Text(''),
+
+                              Padding(
+                            padding: const EdgeInsets.only(
+                                top: 18, bottom: 1, left: 1, right: 13.0),
+                            child: Align(
+                              alignment: Alignment.bottomCenter,
+                              child: SizedBox(
+                                height: 50,
+                                width: 250,
+                                child: TextField(
+                                  cursorColor: Colors
+                                      .black, // context.watch<ThemeProvider>().borderColor,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      query = value.toLowerCase();
+                                    });
+                                  },
+                                  style: TextStyle(
+                                    fontSize: 15.0,
+                                    color: context
+                                        .watch<ThemeProvider>()
+                                        .textColor,
+                                  ),
+                                  controller: editingController,
+                                  decoration: InputDecoration(
+                                    labelStyle: TextStyle(
+                                      fontSize: 15.0,
+                                      color: context
+                                          .watch<ThemeProvider>()
+                                          .borderColor,
+                                    ),
+                                    labelText: LocaleKeys.c_note.tr(),
+                                    hintStyle: TextStyle(
+                                      fontSize: 15.0,
+                                      color: context
+                                          .watch<ThemeProvider>()
+                                          .borderColor,
+                                    ),
+                                    hintText: LocaleKeys.c_search.tr(),
+                                    prefixIcon: Icon(
+                                      Icons.search,
+                                      color: context
+                                          .watch<ThemeProvider>()
+                                          .borderColor,
+                                    ),
+                                    suffixIcon: IconButton(
+                                      icon: Icon(
+                                        Icons.clear,
+                                        color: context
+                                            .watch<ThemeProvider>()
+                                            .borderColor,
+                                      ),
+                                      onPressed: (() {
+                                        setState(() {
+                                          editingController.clear();
+                                          query = '';
+                                        });
+                                      }),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: context
+                                              .watch<ThemeProvider>()
+                                              .borderColor,
+                                          width: 2.0),
+                                    ),
+                                    // border: OutlineInputBorder(
+                                    //   // borderRadius: BorderRadius.all(
+                                    //   //     Radius.circular(25.0)),
+                                    //   borderSide: BorderSide(
+                                    //       color:
+                                    //           Color.fromARGB(255, 1, 255, 22),
+                                    //       width: 3.0),
+                                    // ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: context
+                                              .watch<ThemeProvider>()
+                                              .fillSelectedColor,
+                                          width: 2.0),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      //>>>>>
+                      //SearchWgt(context),
                       ValueListenableBuilder(
                         valueListenable:
                             Hive.box<C_hiveCard>(HiveBoxes.db_hiveCard)
@@ -183,11 +294,16 @@ class CardScreenState extends State<CardScreen> {
                                         builder: (BuildContext context) {
                                           return AlertDialog(
                                             titleTextStyle: TextStyle(
-                                                color: _textColor(context)),
+                                                color: context
+                                                    .watch<ThemeProvider>()
+                                                    .textColor),
                                             contentTextStyle: TextStyle(
-                                                color: _textColor(context)),
-                                            backgroundColor:
-                                                _fillCardColor(context),
+                                                color: context
+                                                    .watch<ThemeProvider>()
+                                                    .textColor),
+                                            backgroundColor: context
+                                                .watch<ThemeProvider>()
+                                                .fillCardColor,
                                             title:
                                                 Text(LocaleKeys.confirm.tr()),
                                             content:
@@ -212,12 +328,15 @@ class CardScreenState extends State<CardScreen> {
                                                 style: ElevatedButton.styleFrom(
                                                   shape: CircleBorder(),
                                                   padding: EdgeInsets.all(20),
-                                                  backgroundColor:
-                                                      _fillSelectedColor(
-                                                          context), // <-- Button color
+                                                  backgroundColor: context
+                                                      .watch<ThemeProvider>()
+                                                      .fillSelectedColor, // <-- Button color
                                                   foregroundColor: Colors
                                                       .red, // <-- Splash color
                                                 ),
+                                              ),
+                                              const SizedBox(
+                                                width: 20,
                                               ),
                                               ElevatedButton(
                                                 onPressed: () {
@@ -229,9 +348,9 @@ class CardScreenState extends State<CardScreen> {
                                                 style: ElevatedButton.styleFrom(
                                                   shape: CircleBorder(),
                                                   padding: EdgeInsets.all(20),
-                                                  backgroundColor:
-                                                      _fillSelectedColor(
-                                                          context), // <-- Button color
+                                                  backgroundColor: context
+                                                      .watch<ThemeProvider>()
+                                                      .fillSelectedColor, // <-- Button color
                                                   foregroundColor: Colors
                                                       .red, // <-- Splash color
                                                 ),
@@ -241,17 +360,39 @@ class CardScreenState extends State<CardScreen> {
                                         },
                                       );
                                     } else {
-                                      Navigator.of(context)
-                                          .push(MaterialPageRoute(
-                                              builder: (context) => EditCard(
-                                                    id: index,
-                                                    note: res.note,
-                                                    card: res.card,
-                                                    name: res.name,
-                                                    dateExp: res.dateExp,
-                                                    cvv: res.cvv,
-                                                    pinAtm: res.pinAtm,
-                                                  )));
+                                      context
+                                          .read<AddCardProvider>()
+                                          .changeDataText(res.note, 1);
+                                      context
+                                          .read<AddCardProvider>()
+                                          .changeDataText(res.card, 2);
+                                      context
+                                          .read<AddCardProvider>()
+                                          .changeDataText(res.name, 3);
+                                      context
+                                          .read<AddCardProvider>()
+                                          .changeDataText(res.date, 4);
+                                      context
+                                          .read<AddCardProvider>()
+                                          .changeDataText(res.dateExp, 5);
+                                      context
+                                          .read<AddCardProvider>()
+                                          .changeDataText(res.cvv, 6);
+                                      context
+                                          .read<AddCardProvider>()
+                                          .changeDataText(res.pinAtm, 7);
+                                      context
+                                          .read<AddCardProvider>()
+                                          .changeDataId(index);
+
+                                      context
+                                          .read<AddCardProvider>()
+                                          .changeFlgAddCard(false);
+
+                                      Navigator.of(context).push(
+                                          PageRouteBuilder(
+                                              pageBuilder: (context, a1, a2) =>
+                                                  AddCard()));
                                     }
                                   },
                                   child: Padding(
@@ -262,9 +403,13 @@ class CardScreenState extends State<CardScreen> {
                                         bottom: 4.0),
                                     child: Container(
                                       decoration: BoxDecoration(
-                                          color: _fillCardColor(context),
+                                          color: context
+                                              .watch<ThemeProvider>()
+                                              .fillCardColor,
                                           border: Border.all(
-                                            color: _borderColor(context),
+                                            color: context
+                                                .watch<ThemeProvider>()
+                                                .borderColor,
                                             width: 2, //width of border
                                           ),
                                           borderRadius:
@@ -273,9 +418,36 @@ class CardScreenState extends State<CardScreen> {
                                         padding: const EdgeInsets.all(4.0),
                                         child: Column(
                                           children: [
+                                            //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                             Row(
                                               children: [
-                                                ButtonMN(
+                                                SizedBox(
+                                                  width: 5,
+                                                ),
+                                                IconButton(
+                                                  iconSize: 25,
+                                                  color: context
+                                                      .watch<ThemeProvider>()
+                                                      .textColor,
+                                                  icon: const Icon(
+                                                      Icons.credit_card),
+                                                  onPressed: () {
+                                                    // ...
+                                                  },
+                                                ),
+                                                SizedBox(
+                                                  width: 5,
+                                                ),
+                                                ContainerMN(
+                                                  textCont: res.note,
+                                                  textLbl:
+                                                      LocaleKeys.c_note.tr(),
+                                                ),
+                                              ],
+                                            ),
+                                            Row(
+                                              children: [
+                                                ButtonMN_CardNum(
                                                   textBtn: res.card,
                                                   textLbl:
                                                       LocaleKeys.c_card.tr(),
@@ -285,26 +457,40 @@ class CardScreenState extends State<CardScreen> {
                                             Row(
                                               children: [
                                                 ButtonMN(
+                                                  textBtn: res.date,
+                                                  textLbl:
+                                                      LocaleKeys.c_date.tr(),
+                                                  flx: 1,
+                                                ),
+                                                ButtonMN(
+                                                  textBtn: res.dateExp,
+                                                  textLbl: LocaleKeys.c_date_exp
+                                                      .tr(),
+                                                  flx: 1,
+                                                ),
+                                                ButtonMN_PassSite(
+                                                  textBtn: res.pinAtm,
+                                                  textLbl:
+                                                      LocaleKeys.c_pin.tr(),
+                                                ),
+                                              ],
+                                            ),
+                                            Row(
+                                              children: [
+                                                ButtonMN(
                                                   textBtn: res.name,
                                                   textLbl:
                                                       LocaleKeys.c_name.tr(),
+                                                  flx: 3,
                                                 ),
-                                                ButtonMN(
+                                                ButtonMN_PassSite(
                                                   textBtn: res.cvv,
                                                   textLbl:
                                                       LocaleKeys.c_cvv.tr(),
                                                 ),
                                               ],
                                             ),
-                                            Row(
-                                              children: [
-                                                ContainerMN(
-                                                  textCont: res.note,
-                                                  textLbl:
-                                                      LocaleKeys.c_note.tr(),
-                                                ),
-                                              ],
-                                            ),
+                                            //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                           ],
                                         ),
                                       ),
@@ -369,125 +555,5 @@ class CardScreenState extends State<CardScreen> {
         // LoginScreen();
 
         Text('_XXX');
-  }
-
-  @override
-  Widget SearchWgt(context) {
-    return Container(
-        child: SizedBox(
-      height: 60,
-      child: //Text(''),
-
-          Padding(
-        padding:
-            const EdgeInsets.only(top: 18, bottom: 1, left: 1, right: 13.0),
-        child: Container(
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: SizedBox(
-              height: 50,
-              width: 250,
-              child: TextField(
-                cursorColor: _borderColor(context),
-                onChanged: (value) {
-                  setState(() {
-                    query = value.toLowerCase();
-                  });
-                },
-                style: TextStyle(
-                  fontSize: 15.0,
-                  color: _textColor(context),
-                ),
-                controller: editingController,
-                decoration: InputDecoration(
-                  labelStyle: TextStyle(
-                    fontSize: 15.0,
-                    color: _borderColor(context),
-                  ),
-                  labelText: LocaleKeys.c_note.tr(),
-                  hintStyle: TextStyle(
-                    fontSize: 15.0,
-                    color: _borderColor(context),
-                  ),
-                  hintText: LocaleKeys.c_search.tr(),
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: _borderColor(context),
-                  ),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      Icons.clear,
-                      color: _borderColor(context),
-                    ),
-                    onPressed: (() {
-                      setState(() {
-                        editingController.clear();
-                        query = '';
-                      });
-                    }),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide:
-                        BorderSide(color: _borderColor(context), width: 2.0),
-                  ),
-                  // border: OutlineInputBorder(
-                  //   // borderRadius: BorderRadius.all(
-                  //   //     Radius.circular(25.0)),
-                  //   borderSide: BorderSide(
-                  //       color:
-                  //           Color.fromARGB(255, 1, 255, 22),
-                  //       width: 3.0),
-                  // ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                        color: _fillSelectedColor(context), width: 2.0),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    ));
-  }
-
-  Color _textColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return Colors.black;
-    } else {
-      return Colors.white;
-    }
-  }
-
-  Color _fillColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return bColor.buttonFillL;
-    } else {
-      return bColor.buttonFillD;
-    }
-  }
-
-  Color _fillSelectedColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return bColor.radioFillL;
-    } else {
-      return bColor.radioFillD;
-    }
-  }
-
-  Color _borderColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return bColor.borderL;
-    } else {
-      return bColor.borderD;
-    }
-  }
-
-  Color _fillCardColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return bColor.cardColorL;
-    } else {
-      return bColor.cardColorD;
-    }
   }
 }

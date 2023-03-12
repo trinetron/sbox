@@ -1,5 +1,7 @@
 import 'package:flutter_neumorphic_null_safety/flutter_neumorphic.dart';
+import 'package:provider/provider.dart';
 import 'package:sbox/models/design/theme.dart';
+import 'package:sbox/provider/theme_provider.dart';
 
 class ContainerMN extends StatelessWidget {
   String textCont;
@@ -35,11 +37,11 @@ class ContainerMN extends StatelessWidget {
                   intensity: 0.9,
                   surfaceIntensity: 0.9,
                   border: NeumorphicBorder(
-                    color: _borderColor(context),
+                    color: context.watch<ThemeProvider>().borderColor,
                     width: 0.8,
                   ),
                   lightSource: LightSource.topLeft,
-                  color: _fillColor(context)),
+                  color: context.watch<ThemeProvider>().fillColor),
 
               padding: const EdgeInsets.all(6.0),
 
@@ -49,8 +51,9 @@ class ContainerMN extends StatelessWidget {
                     alignment: Alignment.topLeft,
                     child: Text(
                       textLbl,
-                      style:
-                          TextStyle(fontSize: 10, color: _textColor(context)),
+                      style: TextStyle(
+                          fontSize: 10,
+                          color: context.watch<ThemeProvider>().textColor),
                     ),
                   ),
                   Container(
@@ -65,7 +68,7 @@ class ContainerMN extends StatelessWidget {
                         initialValue: textCont,
                         readOnly: true,
                         style: TextStyle(
-                          color: _textColor(context),
+                          color: context.watch<ThemeProvider>().textColor,
                           fontSize: 15,
                         ),
                         decoration: InputDecoration(
@@ -82,39 +85,5 @@ class ContainerMN extends StatelessWidget {
             ),
           )),
     );
-  }
-
-  // Color? _iconsColor(BuildContext context) {
-  //   final theme = NeumorphicTheme.of(context);
-  //   if (!theme!.isUsingDark) {
-  //     return theme.current!.accentColor;
-  //   } else {
-  //     return null;
-  //   }
-  // }
-
-  Color _textColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return Colors.black;
-    } else {
-      return Colors.white;
-    }
-  }
-
-  Color? _fillColor(BuildContext context) {
-    final theme = NeumorphicTheme.of(context);
-    if (!theme!.isUsingDark) {
-      return bColor.buttonFillL;
-    } else {
-      return bColor.buttonFillD;
-    }
-  }
-
-  Color? _borderColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return bColor.borderL;
-    } else {
-      return bColor.borderD;
-    }
   }
 }

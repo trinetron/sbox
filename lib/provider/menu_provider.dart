@@ -4,6 +4,7 @@ import 'package:flutter_neumorphic_null_safety/flutter_neumorphic.dart';
 import 'package:provider/provider.dart';
 import 'package:sbox/models/local_db/hive_setting.dart';
 import 'package:sbox/provider/sound_provider.dart';
+import 'package:sbox/provider/theme_provider.dart';
 
 class MenuProvider extends ChangeNotifier {
   double dataH = 53;
@@ -40,25 +41,25 @@ class MenuProvider extends ChangeNotifier {
       if (arr[0] != arr2[0]) {
         if (arr[0] == 'en') {
           context.setLocale(const Locale('en'));
-        }
-        if (arr[0] == 'ru') {
+        } else if (arr[0] == 'ru') {
           context.setLocale(const Locale('ru'));
-        }
-        if (arr[0] == 'fr') {
+        } else if (arr[0] == 'fr') {
           context.setLocale(const Locale('fr'));
-        }
-        if (arr[0] == 'es') {
+        } else if (arr[0] == 'es') {
           context.setLocale(const Locale('es'));
-        }
-        if (arr[0] == 'zh') {
+        } else if (arr[0] == 'zh') {
           context.setLocale(const Locale('zh'));
+        } else {
+          context.setLocale(const Locale('en'));
         }
       }
       if ((arr[2] == 'soundON') && (arr2[2] != 'soundON')) {
         context.read<SoundProvider>().sndOn(true);
         debugPrint('soundON');
-      }
-      if ((arr[2] == 'soundOFF') && (arr2[2] != 'soundOFF')) {
+      } else if ((arr[2] == 'soundOFF') && (arr2[2] != 'soundOFF')) {
+        context.read<SoundProvider>().sndOn(false);
+        debugPrint('soundOFF');
+      } else {
         context.read<SoundProvider>().sndOn(false);
         debugPrint('soundOFF');
       }
@@ -66,10 +67,15 @@ class MenuProvider extends ChangeNotifier {
       if (((arr[1] == 'themeD') && (!NeumorphicTheme.isUsingDark(context))) ||
           ((arr[1] == 'themeD') && (arr[0] != arr2[0]))) {
         NeumorphicTheme.of(context)!.themeMode = ThemeMode.dark;
-      }
-      if ((arr[1] == 'themeL') && (NeumorphicTheme.isUsingDark(context)) ||
+        context.read<ThemeProvider>().setThemeColor(true);
+      } else if ((arr[1] == 'themeL') &&
+              (NeumorphicTheme.isUsingDark(context)) ||
           ((arr[1] == 'themeL') && (arr[0] != arr2[0]))) {
         NeumorphicTheme.of(context)?.themeMode = ThemeMode.light;
+        context.read<ThemeProvider>().setThemeColor(false);
+      } else {
+        NeumorphicTheme.of(context)?.themeMode = ThemeMode.light;
+        context.read<ThemeProvider>().setThemeColor(false);
       }
 
       if (arr[3] == 'mb0_closeStat') {
@@ -81,5 +87,6 @@ class MenuProvider extends ChangeNotifier {
       return true;
     }
     oldMsg = val;
+    notifyListeners();
   }
 }

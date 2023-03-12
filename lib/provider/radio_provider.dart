@@ -25,7 +25,7 @@ class RadioProvider extends ChangeNotifier {
         if ((d != lastD) || (lastD == 0)) {
           debugPrint('radioControl case 1');
           Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => MainScreen()),
+            PageRouteBuilder(pageBuilder: (context, a1, a2) => MainScreen()),
             (Route<dynamic> route) => false,
           );
           // if (d != 0) {
@@ -39,7 +39,7 @@ class RadioProvider extends ChangeNotifier {
         if ((d != lastD) || (lastD == 0)) {
           debugPrint('radioControl case 2');
           Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => CardScreen()),
+            PageRouteBuilder(pageBuilder: (context, a1, a2) => CardScreen()),
             (Route<dynamic> route) => false,
           );
           //if (d != 0) {

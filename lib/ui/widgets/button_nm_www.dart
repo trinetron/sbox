@@ -1,9 +1,12 @@
+import 'package:clipboard/clipboard.dart';
 import 'package:flutter_neumorphic_null_safety/flutter_neumorphic.dart';
 import 'package:flutter/services.dart';
 import 'package:open_url/open_url.dart';
+import 'package:provider/provider.dart';
 import 'package:sbox/models/design/theme.dart';
 import 'package:sbox/models/languages/translat_locale_keys.g.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:sbox/provider/theme_provider.dart';
 
 class ButtonMNwww extends StatelessWidget {
   String textBtn;
@@ -24,9 +27,8 @@ class ButtonMNwww extends StatelessWidget {
             const EdgeInsets.only(left: 4.0, right: 4.0, top: 4.0, bottom: 4.0),
         child: GestureDetector(
           onLongPress: () async {
-            await Clipboard.setData(ClipboardData(
-              text: textBtn,
-            ));
+            await FlutterClipboard.copy(textBtn)
+                .then((value) => debugPrint('$textBtn copied'));
             // copied successfully
             String tmpStr = textBtn;
             tmpStr += ' - ';
@@ -67,11 +69,11 @@ class ButtonMNwww extends StatelessWidget {
                 intensity: 0.9,
                 surfaceIntensity: 0.9,
                 border: NeumorphicBorder(
-                  color: _borderColor(context),
+                  color: context.watch<ThemeProvider>().borderColor,
                   width: 0.8,
                 ),
                 lightSource: LightSource.topLeft,
-                color: _fillColor(context)),
+                color: context.watch<ThemeProvider>().fillColor),
             // style: NeumorphicStyle(
             //   shape: NeumorphicShape.flat,
             //   boxShape: NeumorphicBoxShape.roundRect(BorderRadius.circular(8)),
@@ -89,7 +91,9 @@ class ButtonMNwww extends StatelessWidget {
                   alignment: Alignment.topLeft,
                   child: Text(
                     textLbl,
-                    style: TextStyle(fontSize: 10, color: _textColor(context)),
+                    style: TextStyle(
+                        fontSize: 10,
+                        color: context.watch<ThemeProvider>().textColor),
                   ),
                 ),
                 Container(
@@ -103,8 +107,9 @@ class ButtonMNwww extends StatelessWidget {
                     alignment: Alignment.center,
                     child: Text(
                       textBtn,
-                      style:
-                          TextStyle(fontSize: 12, color: _textColor(context)),
+                      style: TextStyle(
+                          fontSize: 12,
+                          color: context.watch<ThemeProvider>().textColor),
                     ),
                   ),
                 ),
@@ -114,39 +119,5 @@ class ButtonMNwww extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  // Color? _iconsColor(BuildContext context) {
-  //   final theme = NeumorphicTheme.of(context);
-  //   if (!theme!.isUsingDark) {
-  //     return theme.current!.accentColor;
-  //   } else {
-  //     return null;
-  //   }
-  // }
-
-  Color _textColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return Colors.black;
-    } else {
-      return Colors.white;
-    }
-  }
-
-  Color? _fillColor(BuildContext context) {
-    final theme = NeumorphicTheme.of(context);
-    if (!theme!.isUsingDark) {
-      return bColor.buttonFillL;
-    } else {
-      return bColor.buttonFillD;
-    }
-  }
-
-  Color? _borderColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return bColor.borderL;
-    } else {
-      return bColor.borderD;
-    }
   }
 }

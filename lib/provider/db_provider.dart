@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:archive/archive_io.dart';
+import 'package:csv/csv.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:file_cryptor/file_cryptor.dart';
 import 'package:file_picker/file_picker.dart';
@@ -12,6 +13,8 @@ import 'package:provider/provider.dart';
 import 'package:sbox/models/languages/translat_locale_keys.g.dart';
 import 'package:sbox/models/local_db/hive_names.dart';
 import 'package:sbox/models/local_db/hive_setting.dart';
+import 'package:sbox/models/local_db/secstor_card_tmp.dart';
+import 'package:sbox/models/local_db/secstor_tmp.dart';
 import 'package:sbox/provider/menu_provider.dart';
 import 'package:sbox/provider/permissions_provider.dart';
 import 'package:sbox/provider/permissions_provider.dart';
@@ -43,6 +46,8 @@ class DatabaseProvider extends ChangeNotifier {
   static const String key = 'ED+AB1y5hSnt353cw0E4yZ/nd3xDT/VkVgFozawPYJY=';
   String dir2 = '';
 
+  String masterPassVol = '';
+
   // @override
   // void dispose() async {
   //   super.dispose();
@@ -66,6 +71,7 @@ class DatabaseProvider extends ChangeNotifier {
   Box<C_hiveCard> get boxB => _boxB;
 
   C_hiveCard get selectedboxB => _selectedboxB;
+  //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Cryptor
 
@@ -279,7 +285,7 @@ class DatabaseProvider extends ChangeNotifier {
   }
 
   void deleteFromCardHive() {
-    _boxB.deleteAt(_selectedIndex);
+    _boxB.deleteAt(_selectedIndexCard);
     debugPrint(' _boxB.deleteAt   $_selectedIndexCard ');
   }
 
@@ -400,6 +406,238 @@ class DatabaseProvider extends ChangeNotifier {
       // notifyListeners();
       // await Navigator.of(context)
       //     .push(MaterialPageRoute(builder: (context) => MainScreen()));
+    }
+  }
+
+  void generateCsvFiles() async {
+    requestStoragePermission();
+
+    Directory? appDocDir = await getApplicationDocumentsDirectory();
+    String? dir = appDocDir.path.toString().toLowerCase();
+
+    List<List<dynamic>> rows = [];
+
+    var bx = Hive.box<C_hive>(HiveBoxes.db_hive);
+
+    List<dynamic> row = [];
+    row.add("URL");
+    row.add("Login");
+    row.add("Password");
+    row.add("Description");
+    rows.add(row);
+    for (int i = 0; i < bx.length; i++) {
+      List<dynamic> row = [];
+      row.add(bx.get(i)?.task.toString());
+      row.add(bx.get(i)?.login.toString());
+      row.add(bx.get(i)?.pass.toString());
+      row.add(bx.get(i)?.note.toString());
+      rows.add(row);
+    }
+
+    String csv = const ListToCsvConverter().convert(rows);
+
+    debugPrint("dir $dir");
+
+    File f = File(dir + "/sbox_accounts.csv");
+
+    f.writeAsString(csv);
+
+    //>>>>>>>>>>>>>>>>>>
+
+    List<List<dynamic>> rows2 = [];
+
+    var bx2 = Hive.box<C_hiveCard>(HiveBoxes.db_hiveCard);
+
+    List<dynamic> row2 = [];
+    row2.add("Description");
+    row2.add("Card");
+    row2.add("Name");
+    row2.add("Date");
+    row2.add("DateExp");
+    row2.add("CVV");
+    row2.add("PIN_ATM");
+    rows2.add(row2);
+    for (int i = 0; i < bx.length; i++) {
+      List<dynamic> row2 = [];
+      row2.add(bx2.get(i)?.note.toString());
+      row2.add(bx2.get(i)?.card.toString());
+      row2.add(bx2.get(i)?.name.toString());
+      row2.add(bx2.get(i)?.date.toString());
+      row2.add(bx2.get(i)?.dateExp.toString());
+      row2.add(bx2.get(i)?.cvv.toString());
+      row2.add(bx2.get(i)?.pinAtm.toString());
+      rows2.add(row2);
+    }
+
+    String csv2 = const ListToCsvConverter().convert(rows2);
+
+    debugPrint("dir $dir");
+
+    File f2 = File(dir + "/sbox_card.csv");
+
+    f2.writeAsString(csv2);
+  }
+
+  void changeDataMasterPass(String vol) {
+    masterPassVol = vol;
+    notifyListeners();
+  }
+
+  Future<void> changeMasterPass() async {
+    bool chkFinish = await dbFilesNew();
+    chkFinish
+        ? debugPrint('MasterPass Changed')
+        : debugPrint('MasterPass not Changed');
+  }
+
+  Future<bool> dbFilesNew() async {
+    requestStoragePermission();
+
+    keyUsr = masterPassVol;
+    keyMix = '';
+    debugPrint(key);
+
+    keyMix = key.replaceRange(0, keyUsr.length, keyUsr);
+
+    debugPrint('keyMix $keyMix');
+
+    final keyEnc = base64.decode(keyMix);
+    debugPrint(keyEnc.toString());
+
+    Directory? appDocDir = await getApplicationDocumentsDirectory();
+    String appPath = appDocDir.path + '/sbox';
+
+    debugPrint('appPath  $appPath');
+
+    Box<C_hive_tmp> _boxC = await Hive.openBox<C_hive_tmp>(
+        HiveBoxes.db_hive_tmp,
+        encryptionCipher: HiveAesCipher(keyEnc),
+        crashRecovery: true,
+        path: appPath);
+
+    _boxC.isOpen
+        ? debugPrint('_boxC.isOpen true')
+        : debugPrint('_boxC.isOpen false');
+
+    Box<C_hiveCard_tmp> _boxD = await Hive.openBox<C_hiveCard_tmp>(
+        HiveBoxes.db_hiveCard_tmp,
+        encryptionCipher: HiveAesCipher(keyEnc),
+        crashRecovery: true,
+        path: appPath);
+
+    _boxD.isOpen
+        ? debugPrint('_boxD.isOpen true')
+        : debugPrint('_boxD.isOpen false');
+
+    // debugPrint('_boxD.isOpen $_boxD.isOpen.toString()');
+
+    //Box<C_hive> sBox = Hive.box<C_hive>(HiveBoxes.db_hive);
+
+    if (await dbFilesExistsNewDB()) {
+      for (int i = 0; i < _boxA.length; i++) {
+        _boxC.add(C_hive_tmp(
+          task: _boxA.get(i)!.task,
+          login: _boxA.get(i)!.login,
+          pass: _boxA.get(i)!.pass,
+          note: _boxA.get(i)!.note,
+        ));
+      }
+
+      for (int i = 0; i < _boxB.length; i++) {
+        _boxD.add(C_hiveCard_tmp(
+          note: _boxB.get(i)!.note,
+          card: _boxB.get(i)!.card,
+          name: _boxB.get(i)!.name,
+          date: _boxB.get(i)!.date,
+          dateExp: _boxB.get(i)!.dateExp,
+          cvv: _boxB.get(i)!.cvv,
+          pinAtm: _boxB.get(i)!.pinAtm,
+        ));
+      }
+
+      await _boxA.clear();
+      await _boxB.clear();
+
+      await _boxA.close();
+      await _boxB.close();
+
+      _boxA = await Hive.openBox<C_hive>(HiveBoxes.db_hive,
+          encryptionCipher: HiveAesCipher(keyEnc),
+          crashRecovery: false,
+          path: appPath);
+
+      debugPrint('_boxA.isOpen $_boxA.isOpen.toString()');
+
+      _boxB = await Hive.openBox<C_hiveCard>(HiveBoxes.db_hiveCard,
+          encryptionCipher: HiveAesCipher(keyEnc),
+          crashRecovery: false,
+          path: appPath);
+
+      debugPrint('_boxB.isOpen $_boxB.isOpen.toString()');
+
+      for (int i = 0; i < _boxC.length; i++) {
+        _boxA.add(C_hive(
+          task: _boxC.get(i)!.task,
+          login: _boxC.get(i)!.login,
+          pass: _boxC.get(i)!.pass,
+          note: _boxC.get(i)!.note,
+        ));
+      }
+
+      for (int i = 0; i < _boxD.length; i++) {
+        _boxB.add(C_hiveCard(
+          note: _boxD.get(i)!.note,
+          card: _boxD.get(i)!.card,
+          name: _boxD.get(i)!.name,
+          date: _boxD.get(i)!.date,
+          dateExp: _boxD.get(i)!.dateExp,
+          cvv: _boxD.get(i)!.cvv,
+          pinAtm: _boxD.get(i)!.pinAtm,
+        ));
+      }
+
+      await _boxC.close();
+      await _boxD.close();
+
+      await delFile(File(appPath + '/sec_box_tmp.hive'));
+      await delFile(File(appPath + '/sec_box_card_tmp.hive'));
+
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Future<void> delFile(File sourceFile) async {
+    try {
+      await sourceFile.delete();
+    } catch (e) {
+      debugPrint('delFile Err');
+    }
+  }
+
+  Future<File> moveFile(File sourceFile, String newPath) async {
+    try {
+      /// prefer using rename as it is probably faster
+      /// if same directory path
+      return await sourceFile.rename(newPath);
+    } catch (e) {
+      /// if rename fails, copy the source file
+      final newFile = await sourceFile.copy(newPath);
+      return newFile;
+    }
+  }
+
+  Future<bool> dbFilesExistsNewDB() async {
+    Directory? appDocDir = await getApplicationDocumentsDirectory();
+    String appPath = appDocDir.path + '/sbox';
+    if ((await Hive.boxExists(HiveBoxes.db_hive_tmp, path: appPath)) &&
+        (await Hive.boxExists(HiveBoxes.db_hiveCard_tmp, path: appPath))) {
+      debugPrint('dbFilesExists true');
+      return true;
+    } else {
+      debugPrint('dbFilesExists false');
+      return false;
     }
   }
 }

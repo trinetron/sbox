@@ -14,6 +14,8 @@ class AddCardProvider extends ChangeNotifier {
   String dataDateExp = '';
   String dataCvv = '';
   String dataPinAtm = '';
+  int id = 0;
+  bool flgAddCard = true;
 
   int hintOnNote = 0;
   int hintOnCard = 0;
@@ -40,14 +42,72 @@ class AddCardProvider extends ChangeNotifier {
   String hintPinAtm = '';
 
   void cleanDataText() {
-    String dataNote = '';
-    String dataCard = '';
-    String dataName = '';
-    String dataDate = '';
-    String dataDateExp = '';
-    String dataCvv = '';
-    String dataPinAtm = '';
+    dataNote = '';
+    dataCard = '';
+    dataName = '';
+    dataDate = '';
+    dataDateExp = '';
+    dataCvv = '';
+    dataPinAtm = '';
+    id = 0;
     notifyListeners();
+  }
+
+  void changeDataId(var newId) {
+    id = newId;
+  }
+
+  void changeFlgAddCard(bool vol) {
+    flgAddCard = vol;
+  }
+
+  String setTextVol(int objNum) {
+    switch (objNum) {
+      case 1:
+        return dataNote;
+
+      case 2:
+        return dataCard;
+
+      case 3:
+        return dataName;
+
+      case 4:
+        return dataDate;
+
+      case 5:
+        return dataDateExp;
+
+      case 6:
+        return dataCvv;
+
+      case 7:
+        return dataPinAtm;
+
+      default:
+        return '';
+    }
+  }
+
+  int hintOn(int objNum) {
+    switch (objNum) {
+      case 1:
+        return hintOnNote;
+      case 2:
+        return hintOnCard;
+      case 3:
+        return hintOnName;
+      case 4:
+        return hintOnDate;
+      case 5:
+        return hintOnDateExp;
+      case 6:
+        return hintOnCvv;
+      case 7:
+        return hintOnPinAtm;
+      default:
+        return hintOnNote;
+    }
   }
 
   void changeDataText(var newDataText, int objNum) {
@@ -178,43 +238,31 @@ class AddCardProvider extends ChangeNotifier {
         debugPrint('hintPinAtmOn  $hintPinAtmOn');
       }
     }
-
-    // if ((objName == 'login') && (newHintOn == true)) {
-    //   hintSite = LocaleKeys.add_login;
-    //   hintSiteOn = true;
-    // } else {
-    //   hintSite = '';
-    //   hintSiteOn = false;
-    // }
-
-    // if ((objName == 'pass') && (newHintOn == true)) {
-    //   hintSite = LocaleKeys.add_pass;
-    //   hintSiteOn = true;
-    // } else {
-    //   hintSite = '';
-    //   hintSiteOn = false;
-    // }
-
-    // if ((objName == 'note') && (newHintOn == true)) {
-    //   hintSite = LocaleKeys.add_note;
-    //   hintSiteOn = true;
-    // } else {
-    //   hintSite = '';
-    //   hintSiteOn = false;
-    // }
-
     notifyListeners();
   }
 
   void onFormSubmit() {
     Box<C_hiveCard> sBox = Hive.box<C_hiveCard>(HiveBoxes.db_hiveCard);
-    sBox.add(C_hiveCard(
-        note: dataNote,
-        card: dataCard,
-        name: dataName,
-        date: dataDate,
-        dateExp: dataDateExp,
-        cvv: dataCvv,
-        pinAtm: dataPinAtm));
+    if (flgAddCard) {
+      sBox.add(C_hiveCard(
+          note: dataNote,
+          card: dataCard,
+          name: dataName,
+          date: dataDate,
+          dateExp: dataDateExp,
+          cvv: dataCvv,
+          pinAtm: dataPinAtm));
+    } else {
+      sBox.putAt(
+          id,
+          C_hiveCard(
+              note: dataNote,
+              card: dataCard,
+              name: dataName,
+              date: dataDate,
+              dateExp: dataDateExp,
+              cvv: dataCvv,
+              pinAtm: dataPinAtm));
+    }
   }
 }

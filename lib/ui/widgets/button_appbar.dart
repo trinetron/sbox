@@ -4,8 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:sbox/models/design/theme.dart';
 import 'package:sbox/models/languages/translat_locale_keys.g.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:sbox/provider/add_site_provider.dart';
-import 'package:sbox/ui/screens/add_site.dart';
+import 'package:sbox/provider/add_edit_site_provider.dart';
+import 'package:sbox/provider/theme_provider.dart';
+import 'package:sbox/ui/screens/add_edit_site_screen.dart';
 
 class ButtonAppBarAdd extends StatelessWidget {
   ButtonAppBarAdd({
@@ -27,8 +28,9 @@ class ButtonAppBarAdd extends StatelessWidget {
           margin: EdgeInsets.only(left: 3),
           onPressed: () => {
             context.read<AddSiteProvider>().cleanDataText(),
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => AddSite())),
+            context.read<AddSiteProvider>().changeFlgAddSite(true),
+            Navigator.of(context).push(
+                PageRouteBuilder(pageBuilder: (context, a1, a2) => AddSite())),
           },
           style: NeumorphicStyle(
               shape: NeumorphicShape.flat,
@@ -37,18 +39,18 @@ class ButtonAppBarAdd extends StatelessWidget {
               intensity: 0.9,
               surfaceIntensity: 0.9,
               border: NeumorphicBorder(
-                color: _borderColor(context),
+                color: context.watch<ThemeProvider>().borderColor,
                 width: 0.8,
               ),
               lightSource: LightSource.topLeft,
-              color: _fillColor(context)),
+              color: context.watch<ThemeProvider>().fillColor),
 
           padding: const EdgeInsets.all(7.0),
           child: NeumorphicIcon(
             iconBtn,
             size: 25,
             style: NeumorphicStyle(
-              color: _iconColor(context),
+              color: context.watch<ThemeProvider>().iconColor,
             ),
           ),
           //  Text(
@@ -58,39 +60,5 @@ class ButtonAppBarAdd extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Color? _iconColor(BuildContext context) {
-    final theme = NeumorphicTheme.of(context);
-    if (!theme!.isUsingDark) {
-      return bColor.iconL;
-    } else {
-      return bColor.iconD;
-    }
-  }
-
-  Color? _fillColor(BuildContext context) {
-    final theme = NeumorphicTheme.of(context);
-    if (!theme!.isUsingDark) {
-      return bColor.buttonFillL;
-    } else {
-      return bColor.buttonFillD;
-    }
-  }
-
-  Color? _borderColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return bColor.borderL;
-    } else {
-      return bColor.borderD;
-    }
-  }
-
-  Color? _textColor(BuildContext context) {
-    if (!NeumorphicTheme.isUsingDark(context)) {
-      return bColor.buttonTextD;
-    } else {
-      return bColor.buttonTextL;
-    }
   }
 }
