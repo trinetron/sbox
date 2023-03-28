@@ -27,23 +27,25 @@ class ButtonMNwww extends StatelessWidget {
             const EdgeInsets.only(left: 4.0, right: 4.0, top: 4.0, bottom: 4.0),
         child: GestureDetector(
           onLongPress: () async {
-            await FlutterClipboard.copy(textBtn)
-                .then((value) => debugPrint('$textBtn copied'));
-            // copied successfully
-            String tmpStr = textBtn;
-            tmpStr += ' - ';
-            tmpStr += LocaleKeys.c_copy.tr();
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(tmpStr),
-            ));
+            if (textBtn != '') {
+              await FlutterClipboard.copy(textBtn)
+                  .then((value) => debugPrint('$textBtn copied'));
+              // copied successfully
+              String tmpStr = textBtn;
+              tmpStr += ' - ';
+              tmpStr += LocaleKeys.c_copy.tr();
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(tmpStr),
+              ));
 
-            final result = await openUrl(textBtn);
-            if (result.exitCode == 0) {
-              debugPrint('URL should be open in your browser');
-            } else {
-              debugPrint(
-                  'Something went wrong (exit code = ${result.exitCode}): '
-                  '${result.stderr}');
+              final result = await openUrl(textBtn);
+              if (result.exitCode == 0) {
+                debugPrint('URL should be open in your browser');
+              } else {
+                debugPrint(
+                    'Something went wrong (exit code = ${result.exitCode}): '
+                    '${result.stderr}');
+              }
             }
           },
           child: NeumorphicButton(
