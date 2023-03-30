@@ -22,7 +22,7 @@ class TopBodyText extends StatelessWidget {
       height: 35,
       width: double.infinity,
       decoration: BoxDecoration(
-        color: NeumorphicTheme.accentColor(context),
+        color: context.watch<ThemeProvider>().accentColor,
         borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(30),
           bottomRight: Radius.circular(30),

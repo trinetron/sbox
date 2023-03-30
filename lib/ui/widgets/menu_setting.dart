@@ -10,32 +10,51 @@ import 'package:sbox/models/local_db/hive_setting.dart';
 import 'package:sbox/provider/menu_provider.dart';
 import 'package:sbox/ui/screens/main_screen.dart';
 
-class MenuScreen extends StatelessWidget {
-  final Function(String) onMenuChanged;
-  String message = '';
+class MenuScreen extends StatefulWidget {
   String? msg = ''; // ?-может принимать Null
 
   MenuScreen({
     // super.key,
     this.msg,
-    required this.onMenuChanged, //обязательный вызов
+    //required this.onMenuChanged, //обязательный вызов
   });
+
+  @override
+  State<MenuScreen> createState() => _MenuScreenState();
+}
+
+class _MenuScreenState extends State<MenuScreen> {
+  // final Function(String) onMenuChanged;
+  String message = '';
 
   late StateMachineController controller;
 
   SMIInput<bool>? _bump;
+
   SMIInput<bool>? _bSettingTemp;
+
   SMIInput<bool>? _bSndTemp;
+
   SMIInput<bool>? _bLngTemp;
+
   SMIInput<bool>? _bLDTTemp;
+
   SMIInput<bool>? _bSOnTemp;
+
   SMIInput<bool>? _bSOffTemp;
+
   SMIInput<bool>? _bEnTemp;
+
   SMIInput<bool>? _bRuTemp;
+
   SMIInput<bool>? _bDTemp;
+
   SMIInput<bool>? _bFrTemp;
+
   SMIInput<bool>? _bLTemp;
+
   SMIInput<bool>? _bEsTemp;
+
   SMIInput<bool>? _bZhTemp;
 
   void onInit(Artboard artboard) async {
@@ -44,27 +63,34 @@ class MenuScreen extends StatelessWidget {
       'SM1',
       onStateChange: onStateChange,
     ) as StateMachineController;
-    //controller.isActive = true;
+    controller.isActive = true;
 
     artboard.addController(controller);
 
     var asa = HiveSetting();
     String msgSetting = '';
-    //msgSetting = 'themeL:ru:soundOFF';
 
-    Directory appDocDir = await getApplicationDocumentsDirectory();
-    String appPath = appDocDir.path.toString().toLowerCase() + '/sbox';
+    (BuildContext context) {
+      msgSetting = context.read<MenuProvider>().msg;
+    };
 
-    var box = await Hive.openBox('setBox', crashRecovery: true, path: appPath);
+    if (msgSetting == "") {
+      Directory appDocDir = await getApplicationDocumentsDirectory();
+      String appPath = appDocDir.path.toString().toLowerCase() + '/sbox';
 
-    var tmpSet = await box.get('settings');
-    if (tmpSet != null) {
-      msgSetting = tmpSet;
-    } else {
-      msgSetting = 'themeL:soundOFF:mb0_closeStat';
+      var box =
+          await Hive.openBox('setBox', crashRecovery: true, path: appPath);
+
+      var tmpSet = await box.get('settings');
+      if (tmpSet != null) {
+        msgSetting = tmpSet;
+      } else {
+        msgSetting = 'en:themeL:soundOFF:mb0_closeStat';
+        // context.read<MenuProvider>().menuSet(msgSetting, context);
+      }
     }
-    //msgSetting = await asa.readSetting();
 
+//
     var arr = msgSetting.split(':');
     debugPrint('arr = $arr');
 
@@ -209,7 +235,11 @@ class MenuScreen extends StatelessWidget {
 
     message += stateName;
     // message = 'en:themeL:soundOFF';
-    onMenuChanged(message);
+    // onMenuChanged(message);
+    //aa(message, ReadContext);
+
+    context.read<MenuProvider>().msg = message;
+    context.read<MenuProvider>().menuSet(message, context);
   }
 
 //open menu

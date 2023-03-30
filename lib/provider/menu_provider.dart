@@ -66,7 +66,7 @@ class MenuProvider extends ChangeNotifier {
 
       if (((arr[1] == 'themeD') && (!NeumorphicTheme.isUsingDark(context))) ||
           ((arr[1] == 'themeD') && (arr[0] != arr2[0]))) {
-        NeumorphicTheme.of(context)!.themeMode = ThemeMode.dark;
+        NeumorphicTheme.of(context)?.themeMode = ThemeMode.dark;
         context.read<ThemeProvider>().setThemeColor(true);
       } else if ((arr[1] == 'themeL') &&
               (NeumorphicTheme.isUsingDark(context)) ||
@@ -84,9 +84,11 @@ class MenuProvider extends ChangeNotifier {
 
       hiveSetting.writeSetting(val);
       debugPrint('hiveSetting.writeSetting(val) $val');
+
+      notifyListeners();
+
       return true;
     }
     oldMsg = val;
-    notifyListeners();
   }
 }

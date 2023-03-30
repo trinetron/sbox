@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic_null_safety/flutter_neumorphic.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -39,23 +40,25 @@ void main() async {
   Hive.registerAdapter(ChivetmpAdapter());
   Hive.registerAdapter(ChiveCardtmpAdapter());
 
-  // windowManager initialization
-  WidgetsFlutterBinding.ensureInitialized();
-  await windowManager.ensureInitialized();
+  if ((Platform.isWindows) || (Platform.isIOS) || (Platform.isLinux)) {
+    // windowManager initialization
+    WidgetsFlutterBinding.ensureInitialized();
+    await windowManager.ensureInitialized();
 
-  WindowOptions windowOptions = const WindowOptions(
-    size: Size(400, 850),
-    minimumSize: Size(400, 500),
-    center: false,
-    title: 'sBox',
-    backgroundColor: Colors.transparent,
-    skipTaskbar: false,
-    titleBarStyle: TitleBarStyle.normal,
-  );
-  windowManager.waitUntilReadyToShow(windowOptions, () async {
-    await windowManager.show();
-    await windowManager.focus();
-  });
+    WindowOptions windowOptions = const WindowOptions(
+      size: Size(400, 850),
+      minimumSize: Size(400, 500),
+      center: false,
+      title: 'sBox',
+      backgroundColor: Colors.transparent,
+      skipTaskbar: false,
+      titleBarStyle: TitleBarStyle.normal,
+    );
+    windowManager.waitUntilReadyToShow(windowOptions, () async {
+      await windowManager.show();
+      await windowManager.focus();
+    });
+  }
 
   //    Localozation init
   WidgetsFlutterBinding.ensureInitialized();
@@ -119,6 +122,7 @@ class SboxAppState extends State<SboxApp> {
   @override
   void dispose() async {
     Hive.close();
+
     super.dispose();
   }
 
@@ -152,19 +156,19 @@ class SboxAppState extends State<SboxApp> {
     return NeumorphicApp(
       themeMode: bColor.setThemeMode,
       theme: NeumorphicThemeData(
-        baseColor: bColor.baseColorL,
-        variantColor: bColor.appBarColorL,
-        lightSource: bColor.lightSourceL,
-        accentColor: bColor.accentColorL,
-        depth: bColor.depthL,
-      ),
+          // baseColor: bColor.baseColorL,
+          // variantColor: bColor.appBarColorL,
+          // lightSource: bColor.lightSourceL,
+          // accentColor: bColor.accentColorL,
+          // depth: bColor.depthL,
+          ),
       darkTheme: NeumorphicThemeData(
-        baseColor: bColor.baseColorD,
-        variantColor: bColor.appBarColorD,
-        lightSource: bColor.lightSourceD,
-        accentColor: bColor.accentColorD,
-        depth: bColor.depthD,
-      ),
+          // baseColor: bColor.baseColorD,
+          // variantColor: bColor.appBarColorD,
+          // lightSource: bColor.lightSourceD,
+          // accentColor: bColor.accentColorD,
+          // depth: bColor.depthD,
+          ),
       title: 'Secret Box',
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,

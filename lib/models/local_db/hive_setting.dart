@@ -55,6 +55,7 @@ class HiveSetting {
     var box = await Hive.openBox('setBox', path: appPath);
 
     await box.clear();
+    await box.flush();
     await box.put('settings', writeStr);
     debugPrint('settings, = $writeStr');
     //await box.close();

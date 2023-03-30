@@ -17,7 +17,7 @@ class C_hive_tmp extends HiveObject {
   C_hive_tmp({
     this.id = '0',
     this.note = '',
-    this.task = '--',
+    this.task = '',
     this.login = '',
     this.pass = '',
   });

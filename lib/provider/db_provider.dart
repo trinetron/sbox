@@ -28,12 +28,13 @@ import 'dart:io' show Platform;
 import 'package:cr_file_saver/file_saver.dart';
 import '/models/local_db/secstor.dart';
 import 'package:flutter/material.dart';
-//import 'package:hive/hive.dart';
+import 'dart:convert';
 
 class DatabaseProvider extends ChangeNotifier {
   int _selectedIndex = 0;
   int _selectedIndexCard = 0;
   String pass = '';
+  bool checkPassErr = false;
   bool initialized = false;
   bool dbFilesExist = false;
   bool msgFilesExist = false;
@@ -91,7 +92,7 @@ class DatabaseProvider extends ChangeNotifier {
     //  +        '/' +        selectedDirectory.files.first.name;
 
     Directory? appDocDir = await getApplicationDocumentsDirectory();
-    String dir2 = appDocDir.path.toString().toLowerCase() + '/sbox';
+    String dir2 = appDocDir.path + '/sbox';
 
     debugPrint('dir $dir');
     debugPrint('dir2 $dir2');
@@ -110,13 +111,15 @@ class DatabaseProvider extends ChangeNotifier {
     return true;
   }
 
-  bool zipPack(String pathSource, String pathFileTarget, List listFiles) {
+  Future<bool> zipPack(
+      String pathSource, String pathFileTarget, List listFiles) async {
     try {
-      var encoder = ZipFileEncoder();
-      encoder.create(pathFileTarget);
-      for (var fName in listFiles) {
+      var encoder = await ZipFileEncoder();
+      encoder.create(await pathFileTarget);
+      for (var fName in await listFiles) {
         String tmpPath = pathSource + '/' + fName;
-        encoder.addFile(File(tmpPath));
+        await encoder.addFile(await File(tmpPath));
+        debugPrint('zip encoder.addFile $tmpPath');
       }
       encoder.close();
       return true;
@@ -153,7 +156,7 @@ class DatabaseProvider extends ChangeNotifier {
     ];
 
     Directory? appDocDir = await getApplicationDocumentsDirectory();
-    String? dir = appDocDir.path.toString().toLowerCase() + '/sbox';
+    String? dir = appDocDir.path + '/sbox';
 
     String? dir2 = '';
     bool checkZip = false;
@@ -166,7 +169,7 @@ class DatabaseProvider extends ChangeNotifier {
         debugPrint('requestWriteExternalStoragePermission: $granted');
 
         String dirTmp = dir + '/sBoxBackUp_' + curDateTime() + '.x3';
-        checkZip = zipPack(dir, dirTmp, listFiles);
+        checkZip = await zipPack(dir, dirTmp, listFiles);
 
         dir2 = await CRFileSaver.saveFileWithDialog(SaveFileDialogParams(
           sourceFilePath: dirTmp,
@@ -190,7 +193,7 @@ class DatabaseProvider extends ChangeNotifier {
       dir2 = selectedDirectory;
       dir2 = (dir2 + '/sBoxBackUp_' + curDateTime() + '.x3');
 
-      checkZip = zipPack(dir, dir2, listFiles);
+      checkZip = await zipPack(dir, dir2, listFiles);
 
       debugPrint('dir $dir');
       debugPrint('dir2 $dir2');
@@ -342,7 +345,9 @@ class DatabaseProvider extends ChangeNotifier {
       keyMix = '';
       debugPrint(key);
 
-      keyMix = key.replaceRange(0, keyUsr.length, keyUsr);
+      keyMix = _genMixPass(keyUsr, key);
+
+      //keyMix = key.replaceRange(0, keyUsr.length, keyUsr);
 
       debugPrint('keyMix $keyMix');
 
@@ -391,14 +396,6 @@ class DatabaseProvider extends ChangeNotifier {
     } catch (e, s) {
       debugPrint('initSecBD error caught: $e');
       debugPrint('initSecBD error Стек: $s');
-
-      // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      //   content: Text(LocaleKeys.pass_err.tr()),
-      // ));
-
-      // Navigator.of(context)
-      //     .push(MaterialPageRoute(builder: (context) => LoginScreen()));
-
       debugPrint('initSecBD err run: ---');
     } finally {
       //
@@ -409,12 +406,70 @@ class DatabaseProvider extends ChangeNotifier {
     }
   }
 
-  void generateCsvFiles() async {
-    requestStoragePermission();
+  Future<bool> generateCsvFiles() async {
+    List<String> listFiles = [
+      'sbox_accounts.csv',
+      'sbox_card.csv',
+    ];
 
     Directory? appDocDir = await getApplicationDocumentsDirectory();
-    String? dir = appDocDir.path.toString().toLowerCase();
+    String? dir = appDocDir.path + '/sbox';
+    // String dir = appDocDir.path;
 
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>.
+    await genCSV(dir, listFiles);
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+    String? dir2 = '';
+    bool checkZip = false;
+
+    if ((Platform.isAndroid) || (Platform.isIOS)) {
+      try {
+        final granted =
+            await CRFileSaver.requestWriteExternalStoragePermission();
+
+        debugPrint('requestWriteExternalStoragePermission: $granted');
+
+        String dirTmp = dir + '/sBoxCSVpack_' + curDateTime() + '.zip';
+
+        dir2 = await CRFileSaver.saveFileWithDialog(SaveFileDialogParams(
+          sourceFilePath: dirTmp,
+          destinationFileName: 'sBoxCSVpack_' + curDateTime() + '.zip',
+        ));
+        checkZip = await zipPack(dir, dirTmp, listFiles);
+        debugPrint('dir $dir');
+        debugPrint('dir2 $dir2');
+        debugPrint('Saved to $dir');
+        return true;
+      } catch (error) {
+        debugPrint('Error: $error');
+        return false;
+      }
+    } else {
+      requestStoragePermission();
+
+      String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
+      if (selectedDirectory == null) {
+        return false;
+      }
+
+      dir2 = selectedDirectory;
+      dir2 = (dir2 + '/sBoxCSVpack_' + curDateTime() + '.zip');
+
+      checkZip = await zipPack(dir, dir2, listFiles);
+
+      debugPrint('dir $dir');
+      debugPrint('dir2 $dir2');
+
+      if (checkZip) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+
+  Future<bool> genCSV(String dir, List listFiles) async {
     List<List<dynamic>> rows = [];
 
     var bx = Hive.box<C_hive>(HiveBoxes.db_hive);
@@ -438,9 +493,14 @@ class DatabaseProvider extends ChangeNotifier {
 
     debugPrint("dir $dir");
 
-    File f = File(dir + "/sbox_accounts.csv");
+    File f = File(dir + '/' + listFiles[0]);
+    var sink = await f.openWrite();
+    sink.writeln(csv);
+    await f.openRead();
+    await sink.close();
+    //sink.flush();
 
-    f.writeAsString(csv);
+    //sink.writeAsString(csv);
 
     //>>>>>>>>>>>>>>>>>>
 
@@ -473,9 +533,18 @@ class DatabaseProvider extends ChangeNotifier {
 
     debugPrint("dir $dir");
 
-    File f2 = File(dir + "/sbox_card.csv");
+    File f2 = File(dir + '/' + listFiles[1]);
+    var sink2 = await f2.openWrite();
+    sink2.writeln(csv2);
+    await f2.openRead();
+    await sink2.close();
+    //   await sink2.flush();
+    //f2.writeAsString(csv2);
 
-    f2.writeAsString(csv2);
+    if ((f != null) && (f2 != null)) {
+      return true;
+    } else
+      return false;
   }
 
   void changeDataMasterPass(String vol) {
@@ -497,7 +566,9 @@ class DatabaseProvider extends ChangeNotifier {
     keyMix = '';
     debugPrint(key);
 
-    keyMix = key.replaceRange(0, keyUsr.length, keyUsr);
+    keyMix = _genMixPass(keyUsr, key);
+
+    // keyMix = key.replaceRange(0, keyUsr.length, keyUsr);
 
     debugPrint('keyMix $keyMix');
 
@@ -508,6 +579,14 @@ class DatabaseProvider extends ChangeNotifier {
     String appPath = appDocDir.path + '/sbox';
 
     debugPrint('appPath  $appPath');
+
+    _boxA.isOpen
+        ? debugPrint('_boxA.isOpen true')
+        : debugPrint('_boxA.isOpen false');
+
+    _boxB.isOpen
+        ? debugPrint('_boxB.isOpen true')
+        : debugPrint('_boxB.isOpen false');
 
     Box<C_hive_tmp> _boxC = await Hive.openBox<C_hive_tmp>(
         HiveBoxes.db_hive_tmp,
@@ -614,6 +693,37 @@ class DatabaseProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint('delFile Err');
     }
+  }
+
+  String _genMixPass(String usrKey, String mainKey) {
+    int checkSum = _calculateChecksum(usrKey);
+    debugPrint('checkSum $checkSum');
+
+    while (checkSum >= (32 - usrKey.length)) {
+      checkSum = checkSum ~/ 2;
+    }
+    if (checkSum < 0) {
+      checkSum * -1;
+    }
+    debugPrint('offset $checkSum');
+    int end = keyUsr.length + checkSum;
+    debugPrint('end $end');
+    String result = mainKey.replaceRange(checkSum, end, usrKey);
+    debugPrint('result_genMixPass $checkSum');
+    return result;
+  }
+
+  int _calculateChecksum(String input) {
+    List<int> bytes = utf8.encode(input);
+    int checksum = 0;
+
+    for (int byte in bytes) {
+      checksum += byte;
+    }
+
+    int result = checksum & 0xFF;
+    return result;
+    // return result.toRadixString(16).toUpperCase();
   }
 
   Future<File> moveFile(File sourceFile, String newPath) async {

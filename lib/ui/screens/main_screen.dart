@@ -73,9 +73,9 @@ class MainScreenState extends State<MainScreen> {
         child: Stack(
           children: [
             Scaffold(
-              backgroundColor: NeumorphicTheme.baseColor(context),
+              backgroundColor: context.watch<ThemeProvider>().baseColor,
               appBar: AppBar(
-                backgroundColor: NeumorphicTheme.accentColor(context),
+                backgroundColor: context.watch<ThemeProvider>().accentColor,
                 automaticallyImplyLeading: false,
                 title: Row(
                   children: [
@@ -137,15 +137,16 @@ class MainScreenState extends State<MainScreen> {
                                       height: 50,
                                       width: 250,
                                       child: TextField(
-                                        cursorColor: Colors
-                                            .black, //context.watch<ThemeProvider>().borderColor,
+                                        cursorColor: context
+                                            .watch<ThemeProvider>()
+                                            .borderColor,
                                         onChanged: (value) {
                                           setState(() {
                                             query = value.toLowerCase();
                                           });
                                         },
                                         style: TextStyle(
-                                          fontSize: 15.0,
+                                          fontSize: 20.0,
                                           color: context
                                               .watch<ThemeProvider>()
                                               .textColor,
@@ -153,7 +154,7 @@ class MainScreenState extends State<MainScreen> {
                                         controller: editingController,
                                         decoration: InputDecoration(
                                           labelStyle: TextStyle(
-                                            fontSize: 15.0,
+                                            fontSize: 18.0,
                                             color: context
                                                 .watch<ThemeProvider>()
                                                 .borderColor,
@@ -165,7 +166,8 @@ class MainScreenState extends State<MainScreen> {
                                                 .watch<ThemeProvider>()
                                                 .borderColor,
                                           ),
-                                          hintText: LocaleKeys.c_search.tr(),
+                                          hintText:
+                                              '  ' + LocaleKeys.c_search.tr(),
                                           prefixIcon: Icon(
                                             Icons.search,
                                             color: context
@@ -373,7 +375,8 @@ class MainScreenState extends State<MainScreen> {
                                                 child: Icon(Icons.delete,
                                                     color: Colors.white),
                                                 style: ElevatedButton.styleFrom(
-                                                  shape: CircleBorder(),
+                                                  shape:
+                                                      RoundedRectangleBorder(),
                                                   padding: EdgeInsets.all(20),
                                                   backgroundColor: context
                                                       .watch<ThemeProvider>()
@@ -393,7 +396,8 @@ class MainScreenState extends State<MainScreen> {
                                                 child: Icon(Icons.cancel,
                                                     color: Colors.white),
                                                 style: ElevatedButton.styleFrom(
-                                                  shape: CircleBorder(),
+                                                  shape:
+                                                      RoundedRectangleBorder(),
                                                   padding: EdgeInsets.all(20),
                                                   backgroundColor: context
                                                       .watch<ThemeProvider>()
@@ -551,10 +555,10 @@ class MainScreenState extends State<MainScreen> {
                         padding: const EdgeInsets.only(left: 0.1, bottom: 0.1),
                         child: MenuScreen(
                           msg: context.watch<MenuProvider>().msg,
-                          onMenuChanged: (String val) {
-                            debugPrint('val = $val');
-                            context.read<MenuProvider>().menuSet(val, context);
-                          },
+                          // onMenuChanged: (String val) {
+                          //   debugPrint('val = $val');
+                          //   context.read<MenuProvider>().menuSet(val, context);
+                          // },
                         ),
                       ),
                     ))),
@@ -610,7 +614,7 @@ class MainScreenState extends State<MainScreen> {
                     color: Colors
                         .black, //context.watch<ThemeProvider>().borderColor,
                   ),
-                  hintText: LocaleKeys.c_search.tr(),
+                  hintText: '  ' + LocaleKeys.c_search.tr(),
                   prefixIcon: Icon(
                     Icons.search,
                     color: Colors

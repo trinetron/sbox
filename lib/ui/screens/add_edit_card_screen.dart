@@ -36,7 +36,7 @@ class AddCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: NeumorphicTheme.baseColor(context),
+      backgroundColor: context.watch<ThemeProvider>().baseColor,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Center(

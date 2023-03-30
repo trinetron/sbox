@@ -43,7 +43,7 @@ class _AddSiteState extends State<AddSite> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: NeumorphicTheme.baseColor(context),
+      backgroundColor: context.watch<ThemeProvider>().baseColor,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Center(
@@ -558,7 +558,7 @@ class _AddSiteState extends State<AddSite> {
               },
               child: Icon(Icons.new_releases_outlined, color: Colors.white),
               style: ElevatedButton.styleFrom(
-                shape: CircleBorder(),
+                shape: RoundedRectangleBorder(),
                 padding: EdgeInsets.all(20),
                 backgroundColor: context
                     .watch<ThemeProvider>()
@@ -575,7 +575,7 @@ class _AddSiteState extends State<AddSite> {
               },
               child: Icon(Icons.cancel, color: Colors.white),
               style: ElevatedButton.styleFrom(
-                shape: CircleBorder(),
+                shape: RoundedRectangleBorder(),
                 padding: EdgeInsets.all(20),
                 backgroundColor: context
                     .watch<ThemeProvider>()

@@ -18,7 +18,7 @@ class C_hive extends HiveObject {
   C_hive({
     this.id = '0',
     this.note = '',
-    this.task = '--',
+    this.task = '',
     this.login = '',
     this.pass = '',
   });

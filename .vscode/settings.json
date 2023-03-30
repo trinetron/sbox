@@ -1,3 +1,7 @@
 {
-    "cmake.sourceDirectory": "${workspaceFolder}/build/windows/_deps/nuget-subbuild"
+    "cmake.sourceDirectory": "${workspaceFolder}/build/windows/_deps/nuget-subbuild",
+    "java.project.sourcePaths": [
+        ""
+    ],
+    "java.configuration.updateBuildConfiguration": "interactive"
 }

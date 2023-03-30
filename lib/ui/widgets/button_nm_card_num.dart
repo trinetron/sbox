@@ -29,16 +29,18 @@ class ButtonMN_CardNum extends StatelessWidget {
         child: NeumorphicButton(
           margin: const EdgeInsets.only(top: 0.0, bottom: 0.0),
           onPressed: () async {
-            await FlutterClipboard.copy(textBtn)
-                .then((value) => debugPrint('$textBtn copied'));
+            if (textBtn != '') {
+              await FlutterClipboard.copy(textBtn)
+                  .then((value) => debugPrint('$textBtn copied'));
 
-            // copied successfully
-            String tmpStr = textBtn;
-            tmpStr += ' - ';
-            tmpStr += LocaleKeys.c_copy.tr();
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text(tmpStr),
-            ));
+              // copied successfully
+              String tmpStr = textBtn;
+              tmpStr += ' - ';
+              tmpStr += LocaleKeys.c_copy.tr();
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(tmpStr),
+              ));
+            }
           },
           style: NeumorphicStyle(
               shape: NeumorphicShape.flat,

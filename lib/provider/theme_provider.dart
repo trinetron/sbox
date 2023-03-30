@@ -7,20 +7,24 @@ class ThemeProvider extends ChangeNotifier {
   final bColor = ColorsSHM();
   bool flgDark = false;
 
-  Color txtBGColor = Color.fromARGB(255, 216, 207, 216);
-  Color topColor = Color.fromARGB(255, 60, 128, 113);
-  var lightSource = LightSource.topLeft;
-  Color butColor = Color.fromRGBO(157, 148, 177, 1);
-  var depth = 6.0;
-  var intensity = 0.5;
+  Color txtBGColor = Colors.black;
+  Color topColor = Colors.black;
+  LightSource lightSource = LightSource.topLeft;
+  Color butColor = Colors.black;
+  double depth = 6.0;
+  double intensity = 0.5;
 
-  Color fillSelectedColor = Color.fromARGB(255, 228, 95, 255);
-  Color buttonText = Color.fromARGB(255, 0, 71, 153);
-  Color fillColor = Color.fromARGB(255, 218, 190, 245);
-  Color borderColor = Color.fromARGB(255, 58, 57, 57);
-  Color iconColor = Color.fromARGB(255, 3, 3, 3);
-  Color fillCardColor = Color.fromARGB(255, 199, 168, 202);
+  Color fillSelectedColor = Colors.black;
+  Color buttonText = Colors.black;
+  Color fillColor = Colors.black;
+  Color borderColor = Colors.black;
+  Color iconColor = Colors.black;
+  Color fillCardColor = Colors.black;
   Color textColor = Colors.black;
+
+  Color baseColor = Colors.black;
+  Color variantColor = Colors.black;
+  Color accentColor = Colors.black;
 
   void setThemeColor(bool flgDark) {
     if (!flgDark) {
@@ -38,6 +42,10 @@ class ThemeProvider extends ChangeNotifier {
       iconColor = bColor.iconL;
       fillCardColor = bColor.cardColorL;
       textColor = bColor.textColorL;
+
+      baseColor = bColor.baseColorL;
+      variantColor = bColor.appBarColorL;
+      accentColor = bColor.accentColorL;
     } else {
       txtBGColor = bColor.baseColorD;
       topColor = bColor.appBarColorD;
@@ -53,6 +61,10 @@ class ThemeProvider extends ChangeNotifier {
       iconColor = bColor.iconD;
       fillCardColor = bColor.cardColorD;
       textColor = bColor.textColorD;
+
+      baseColor = bColor.baseColorD;
+      variantColor = bColor.appBarColorD;
+      accentColor = bColor.accentColorD;
     }
     notifyListeners();
   }

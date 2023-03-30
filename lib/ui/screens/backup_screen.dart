@@ -63,9 +63,9 @@ class BackupScreenState extends State<BackupScreen> {
       child: Stack(
         children: [
           Scaffold(
-            backgroundColor: NeumorphicTheme.baseColor(context),
+            backgroundColor: context.watch<ThemeProvider>().baseColor,
             appBar: AppBar(
-              backgroundColor: NeumorphicTheme.accentColor(context),
+              backgroundColor: context.watch<ThemeProvider>().accentColor,
               automaticallyImplyLeading: false,
               title: Row(
                 children: [
@@ -289,7 +289,7 @@ class BackupScreenState extends State<BackupScreen> {
                         onPressed: () async {
                           Directory? appDocDir =
                               await getApplicationDocumentsDirectory();
-                          String? dir = appDocDir.path.toString().toLowerCase();
+                          String? dir = appDocDir.path;
                           String tmpText =
                               '\n\n$dir /sbox_accounts.csv \n\n$dir /sbox_accounts.csv ';
                           String filesPathText =
@@ -325,7 +325,7 @@ class BackupScreenState extends State<BackupScreen> {
                                     child: Icon(Icons.select_all_rounded,
                                         color: Colors.white),
                                     style: ElevatedButton.styleFrom(
-                                      shape: CircleBorder(),
+                                      shape: RoundedRectangleBorder(),
                                       padding: EdgeInsets.all(20),
                                       backgroundColor: context
                                           .watch<ThemeProvider>()
@@ -344,7 +344,7 @@ class BackupScreenState extends State<BackupScreen> {
                                     child:
                                         Icon(Icons.cancel, color: Colors.white),
                                     style: ElevatedButton.styleFrom(
-                                      shape: CircleBorder(),
+                                      shape: RoundedRectangleBorder(),
                                       padding: EdgeInsets.all(20),
                                       backgroundColor: context
                                           .watch<ThemeProvider>()
@@ -475,10 +475,10 @@ class BackupScreenState extends State<BackupScreen> {
                       // alignment: Alignment.bottomLeft,
                       child: MenuScreen(
                         msg: context.watch<MenuProvider>().msg,
-                        onMenuChanged: (String val) {
-                          debugPrint('val = $val');
-                          context.read<MenuProvider>().menuSet(val, context);
-                        },
+                        // onMenuChanged: (String val) {
+                        //   debugPrint('val = $val');
+                        //   context.read<MenuProvider>().menuSet(val, context);
+                        // },
                       ),
                     ),
                   ))),
@@ -540,7 +540,7 @@ class BackupScreenState extends State<BackupScreen> {
               },
               child: Icon(Icons.new_releases_outlined, color: Colors.white),
               style: ElevatedButton.styleFrom(
-                shape: CircleBorder(),
+                shape: RoundedRectangleBorder(),
                 padding: EdgeInsets.all(20),
                 backgroundColor: context
                     .watch<ThemeProvider>()
@@ -557,7 +557,7 @@ class BackupScreenState extends State<BackupScreen> {
               },
               child: Icon(Icons.cancel, color: Colors.white),
               style: ElevatedButton.styleFrom(
-                shape: CircleBorder(),
+                shape: RoundedRectangleBorder(),
                 padding: EdgeInsets.all(20),
                 backgroundColor: context
                     .watch<ThemeProvider>()

@@ -14,10 +14,24 @@ import 'package:sbox/provider/theme_provider.dart';
 import 'package:sbox/ui/screens/main_screen.dart';
 import 'package:sbox/ui/widgets/menu_setting.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   final bColor = ColorsSHM();
+
   String _pass = '';
+
   TextEditingController editingController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => checkNewDb(context));
+    debugPrint('checkNewDb');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +44,7 @@ class LoginScreen extends StatelessWidget {
               children: [
                 Expanded(
                   child: SizedBox(
-                    height: 10,
+                    height: 1,
                   ),
                 ),
                 Container(
@@ -46,14 +60,14 @@ class LoginScreen extends StatelessWidget {
                     // fit: BoxFit.fitHeight,
                     // fit: BoxFit.fitWidth,
                     // fit: BoxFit.scaleDown,
-                    'assets/logo3.riv',
+                    'assets/logo6.riv',
                     onInit: onInit,
                     alignment: Alignment.center,
                   ),
                 ),
                 Expanded(
                   child: SizedBox(
-                    height: 10,
+                    height: 1,
                   ),
                 ),
                 Expanded(
@@ -77,7 +91,7 @@ class LoginScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              const SizedBox(height: 5),
+                              const SizedBox(height: 1),
                               Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(6),
@@ -90,7 +104,7 @@ class LoginScreen extends StatelessWidget {
 
                                         Padding(
                                       padding: const EdgeInsets.only(
-                                          top: 5, bottom: 4, left: 3, right: 3),
+                                          top: 2, bottom: 2, left: 3, right: 3),
                                       child: Container(
                                         child: Align(
                                           alignment: Alignment.bottomCenter,
@@ -100,79 +114,6 @@ class LoginScreen extends StatelessWidget {
                                                 .borderColor,
                                             onChanged: (val) async {
                                               _pass = val;
-
-                                              bool check_db = await context
-                                                  .read<DatabaseProvider>()
-                                                  .dbFilesExists();
-
-                                              bool msg_check_db = await context
-                                                  .read<DatabaseProvider>()
-                                                  .msgFilesExist;
-
-                                              if ((!check_db) &&
-                                                  (!msg_check_db)) {
-                                                context
-                                                    .read<DatabaseProvider>()
-                                                    .msgdbFilesExists(true);
-                                                await showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return AlertDialog(
-                                                      titleTextStyle: TextStyle(
-                                                          color: context
-                                                              .watch<
-                                                                  ThemeProvider>()
-                                                              .textColor),
-                                                      contentTextStyle: TextStyle(
-                                                          color: context
-                                                              .watch<
-                                                                  ThemeProvider>()
-                                                              .textColor),
-                                                      backgroundColor: context
-                                                          .watch<
-                                                              ThemeProvider>()
-                                                          .fillCardColor,
-                                                      title: Text(LocaleKeys
-                                                          .check_m_pass
-                                                          .tr()),
-                                                      content: Text(LocaleKeys
-                                                          .set_new_pass
-                                                          .tr()),
-                                                      actions: <Widget>[
-                                                        ElevatedButton(
-                                                          onPressed: () {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop(false);
-                                                          },
-                                                          child: Icon(
-                                                              Icons.done,
-                                                              color:
-                                                                  Colors.white),
-                                                          style: ElevatedButton
-                                                              .styleFrom(
-                                                            shape:
-                                                                CircleBorder(),
-                                                            padding:
-                                                                EdgeInsets.all(
-                                                                    20),
-                                                            backgroundColor: context
-                                                                .watch<
-                                                                    ThemeProvider>()
-                                                                .txtBGColor, // <-- Button color
-                                                            //foregroundColor: _txtBGColor(context),// <-- Splash color
-                                                          ),
-                                                        )
-                                                      ],
-                                                    );
-                                                  },
-                                                );
-
-                                                debugPrint('check_dbFilesNO');
-                                              } else {
-                                                debugPrint('check_dbFilesOK');
-                                              }
                                             },
                                             style: TextStyle(
                                               fontSize: 15.0,
@@ -242,7 +183,7 @@ class LoginScreen extends StatelessWidget {
                                       ),
                                     ),
                                   )),
-                              const SizedBox(height: 20),
+                              const SizedBox(height: 10),
                               GestureDetector(
                                 onTap: () async {
                                   // try {
@@ -276,19 +217,72 @@ class LoginScreen extends StatelessWidget {
                                       .initialized) {
                                     // Navigator.of(context).push(MaterialPageRoute(
                                     //     builder: (context) => MainScreen()));
+                                    debugPrint('loginState OK');
+                                    context
+                                        .read<DatabaseProvider>()
+                                        .checkPassErr = false;
                                   } else {
                                     // ScaffoldMessenger.of(context)
                                     //     .showSnackBar(SnackBar(
                                     //   content: Text(LocaleKeys.pass_err.tr()),
                                     // ));
+                                    context
+                                        .read<DatabaseProvider>()
+                                        .checkPassErr = true;
+                                    debugPrint('loginState Err');
                                   }
 
-                                  //   debugPrint('pass check try run: ---');
-                                  // } catch (e) {
-                                  //   debugPrint('pass check error caught: $e');
+                                  bool checkPassErr = context
+                                      .read<DatabaseProvider>()
+                                      .checkPassErr;
 
-                                  //   debugPrint('err run: ---');
-                                  // }
+                                  if (checkPassErr) {
+                                    await showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          titleTextStyle: TextStyle(
+                                              color: context
+                                                  .watch<ThemeProvider>()
+                                                  .textColor),
+                                          contentTextStyle: TextStyle(
+                                              color: context
+                                                  .watch<ThemeProvider>()
+                                                  .textColor),
+                                          backgroundColor: context
+                                              .watch<ThemeProvider>()
+                                              .fillCardColor,
+                                          title: Text(
+                                              LocaleKeys.check_m_pass.tr()),
+                                          content: Text(
+                                              LocaleKeys.err_old_pass.tr()),
+                                          actions: <Widget>[
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                context
+                                                    .read<DatabaseProvider>()
+                                                    .checkPassErr;
+                                                Navigator.of(context)
+                                                    .pop(false);
+                                              },
+                                              child: Icon(Icons.done,
+                                                  color: Colors.white),
+                                              style: ElevatedButton.styleFrom(
+                                                shape: RoundedRectangleBorder(),
+                                                padding: EdgeInsets.all(20),
+                                                backgroundColor: context
+                                                    .watch<ThemeProvider>()
+                                                    .txtBGColor, // <-- Button color
+                                                //foregroundColor: _txtBGColor(context),// <-- Splash color
+                                              ),
+                                            )
+                                          ],
+                                        );
+                                      },
+                                    );
+
+                                    debugPrint('check_PassErr');
+                                  }
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
@@ -319,7 +313,7 @@ class LoginScreen extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 15),
+                              const SizedBox(height: 1),
                             ],
                           ),
                         ),
@@ -383,16 +377,60 @@ class LoginScreen extends StatelessWidget {
                       // alignment: Alignment.bottomLeft,
                       child: MenuScreen(
                         msg: context.watch<MenuProvider>().msg,
-                        onMenuChanged: (String val) {
-                          debugPrint('val = $val');
-                          context.read<MenuProvider>().menuSet(val, context);
-                        },
+                        // onMenuChanged: (String val) {
+                        //   debugPrint('val = $val');
+                        //   context.read<MenuProvider>().menuSet(val, context);
+                        // },
                       ),
                     ),
                   ))),
         ],
       ),
     );
+  }
+
+  Future<void> checkNewDb(BuildContext context) async {
+    bool check_db = await context.read<DatabaseProvider>().dbFilesExists();
+
+    bool msg_check_db = await context.read<DatabaseProvider>().msgFilesExist;
+
+    if ((!check_db) && (!msg_check_db)) {
+      context.read<DatabaseProvider>().msgdbFilesExists(true);
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            titleTextStyle:
+                TextStyle(color: context.watch<ThemeProvider>().textColor),
+            contentTextStyle:
+                TextStyle(color: context.watch<ThemeProvider>().textColor),
+            backgroundColor: context.watch<ThemeProvider>().fillCardColor,
+            title: Text(LocaleKeys.check_m_pass.tr()),
+            content: Text(LocaleKeys.set_new_pass.tr()),
+            actions: <Widget>[
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+                child: Icon(Icons.done, color: Colors.white),
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(),
+                  padding: EdgeInsets.all(20),
+                  backgroundColor: context
+                      .watch<ThemeProvider>()
+                      .txtBGColor, // <-- Button color
+                  //foregroundColor: _txtBGColor(context),// <-- Splash color
+                ),
+              )
+            ],
+          );
+        },
+      );
+
+      debugPrint('check_dbFilesNO');
+    } else {
+      debugPrint('check_dbFilesOK');
+    }
   }
 
   void onInit(Artboard artboard) async {
