@@ -170,14 +170,14 @@ class CardScreenState extends State<CardScreen> {
                                       fontSize: 15.0,
                                       color: context
                                           .watch<ThemeProvider>()
-                                          .borderColor,
+                                          .textColor,
                                     ),
                                     hintText: '  ' + LocaleKeys.c_search.tr(),
                                     prefixIcon: Icon(
                                       Icons.search,
                                       color: context
                                           .watch<ThemeProvider>()
-                                          .borderColor,
+                                          .textColor,
                                     ),
                                     suffixIcon: IconButton(
                                       icon: Icon(

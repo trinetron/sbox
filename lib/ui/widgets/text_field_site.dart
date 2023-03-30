@@ -48,11 +48,15 @@ class TextFieldSite extends StatelessWidget {
           hoverColor: context.watch<ThemeProvider>().textColor,
           labelStyle: TextStyle(
             fontSize: 15.0,
-            color: context.watch<ThemeProvider>().borderColor,
+            color: context.watch<ThemeProvider>().fillSelectedColor,
           ),
           hintStyle: TextStyle(
             fontSize: 15.0,
             color: context.watch<ThemeProvider>().borderColor,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+                color: context.watch<ThemeProvider>().borderColor, width: 2.0),
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(6),

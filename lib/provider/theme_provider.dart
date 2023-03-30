@@ -15,7 +15,7 @@ class ThemeProvider extends ChangeNotifier {
   double intensity = 0.5;
 
   Color fillSelectedColor = Colors.black;
-  Color buttonText = Colors.black;
+  Color buttonFill = Colors.black;
   Color fillColor = Colors.black;
   Color borderColor = Colors.black;
   Color iconColor = Colors.black;
@@ -36,7 +36,7 @@ class ThemeProvider extends ChangeNotifier {
       intensity = bColor.intensityL;
 
       fillSelectedColor = bColor.radioFillL;
-      buttonText = bColor.buttonTextL;
+      buttonFill = bColor.buttonTextL;
       fillColor = bColor.buttonFillL;
       borderColor = bColor.borderL;
       iconColor = bColor.iconL;
@@ -55,7 +55,7 @@ class ThemeProvider extends ChangeNotifier {
       intensity = bColor.intensityD;
 
       fillSelectedColor = bColor.radioFillD;
-      buttonText = bColor.buttonTextD;
+      buttonFill = bColor.buttonTextD;
       fillColor = bColor.buttonFillD;
       borderColor = bColor.borderD;
       iconColor = bColor.iconD;

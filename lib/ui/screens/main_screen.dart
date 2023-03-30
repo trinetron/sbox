@@ -164,7 +164,7 @@ class MainScreenState extends State<MainScreen> {
                                             fontSize: 15.0,
                                             color: context
                                                 .watch<ThemeProvider>()
-                                                .borderColor,
+                                                .textColor,
                                           ),
                                           hintText:
                                               '  ' + LocaleKeys.c_search.tr(),
@@ -172,7 +172,7 @@ class MainScreenState extends State<MainScreen> {
                                             Icons.search,
                                             color: context
                                                 .watch<ThemeProvider>()
-                                                .borderColor,
+                                                .textColor,
                                           ),
                                           suffixIcon: IconButton(
                                             icon: Icon(

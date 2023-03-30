@@ -9,8 +9,8 @@ class ColorsSHM {
   final depthL = 6.0;
   final intensityL = 0.5;
 
-  Color radioFillL = Color.fromARGB(255, 228, 95, 255);
-  Color buttonTextL = Color.fromARGB(255, 0, 71, 153);
+  Color radioFillL = Color.fromARGB(255, 94, 2, 131);
+  Color buttonTextL = Color.fromARGB(255, 228, 95, 255);
   Color buttonFillL = Color.fromARGB(255, 218, 190, 245);
   Color borderL = Color.fromARGB(255, 58, 57, 57);
   Color iconL = Color.fromARGB(255, 3, 3, 3);

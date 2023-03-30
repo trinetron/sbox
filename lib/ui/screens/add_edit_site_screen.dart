@@ -253,7 +253,7 @@ class _AddSiteState extends State<AddSite> {
                                         lightSource: LightSource.topLeft,
                                         selectedColor: context
                                             .watch<ThemeProvider>()
-                                            .fillSelectedColor,
+                                            .buttonFill,
                                         unselectedColor: context
                                             .watch<ThemeProvider>()
                                             .fillColor,
@@ -428,7 +428,7 @@ class _AddSiteState extends State<AddSite> {
                     max: 25,
                     style: SliderStyle(
                       accent: Colors.deepPurple,
-                      variant: context.watch<ThemeProvider>().fillSelectedColor,
+                      variant: context.watch<ThemeProvider>().buttonFill,
                     ),
                     value:
                         context.watch<AddSiteProvider>().lengthVol.toDouble(),
@@ -453,9 +453,8 @@ class _AddSiteState extends State<AddSite> {
                         child: NeumorphicSwitch(
                           value: context.watch<AddSiteProvider>().letter,
                           style: NeumorphicSwitchStyle(
-                              activeTrackColor: context
-                                  .watch<ThemeProvider>()
-                                  .fillSelectedColor,
+                              activeTrackColor:
+                                  context.watch<ThemeProvider>().buttonFill,
                               activeThumbColor: Colors.deepPurple,
                               thumbShape: NeumorphicShape.flat
                               //or convex, concave
@@ -486,9 +485,8 @@ class _AddSiteState extends State<AddSite> {
                         child: NeumorphicSwitch(
                           value: context.watch<AddSiteProvider>().isSpecial,
                           style: NeumorphicSwitchStyle(
-                              activeTrackColor: context
-                                  .watch<ThemeProvider>()
-                                  .fillSelectedColor,
+                              activeTrackColor:
+                                  context.watch<ThemeProvider>().buttonFill,
                               activeThumbColor: Colors.deepPurple,
                               thumbShape: NeumorphicShape.flat
                               //or convex, concave
@@ -521,9 +519,8 @@ class _AddSiteState extends State<AddSite> {
                         child: NeumorphicSwitch(
                           value: context.watch<AddSiteProvider>().isNumber,
                           style: NeumorphicSwitchStyle(
-                              activeTrackColor: context
-                                  .watch<ThemeProvider>()
-                                  .fillSelectedColor,
+                              activeTrackColor:
+                                  context.watch<ThemeProvider>().buttonFill,
                               activeThumbColor: Colors.deepPurple,
                               thumbShape: NeumorphicShape.flat
                               //or convex, concave

@@ -37,7 +37,7 @@ class ButtonQuestionCard extends StatelessWidget {
               width: 0.8,
             ),
             lightSource: LightSource.topLeft,
-            selectedColor: context.watch<ThemeProvider>().fillSelectedColor,
+            selectedColor: context.watch<ThemeProvider>().buttonFill,
             unselectedColor: context.watch<ThemeProvider>().fillColor,
           ),
           groupValue: context.watch<AddCardProvider>().hintOn(num),
