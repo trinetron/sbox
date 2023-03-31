@@ -127,7 +127,7 @@ class CardScreenState extends State<CardScreen> {
                   physics: ScrollPhysics(),
                   child: Column(
                     children: <Widget>[
-                      TopBodyText(textLbl: LocaleKeys.confirm.tr()),
+                      TopBodyText(textLbl: LocaleKeys.cards_lbl.tr()),
                       //>>>>>
                       Container(
                         child: SizedBox(

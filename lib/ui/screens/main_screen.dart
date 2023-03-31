@@ -118,7 +118,7 @@ class MainScreenState extends State<MainScreen> {
                   physics: ScrollPhysics(),
                   child: Column(
                     children: <Widget>[
-                      TopBodyText(textLbl: LocaleKeys.confirm.tr()),
+                      TopBodyText(textLbl: LocaleKeys.acc_s_lbl.tr()),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.end,

@@ -8,6 +8,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:sbox/provider/add_edit_site_provider.dart';
 import 'package:sbox/provider/permissions_provider.dart';
 import 'package:flutter/services.dart';
+import 'package:sbox/provider/sound_provider.dart';
 import 'package:sbox/provider/theme_provider.dart';
 
 class ButtonPastSite extends StatelessWidget {
@@ -45,6 +46,7 @@ class ButtonPastSite extends StatelessWidget {
           groupValue: 12,
           value: 0,
           onChanged: (value) async => {
+            context.read<SoundProvider>().playSound('button'),
             FlutterClipboard.paste().then((value) {
               context.read<AddSiteProvider>().changeDataText(value, num);
               // newDataText = value;

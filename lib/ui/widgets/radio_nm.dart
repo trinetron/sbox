@@ -2,6 +2,7 @@ import 'package:flutter_neumorphic_null_safety/flutter_neumorphic.dart';
 import 'package:provider/provider.dart';
 import 'package:sbox/models/design/theme.dart';
 import 'package:sbox/provider/radio_provider.dart';
+import 'package:sbox/provider/sound_provider.dart';
 import 'package:sbox/provider/theme_provider.dart';
 
 class radioWidget extends StatelessWidget {
@@ -46,6 +47,7 @@ class radioWidget extends StatelessWidget {
             groupValue: context.watch<RadioProvider>().data,
             value: 1,
             onChanged: (value) => {
+              context.read<SoundProvider>().playSound('button'),
               context.read<RadioProvider>().changeInt(1, context),
               debugPrint('changeInt(1)'),
             },
@@ -99,6 +101,7 @@ class radioWidget extends StatelessWidget {
             groupValue: context.watch<RadioProvider>().data,
             value: 2,
             onChanged: (value) => {
+              context.read<SoundProvider>().playSound('button'),
               context.read<RadioProvider>().changeInt(2, context),
               debugPrint('changeInt(2)'),
             },

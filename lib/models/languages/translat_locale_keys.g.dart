@@ -1,6 +1,6 @@
 // DO NOT EDIT. This is code generated via package:easy_localization/generate.dart
 
-abstract class  LocaleKeys {
+abstract class LocaleKeys {
   static const c_add = 'c_add';
   static const c_cancel = 'c_cancel';
   static const box_empty = 'box_empty';
@@ -47,5 +47,22 @@ abstract class  LocaleKeys {
   static const deleteQ = 'deleteQ';
   static const delete = 'delete';
   static const edit = 'edit';
-
+  static const acc_s_lbl = 'acc_s_lbl';
+  static const cr_edit_acc = 'cr_edit_acc';
+  static const cards_lbl = 'cards_lbl';
+  static const cr_edit_card = 'cr_edit_card';
+  static const optin_lbl = 'optin_lbl';
+  static const chng_mass_pass = 'chng_mass_pass';
+  static const dload_db_csv = 'dload_db_csv';
+  static const gen_pass_lbl = 'gen_pass_lbl';
+  static const gen_pass_dec = 'gen_pass_dec';
+  static const gen_pass_az = 'gen_pass_az';
+  static const gen_pass_sim = 'gen_pass_sim';
+  static const gen_pass_dig = 'gen_pass_dig';
+  static const mass_pass_lbl = 'mass_pass_lbl';
+  static const mass_pass_dec = 'mass_pass_dec';
+  static const err_pass = 'err_pass';
+  static const entr_pass_lbl = 'entr_pass_lbl';
+  static const r_backup_dec = 'r_backup_dec';
+  static const csv_dec = 'csv_dec';
 }

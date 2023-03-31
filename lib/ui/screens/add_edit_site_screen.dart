@@ -18,6 +18,7 @@ import 'package:sbox/ui/widgets/radio_button_nm.dart';
 import 'dart:math';
 
 import 'package:sbox/ui/widgets/text_field_site.dart';
+import 'package:sbox/ui/widgets/top_body_text.dart';
 
 @immutable
 class AddSite extends StatefulWidget {
@@ -50,9 +51,10 @@ class _AddSiteState extends State<AddSite> {
             child: Container(
               child: Padding(
                 padding:
-                    const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20),
+                    const EdgeInsets.symmetric(vertical: 0.0, horizontal: 20),
                 child: Column(
                   children: [
+                    TopBodyText(textLbl: LocaleKeys.cr_edit_acc.tr()),
                     SizedBox(height: 20),
 
                     // addTextFieldWidget(objNum: 1),
@@ -374,6 +376,7 @@ class _AddSiteState extends State<AddSite> {
                     SizedBox(height: 30),
 
                     ButtonFormAdd(),
+                    SizedBox(height: 30),
                   ],
                 ),
               ),
@@ -396,12 +399,12 @@ class _AddSiteState extends State<AddSite> {
           contentTextStyle:
               TextStyle(color: context.watch<ThemeProvider>().textColor),
           backgroundColor: context.watch<ThemeProvider>().fillColor,
-          title: Text(LocaleKeys.add_pass.tr()),
+          title: Text(LocaleKeys.gen_pass_lbl.tr()),
           content: Align(
             alignment: Alignment.topLeft,
             child: Column(
               children: [
-                Text(LocaleKeys.set_new_pass.tr()),
+                Text(LocaleKeys.gen_pass_dec.tr()),
                 SizedBox(
                   height: 30,
                 ),
@@ -466,7 +469,7 @@ class _AddSiteState extends State<AddSite> {
                       ),
                       SizedBox(width: 20),
                       Text(
-                        LocaleKeys.add_gen.tr(),
+                        LocaleKeys.gen_pass_az.tr(),
                         style: TextStyle(
                             color: context.watch<ThemeProvider>().textColor),
                       ),
@@ -500,7 +503,7 @@ class _AddSiteState extends State<AddSite> {
                       ),
                       SizedBox(width: 20),
                       Text(
-                        LocaleKeys.add_gen.tr(),
+                        LocaleKeys.gen_pass_sim.tr(),
                         style: TextStyle(
                             color: context.watch<ThemeProvider>().textColor),
                       ),
@@ -534,7 +537,7 @@ class _AddSiteState extends State<AddSite> {
                       ),
                       SizedBox(width: 20),
                       Text(
-                        LocaleKeys.add_gen.tr(),
+                        LocaleKeys.gen_pass_dig.tr(),
                         style: TextStyle(
                             color: context.watch<ThemeProvider>().textColor),
                       ),

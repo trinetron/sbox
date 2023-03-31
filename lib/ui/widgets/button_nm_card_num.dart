@@ -7,6 +7,7 @@ import 'package:sbox/models/design/theme.dart';
 import 'package:sbox/models/languages/translat_locale_keys.g.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:sbox/provider/permissions_provider.dart';
+import 'package:sbox/provider/sound_provider.dart';
 import 'package:sbox/provider/theme_provider.dart';
 
 class ButtonMN_CardNum extends StatelessWidget {
@@ -29,6 +30,7 @@ class ButtonMN_CardNum extends StatelessWidget {
         child: NeumorphicButton(
           margin: const EdgeInsets.only(top: 0.0, bottom: 0.0),
           onPressed: () async {
+            context.read<SoundProvider>().playSound('button');
             if (textBtn != '') {
               await FlutterClipboard.copy(textBtn)
                   .then((value) => debugPrint('$textBtn copied'));

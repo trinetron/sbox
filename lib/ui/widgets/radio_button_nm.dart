@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:sbox/models/design/theme.dart';
 import 'package:sbox/provider/add_edit_site_provider.dart';
 import 'package:sbox/provider/radio_provider.dart';
+import 'package:sbox/provider/sound_provider.dart';
 import 'package:sbox/provider/theme_provider.dart';
 
 class radioButtonWidget extends StatelessWidget {
@@ -46,8 +47,10 @@ class radioButtonWidget extends StatelessWidget {
             ),
             // groupValue: context.watch<AddSiteProvider>().hintOn,
             // value: context.watch<AddSiteProvider>().hintOn2,
-            onChanged: (value) =>
-                context.read<AddSiteProvider>().changeHintOn(objNum),
+            onChanged: (value) => {
+              context.read<SoundProvider>().playSound('button'),
+              context.read<AddSiteProvider>().changeHintOn(objNum),
+            },
             child: Center(
               child: NeumorphicIcon(
                 Icons.question_mark,

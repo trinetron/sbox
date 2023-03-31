@@ -462,6 +462,8 @@ class DatabaseProvider extends ChangeNotifier {
       debugPrint('dir2 $dir2');
 
       if (checkZip) {
+        await delFile(File(dir + '/' + listFiles[0]));
+        await delFile(File(dir + '/' + listFiles[1]));
         return true;
       } else {
         return false;

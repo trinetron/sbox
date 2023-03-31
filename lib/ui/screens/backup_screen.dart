@@ -2,6 +2,9 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_neumorphic_null_safety/flutter_neumorphic.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sbox/models/local_db/hive_names.dart';
@@ -18,6 +21,7 @@ import 'package:sbox/models/design/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_neumorphic_null_safety/flutter_neumorphic.dart';
 import 'package:sbox/provider/theme_provider.dart';
+import 'package:sbox/ui/screens/add_edit_site_screen.dart';
 import 'package:sbox/ui/screens/login_screen.dart';
 import 'package:sbox/ui/widgets/button_appbar.dart';
 import 'package:sbox/ui/widgets/button_appbar_backup.dart';
@@ -97,7 +101,7 @@ class BackupScreenState extends State<BackupScreen> {
                 physics: ScrollPhysics(),
                 child: Column(
                   children: <Widget>[
-                    TopBodyText(textLbl: LocaleKeys.confirm.tr()),
+                    TopBodyText(textLbl: LocaleKeys.optin_lbl.tr()),
                     SizedBox(
                       height: 30,
                     ),
@@ -107,6 +111,7 @@ class BackupScreenState extends State<BackupScreen> {
                       child: NeumorphicButton(
                         margin: const EdgeInsets.only(top: 0.0, bottom: 0.0),
                         onPressed: () {
+                          context.read<SoundProvider>().playSound('save');
                           context
                               .read<DatabaseProvider>()
                               .backupDbFile(context);
@@ -169,10 +174,70 @@ class BackupScreenState extends State<BackupScreen> {
                       child: NeumorphicButton(
                         margin: const EdgeInsets.only(top: 0.0, bottom: 0.0),
                         onPressed: () async {
-                          context
-                              .read<DatabaseProvider>()
-                              .restoreDbFile(context);
+                          context.read<SoundProvider>().playSound('err');
+                          await showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                titleTextStyle: TextStyle(
+                                    color: context
+                                        .watch<ThemeProvider>()
+                                        .textColor),
+                                contentTextStyle: TextStyle(
+                                    color: context
+                                        .watch<ThemeProvider>()
+                                        .textColor),
+                                backgroundColor: context
+                                    .watch<ThemeProvider>()
+                                    .fillCardColor,
+                                title: Text(LocaleKeys.confirm.tr()),
+                                content: Text(LocaleKeys.r_backup_dec.tr()),
+                                actions: <Widget>[
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      context
+                                          .read<DatabaseProvider>()
+                                          .restoreDbFile(context);
+                                      //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                      Navigator.of(context).pop(true);
+                                    },
+                                    child: Icon(Icons.download_done,
+                                        color: Colors.white),
+                                    style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(),
+                                      padding: EdgeInsets.all(20),
+                                      backgroundColor: context
+                                          .watch<ThemeProvider>()
+                                          .fillSelectedColor, // <-- Button color
+                                      foregroundColor:
+                                          Colors.red, // <-- Splash color
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 20,
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop(false);
+                                    },
+                                    child:
+                                        Icon(Icons.cancel, color: Colors.white),
+                                    style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(),
+                                      padding: EdgeInsets.all(20),
+                                      backgroundColor: context
+                                          .watch<ThemeProvider>()
+                                          .fillSelectedColor, // <-- Button color
+                                      foregroundColor:
+                                          Colors.red, // <-- Splash color
+                                    ),
+                                  )
+                                ],
+                              );
+                            },
+                          );
                         },
+
                         style: NeumorphicStyle(
                             shape: NeumorphicShape.flat,
                             boxShape: NeumorphicBoxShape.roundRect(
@@ -232,6 +297,7 @@ class BackupScreenState extends State<BackupScreen> {
                       child: NeumorphicButton(
                         margin: const EdgeInsets.only(top: 0.0, bottom: 0.0),
                         onPressed: () async {
+                          context.read<SoundProvider>().playSound('err');
                           _showModalChangeMasterPass(context);
                         },
                         style: NeumorphicStyle(
@@ -265,7 +331,7 @@ class BackupScreenState extends State<BackupScreen> {
                               child: Align(
                                 alignment: Alignment.center,
                                 child: Text(
-                                  LocaleKeys.load_back.tr(),
+                                  LocaleKeys.chng_mass_pass.tr(),
                                   style: TextStyle(
                                       fontSize: 12,
                                       color: context
@@ -287,13 +353,7 @@ class BackupScreenState extends State<BackupScreen> {
                       child: NeumorphicButton(
                         margin: const EdgeInsets.only(top: 0.0, bottom: 0.0),
                         onPressed: () async {
-                          Directory? appDocDir =
-                              await getApplicationDocumentsDirectory();
-                          String? dir = appDocDir.path;
-                          String tmpText =
-                              '\n\n$dir /sbox_accounts.csv \n\n$dir /sbox_accounts.csv ';
-                          String filesPathText =
-                              LocaleKeys.deleteQ.tr() + '\n' + tmpText;
+                          context.read<SoundProvider>().playSound('err');
                           await showDialog(
                             context: context,
                             builder: (BuildContext context) {
@@ -310,11 +370,14 @@ class BackupScreenState extends State<BackupScreen> {
                                     .watch<ThemeProvider>()
                                     .fillCardColor,
                                 title: Text(LocaleKeys.confirm.tr()),
-                                content: Text(filesPathText),
+                                content: Text(LocaleKeys.csv_dec.tr()),
                                 actions: <Widget>[
                                   ElevatedButton(
                                     onPressed: () {
                                       //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                      context
+                                          .read<SoundProvider>()
+                                          .playSound('save');
                                       context
                                           .read<DatabaseProvider>()
                                           .generateCsvFiles();
@@ -394,7 +457,7 @@ class BackupScreenState extends State<BackupScreen> {
                               child: Align(
                                 alignment: Alignment.center,
                                 child: Text(
-                                  LocaleKeys.load_back.tr(),
+                                  LocaleKeys.dload_db_csv.tr(),
                                   style: TextStyle(
                                       fontSize: 12,
                                       color: context
@@ -501,7 +564,7 @@ class BackupScreenState extends State<BackupScreen> {
           contentTextStyle:
               TextStyle(color: context.watch<ThemeProvider>().textColor),
           backgroundColor: context.watch<ThemeProvider>().fillColor,
-          title: Text(LocaleKeys.add_pass.tr()),
+          title: Text(LocaleKeys.chng_mass_pass.tr()),
           content: Align(
             alignment: Alignment.topLeft,
             child: Column(
@@ -520,7 +583,7 @@ class BackupScreenState extends State<BackupScreen> {
                     //   ),
                     // ),
                     TextFieldMasterPass(
-                      textLbl: LocaleKeys.c_pass.tr(),
+                      textLbl: LocaleKeys.mass_pass_lbl.tr(),
                     ),
                   ],
                 ),
@@ -532,6 +595,7 @@ class BackupScreenState extends State<BackupScreen> {
           actions: <Widget>[
             ElevatedButton(
               onPressed: () async {
+                context.read<SoundProvider>().playSound('save');
                 context.read<DatabaseProvider>().changeMasterPass();
                 // editingController.text =
                 //     await context.read<AddSiteProvider>().genPassVol;

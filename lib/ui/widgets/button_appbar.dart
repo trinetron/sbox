@@ -5,6 +5,7 @@ import 'package:sbox/models/design/theme.dart';
 import 'package:sbox/models/languages/translat_locale_keys.g.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:sbox/provider/add_edit_site_provider.dart';
+import 'package:sbox/provider/sound_provider.dart';
 import 'package:sbox/provider/theme_provider.dart';
 import 'package:sbox/ui/screens/add_edit_site_screen.dart';
 
@@ -27,6 +28,7 @@ class ButtonAppBarAdd extends StatelessWidget {
         child: NeumorphicButton(
           margin: EdgeInsets.only(left: 3),
           onPressed: () => {
+            context.read<SoundProvider>().playSound('button'),
             context.read<AddSiteProvider>().cleanDataText(),
             context.read<AddSiteProvider>().changeFlgAddSite(true),
             Navigator.of(context).push(

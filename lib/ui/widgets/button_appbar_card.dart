@@ -6,6 +6,7 @@ import 'package:sbox/models/languages/translat_locale_keys.g.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:sbox/provider/add_card_provider.dart';
 import 'package:sbox/provider/add_edit_site_provider.dart';
+import 'package:sbox/provider/sound_provider.dart';
 import 'package:sbox/provider/theme_provider.dart';
 import 'package:sbox/ui/screens/add_edit_card_screen.dart';
 import 'package:sbox/ui/screens/add_edit_site_screen.dart';
@@ -29,6 +30,7 @@ class ButtonAppBarCardAdd extends StatelessWidget {
         child: NeumorphicButton(
           margin: EdgeInsets.only(left: 3),
           onPressed: () => {
+            context.read<SoundProvider>().playSound('button'),
             context.read<AddCardProvider>().cleanDataText(),
             context.read<AddCardProvider>().changeFlgAddCard(true),
             Navigator.of(context).push(

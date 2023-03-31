@@ -20,6 +20,7 @@ import 'package:sbox/ui/widgets/button_question_site.dart';
 import 'package:sbox/ui/widgets/radio_button_nm.dart';
 import 'package:sbox/ui/widgets/text_field_card.dart';
 import 'package:sbox/ui/widgets/text_field_site.dart';
+import 'package:sbox/ui/widgets/top_body_text.dart';
 
 @immutable
 class AddCard extends StatelessWidget {
@@ -43,9 +44,10 @@ class AddCard extends StatelessWidget {
             child: Container(
               child: Padding(
                 padding:
-                    const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20),
+                    const EdgeInsets.symmetric(vertical: 0.0, horizontal: 20),
                 child: Column(
                   children: [
+                    TopBodyText(textLbl: LocaleKeys.cr_edit_card.tr()),
                     SizedBox(height: 20),
 
                     // addTextFieldWidget(objNum: 1),
@@ -471,6 +473,7 @@ class AddCard extends StatelessWidget {
                     const SizedBox(height: 30),
 
                     ButtonFormCardAdd(),
+                    SizedBox(height: 30),
                   ],
                 ),
               ),
