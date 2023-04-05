@@ -1,30 +1,52 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
-
-import 'package:sbox/main.dart';
+import 'package:flutter/src/widgets/framework.dart';
+import 'package:provider/provider.dart';
+import 'package:test/test.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:sbox/provider/db_provider.dart';
+import 'package:archive/archive.dart';
+import 'dart:io';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  group('DatabaseProvider', () {
+    late DatabaseProvider provider;
+    var bbb = DatabaseProvider();
+    setUp(() {});
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    WidgetsFlutterBinding.ensureInitialized();
+    BuildContext context;
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    test('Test zipPack function', () async {
+      // create temporary file and directory for testing
+      final tempdir = await getApplicationDocumentsDirectory();
+      final filename = '${tempdir.path}/test.zip';
+      final dir = await Directory('${tempdir.path}').create();
+      await File('${dir.path}/test.txt').writeAsString('hello world');
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+      // create list of files to add to archive
+      final fileList = ['test.txt'];
+
+      debugPrint(dir.path);
+      debugPrint(filename);
+      debugPrint(fileList.toString());
+
+      // call the zipPack function and check its return value
+
+      expect(await bbb.zipPack(dir.path, filename, fileList), true);
+
+      // expect(
+      //     Provider.of<DatabaseProvider>.zipPack(dir.path, filename, fileList));
+
+      // check that the zip file was created and has the correct contents
+      final bytes = await File(filename).readAsBytes();
+      final archive = ZipDecoder().decodeBytes(bytes);
+      expect(archive.numberOfFiles(), equals(1));
+      expect(archive.files[0].name, equals('test.txt'));
+      expect(archive.files[0].content, equals('hello world'.codeUnits));
+
+      // clean up the temporary files and directory
+      await File(filename).delete();
+      await dir.delete(recursive: true);
+    });
   });
 }

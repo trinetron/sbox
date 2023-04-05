@@ -1,6 +1,6 @@
 // DO NOT EDIT. This is code generated via package:easy_localization/generate.dart
 
-abstract class LocaleKeys {
+abstract class  LocaleKeys {
   static const c_add = 'c_add';
   static const c_cancel = 'c_cancel';
   static const box_empty = 'box_empty';
@@ -65,4 +65,5 @@ abstract class LocaleKeys {
   static const entr_pass_lbl = 'entr_pass_lbl';
   static const r_backup_dec = 'r_backup_dec';
   static const csv_dec = 'csv_dec';
+
 }

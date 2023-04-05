@@ -24,6 +24,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final bColor = ColorsSHM();
 
+  bool checkPassErr = false;
+
   String _pass = '';
 
   TextEditingController editingController = TextEditingController();
@@ -120,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                                               Padding(
                                             padding: const EdgeInsets.only(
-                                                top: 2,
+                                                top: 5,
                                                 bottom: 2,
                                                 left: 3,
                                                 right: 3),
@@ -217,8 +219,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                     const SizedBox(height: 10),
                                     GestureDetector(
                                       onTap: () async {
-                                        // try {
-
                                         context
                                             .read<DatabaseProvider>()
                                             .changeDataLogin(_pass);
@@ -231,7 +231,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                             .read<StateProvider>()
                                             .changeInit(false);
 
-                                        context
+                                        await context
                                             .read<DatabaseProvider>()
                                             .initSecBD(context);
                                         debugPrint('ok2');
@@ -249,75 +249,94 @@ class _LoginScreenState extends State<LoginScreen> {
                                           // Navigator.of(context).push(MaterialPageRoute(
                                           //     builder: (context) => MainScreen()));
                                           debugPrint('loginState OK');
-                                          context
-                                              .read<DatabaseProvider>()
-                                              .checkPassErr = false;
+                                          // context
+                                          //     .read<DatabaseProvider>()
+                                          //     .checkPassErr = false;
+                                          // checkPassErr = false;
+                                          // await Navigator.of(context).push(
+                                          //     PageRouteBuilder(
+                                          //         pageBuilder:
+                                          //             (context, a1, a2) =>
+                                          //                 MainScreen()));
                                         } else {
                                           // ScaffoldMessenger.of(context)
                                           //     .showSnackBar(SnackBar(
                                           //   content: Text(LocaleKeys.pass_err.tr()),
                                           // ));
-                                          context
-                                              .read<DatabaseProvider>()
-                                              .checkPassErr = true;
+                                          // context
+                                          //     .read<DatabaseProvider>()
+                                          //     .checkPassErr = true;
+                                          // checkPassErr = true;
+
                                           debugPrint('loginState Err');
                                         }
 
-                                        bool checkPassErr = context
+                                        bool loginState = false;
+                                        loginState = await context
+                                            .read<StateProvider>()
+                                            .initialized;
+
+                                        checkPassErr = await context
                                             .read<DatabaseProvider>()
                                             .checkPassErr;
 
-                                        if (checkPassErr) {
-                                          await showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                titleTextStyle: TextStyle(
-                                                    color: context
-                                                        .watch<ThemeProvider>()
-                                                        .textColor),
-                                                contentTextStyle: TextStyle(
-                                                    color: context
-                                                        .watch<ThemeProvider>()
-                                                        .textColor),
-                                                backgroundColor: context
-                                                    .watch<ThemeProvider>()
-                                                    .fillCardColor,
-                                                title: Text(LocaleKeys
-                                                    .check_m_pass
-                                                    .tr()),
-                                                content: Text(LocaleKeys
-                                                    .err_old_pass
-                                                    .tr()),
-                                                actions: <Widget>[
-                                                  ElevatedButton(
-                                                    onPressed: () {
-                                                      context
-                                                          .read<
-                                                              DatabaseProvider>()
-                                                          .checkPassErr;
-                                                      Navigator.of(context)
-                                                          .pop(false);
-                                                    },
-                                                    child: Icon(Icons.done,
-                                                        color: Colors.white),
-                                                    style: ElevatedButton
-                                                        .styleFrom(
-                                                      shape:
-                                                          RoundedRectangleBorder(),
-                                                      padding:
-                                                          EdgeInsets.all(20),
-                                                      backgroundColor: context
-                                                          .watch<
-                                                              ThemeProvider>()
-                                                          .txtBGColor, // <-- Button color
-                                                      //foregroundColor: _txtBGColor(context),// <-- Splash color
-                                                    ),
-                                                  )
-                                                ],
-                                              );
-                                            },
-                                          );
+                                        if ((await checkPassErr) &&
+                                            (await !loginState)) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(SnackBar(
+                                            content:
+                                                Text(LocaleKeys.pass_err.tr()),
+                                          ));
+
+                                          // await showDialog(
+                                          //   context: context,
+                                          //   builder: (BuildContext context) {
+                                          //     return AlertDialog(
+                                          //       titleTextStyle: TextStyle(
+                                          //           color: context
+                                          //               .watch<ThemeProvider>()
+                                          //               .textColor),
+                                          //       contentTextStyle: TextStyle(
+                                          //           color: context
+                                          //               .watch<ThemeProvider>()
+                                          //               .textColor),
+                                          //       backgroundColor: context
+                                          //           .watch<ThemeProvider>()
+                                          //           .fillCardColor,
+                                          //       title: Text(LocaleKeys
+                                          //           .check_m_pass
+                                          //           .tr()),
+                                          //       content: Text(
+                                          //           LocaleKeys.err_pass.tr()),
+                                          //       actions: <Widget>[
+                                          //         ElevatedButton(
+                                          //           onPressed: () {
+                                          //             context
+                                          //                 .read<
+                                          //                     DatabaseProvider>()
+                                          //                 .checkPassErr;
+                                          //             Navigator.of(context)
+                                          //                 .pop(false);
+                                          //           },
+                                          //           child: Icon(Icons.done,
+                                          //               color: Colors.white),
+                                          //           style: ElevatedButton
+                                          //               .styleFrom(
+                                          //             shape:
+                                          //                 RoundedRectangleBorder(),
+                                          //             padding:
+                                          //                 EdgeInsets.all(20),
+                                          //             backgroundColor: context
+                                          //                 .watch<
+                                          //                     ThemeProvider>()
+                                          //                 .txtBGColor, // <-- Button color
+                                          //             //foregroundColor: _txtBGColor(context),// <-- Splash color
+                                          //           ),
+                                          //         )
+                                          //       ],
+                                          //     );
+                                          //   },
+                                          // );
 
                                           debugPrint('check_PassErr');
                                         }

@@ -34,7 +34,7 @@ class DatabaseProvider extends ChangeNotifier {
   int _selectedIndex = 0;
   int _selectedIndexCard = 0;
   String pass = '';
-  bool checkPassErr = false;
+  bool checkPassErr = true;
   bool initialized = false;
   bool dbFilesExist = false;
   bool msgFilesExist = false;
@@ -77,11 +77,6 @@ class DatabaseProvider extends ChangeNotifier {
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Cryptor
 
   Future<bool> restoreDbFile(context) async {
-    // List<String> listFiles = [
-    //   'sec_box.hive',
-    //   'sec_box_card.hive',
-    // ];
-
     requestStoragePermission();
 
     var selectedDirectory = await FilePicker.platform.pickFiles();
@@ -89,7 +84,6 @@ class DatabaseProvider extends ChangeNotifier {
       return false;
     }
     String dir = selectedDirectory.files.first.path.toString();
-    //  +        '/' +        selectedDirectory.files.first.name;
 
     Directory? appDocDir = await getApplicationDocumentsDirectory();
     String dir2 = appDocDir.path + '/sbox';
@@ -129,48 +123,65 @@ class DatabaseProvider extends ChangeNotifier {
     }
   }
 
+//This function unzips a source zip file and writes the file contents to the specified target directory.
   bool unzipPack(String pathSourceZipFile, String pathTarget) {
     try {
+      //reads in the bytes from the source zip file
       final bytes = File(pathSourceZipFile).readAsBytesSync();
+      //decodes the bytes into an archive
       final archive = ZipDecoder().decodeBytes(bytes);
+      //for each file in the archive
       for (final file in archive) {
+        //obtains the filename
         final filename = file.name;
+        //checks if the file is a regular file
         if (file.isFile) {
+          //obtains the file contents as a byte list
           final data = file.content as List<int>;
-          File(pathTarget + '/' + filename)
+          //creates the file in the specified target directory and writes the contents
+          File('$pathTarget/$filename')
             ..createSync(recursive: true)
             ..writeAsBytesSync(data);
         }
       }
       return true;
     } catch (e) {
+      //handles the error if the code throws an exception
       debugPrint('Error $e');
       return false;
     }
   }
 
+// This function generates a backup of two Hive database files to a specified directory.
   Future<bool> backupDbFile(context) async {
     List<String> listFiles = [
-      'sec_box.hive',
-      'sec_box_card.hive',
+      'sec_box.hive', // The name of the first Hive database file to backup
+      'sec_box_card.hive', // The name of the second Hive database file to backup
     ];
 
-    Directory? appDocDir = await getApplicationDocumentsDirectory();
-    String? dir = appDocDir.path + '/sbox';
+    Directory? appDocDir =
+        await getApplicationDocumentsDirectory(); // Get the directory where the app is installed
+    String? dir =
+        appDocDir.path + '/sbox'; // Set the directory path for the backup
 
-    String? dir2 = '';
-    bool checkZip = false;
+    String? dir2 = ''; // Set the variable dir2 to an empty string
+    bool checkZip = false; // Set the checkZip variable to false
 
+    // Check if the app is running on an Android or iOS device
     if ((Platform.isAndroid) || (Platform.isIOS)) {
       try {
+        // Request permission to write to external storage
         final granted =
             await CRFileSaver.requestWriteExternalStoragePermission();
-
         debugPrint('requestWriteExternalStoragePermission: $granted');
 
+        // Generate a new temporary directory path
         String dirTmp = dir + '/sBoxBackUp_' + curDateTime() + '.x3';
+
+        // Package the specified files into a zip file
         checkZip = await zipPack(dir, dirTmp, listFiles);
 
+        // Save the backup file to the device's storage
         dir2 = await CRFileSaver.saveFileWithDialog(SaveFileDialogParams(
           sourceFilePath: dirTmp,
           destinationFileName: 'sBoxBackUp_' + curDateTime() + '.x3',
@@ -184,32 +195,32 @@ class DatabaseProvider extends ChangeNotifier {
         return false;
       }
     } else {
-      requestStoragePermission();
+      // If the app is running on any other device (e.g. web)
+      requestStoragePermission(); // Request permission to access the device's storage
 
+      // Allow the user to select a directory to save the backup file to
       String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
       if (selectedDirectory == null) {
         return false;
       }
+
+      // Generate a new directory path for the backup file
       dir2 = selectedDirectory;
       dir2 = (dir2 + '/sBoxBackUp_' + curDateTime() + '.x3');
 
+      // Package the specified files into a zip file
       checkZip = await zipPack(dir, dir2, listFiles);
 
       debugPrint('dir $dir');
       debugPrint('dir2 $dir2');
 
+      // Return true if the backup file was successfully generated and saved, otherwise return false
       if (checkZip) {
         return true;
       } else {
         return false;
       }
     }
-
-    debugPrint('dir $dir');
-    debugPrint('dir2 $dir2');
-
-    //var directory = await Directory(dir2).create(recursive: true);
-    // debugPrint('create directory.path $directory.path');
   }
 
   Future<void> requestStoragePermission() async {
@@ -295,7 +306,7 @@ class DatabaseProvider extends ChangeNotifier {
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
   bool get isAuth {
-    return initialized != false;
+    return initialized = false;
   }
 
   void msgdbFilesExists(var val) {
@@ -379,6 +390,7 @@ class DatabaseProvider extends ChangeNotifier {
         context.read<StateProvider>().changeInit(true);
         context.read<StateProvider>().changeErrState(false);
         context.read<RadioProvider>().changeInt(1, context);
+        context.read<DatabaseProvider>().checkPassErr = false;
         notifyListeners();
 
         await Navigator.of(context).push(
@@ -386,10 +398,11 @@ class DatabaseProvider extends ChangeNotifier {
       } else {
         context.read<StateProvider>().changeErrState(false);
         context.read<StateProvider>().changeInit(false);
+        context.read<DatabaseProvider>().checkPassErr = true;
         notifyListeners();
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(LocaleKeys.pass_err.tr()),
-        ));
+        // ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        //   content: Text(LocaleKeys.pass_err.tr()),
+        // ));
       }
 
       debugPrint('initSecBD try run: ---');
@@ -420,7 +433,7 @@ class DatabaseProvider extends ChangeNotifier {
     await genCSV(dir, listFiles);
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
-    String? dir2 = '';
+    String? dir2 = dir;
     bool checkZip = false;
 
     if ((Platform.isAndroid) || (Platform.isIOS)) {
@@ -431,12 +444,13 @@ class DatabaseProvider extends ChangeNotifier {
         debugPrint('requestWriteExternalStoragePermission: $granted');
 
         String dirTmp = dir + '/sBoxCSVpack_' + curDateTime() + '.zip';
+        checkZip = await zipPack(dir, dirTmp, listFiles);
 
         dir2 = await CRFileSaver.saveFileWithDialog(SaveFileDialogParams(
           sourceFilePath: dirTmp,
           destinationFileName: 'sBoxCSVpack_' + curDateTime() + '.zip',
         ));
-        checkZip = await zipPack(dir, dirTmp, listFiles);
+
         debugPrint('dir $dir');
         debugPrint('dir2 $dir2');
         debugPrint('Saved to $dir');
@@ -617,22 +631,24 @@ class DatabaseProvider extends ChangeNotifier {
     if (await dbFilesExistsNewDB()) {
       for (int i = 0; i < _boxA.length; i++) {
         _boxC.add(C_hive_tmp(
-          task: _boxA.get(i)!.task,
-          login: _boxA.get(i)!.login,
-          pass: _boxA.get(i)!.pass,
-          note: _boxA.get(i)!.note,
+          task: (_boxA.getAt(i)!.task.isEmpty) ? ' ' : _boxA.getAt(i)!.task,
+          login: (_boxA.getAt(i)!.login.isEmpty) ? ' ' : _boxA.getAt(i)!.login,
+          pass: (_boxA.getAt(i)!.pass.isEmpty) ? ' ' : _boxA.getAt(i)!.pass,
+          note: (_boxA.getAt(i)!.note.isEmpty) ? ' ' : _boxA.getAt(i)!.note,
         ));
       }
 
       for (int i = 0; i < _boxB.length; i++) {
         _boxD.add(C_hiveCard_tmp(
-          note: _boxB.get(i)!.note,
-          card: _boxB.get(i)!.card,
-          name: _boxB.get(i)!.name,
-          date: _boxB.get(i)!.date,
-          dateExp: _boxB.get(i)!.dateExp,
-          cvv: _boxB.get(i)!.cvv,
-          pinAtm: _boxB.get(i)!.pinAtm,
+          note: (_boxB.getAt(i)!.note.isEmpty) ? ' ' : _boxB.getAt(i)!.note,
+          card: (_boxB.getAt(i)!.card.isEmpty) ? ' ' : _boxB.getAt(i)!.card,
+          name: (_boxB.getAt(i)!.name.isEmpty) ? ' ' : _boxB.getAt(i)!.name,
+          date: (_boxB.getAt(i)!.date.isEmpty) ? ' ' : _boxB.getAt(i)!.date,
+          dateExp:
+              (_boxB.getAt(i)!.dateExp.isEmpty) ? ' ' : _boxB.getAt(i)!.dateExp,
+          cvv: (_boxB.getAt(i)!.cvv.isEmpty) ? ' ' : _boxB.getAt(i)!.cvv,
+          pinAtm:
+              (_boxB.getAt(i)!.pinAtm.isEmpty) ? ' ' : _boxB.getAt(i)!.pinAtm,
         ));
       }
 
@@ -658,22 +674,24 @@ class DatabaseProvider extends ChangeNotifier {
 
       for (int i = 0; i < _boxC.length; i++) {
         _boxA.add(C_hive(
-          task: _boxC.get(i)!.task,
-          login: _boxC.get(i)!.login,
-          pass: _boxC.get(i)!.pass,
-          note: _boxC.get(i)!.note,
+          task: (_boxC.getAt(i)!.task.isEmpty) ? ' ' : _boxC.getAt(i)!.task,
+          login: (_boxC.getAt(i)!.login.isEmpty) ? ' ' : _boxC.getAt(i)!.login,
+          pass: (_boxC.getAt(i)!.pass.isEmpty) ? ' ' : _boxC.getAt(i)!.pass,
+          note: (_boxC.getAt(i)!.note.isEmpty) ? ' ' : _boxC.getAt(i)!.note,
         ));
       }
 
       for (int i = 0; i < _boxD.length; i++) {
         _boxB.add(C_hiveCard(
-          note: _boxD.get(i)!.note,
-          card: _boxD.get(i)!.card,
-          name: _boxD.get(i)!.name,
-          date: _boxD.get(i)!.date,
-          dateExp: _boxD.get(i)!.dateExp,
-          cvv: _boxD.get(i)!.cvv,
-          pinAtm: _boxD.get(i)!.pinAtm,
+          note: (_boxD.getAt(i)!.note.isEmpty) ? ' ' : _boxD.getAt(i)!.note,
+          card: (_boxD.getAt(i)!.card.isEmpty) ? ' ' : _boxD.getAt(i)!.card,
+          name: (_boxD.getAt(i)!.name.isEmpty) ? ' ' : _boxD.getAt(i)!.name,
+          date: (_boxD.getAt(i)!.date.isEmpty) ? ' ' : _boxD.getAt(i)!.date,
+          dateExp:
+              (_boxD.getAt(i)!.dateExp.isEmpty) ? ' ' : _boxD.getAt(i)!.dateExp,
+          cvv: (_boxD.getAt(i)!.cvv.isEmpty) ? ' ' : _boxD.getAt(i)!.cvv,
+          pinAtm:
+              (_boxD.getAt(i)!.pinAtm.isEmpty) ? ' ' : _boxD.getAt(i)!.pinAtm,
         ));
       }
 
