@@ -1,6 +1,9 @@
 # sBox
 
-[online documentation](https://trinetron.github.io/sboxapp.site/UiEnAn.gif)
+[WEBSITE](https://trinetron.github.io/sboxapp.site/index.html)
+[SECURITY POLICY](https://trinetron.github.io/sboxapp.site/SECURITY_POLICY.html)
+[installation for android](https://trinetron.github.io/web_sbox/sBox-release.apk)
+[installation for windows](https://trinetron.github.io/web_sbox/sBoxSetup.exe)
 
 
 With this application, you can easily and quickly save information about all your accounts and bank cards in one place. You will no longer forget your passwords or waste time searching for them in a notebook or on a piece of paper hidden somewhere in the house. The application does not have an internet connection, your data is stored only on your device.
