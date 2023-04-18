@@ -1,8 +1,11 @@
 # sBox
 
 [WEBSITE](https://trinetron.github.io/sboxapp.site/index.html)
+
 [SECURITY POLICY](https://trinetron.github.io/sboxapp.site/SECURITY_POLICY.html)
+
 [installation for android](https://trinetron.github.io/web_sbox/sBox-release.apk)
+
 [installation for windows](https://trinetron.github.io/web_sbox/sBoxSetup.exe)
 
 
